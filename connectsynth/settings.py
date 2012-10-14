@@ -120,6 +120,11 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'hoge',
+    'common',
+    'sdk',
+    'autho',
+    'account',
+    'public',
 )
 
 # A sample logging configuration. The only tangible logging
