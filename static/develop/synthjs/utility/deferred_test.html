@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+	goog.require("goog.testing.jsunit");
+	goog.require("goog.testing.AsyncTestCase");
+	
+	goog.require("synthjs.utility.Deferred");
+</script>
+</head>
+<body>
+<script>
+
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
+var D = synthjs.utility.Deferred;
+
+function setUp() {
+
+}
+
+function tearDown() {
+
+}
+
+function testDeferredReturn() {
+	
+	var d1 = new D().addCallback(function(e){return 'd1';});
+	var d2 = new D().addCallback(function(e){return 'd2';});
+	
+	d1.name = 'd1';
+	d2.name = 'd2';
+	
+	d1.assocChainDeferred(d2).addCallback(function(e){
+		assertEquals('d2', e);
+		asyncTestCase.continueTesting();
+	});
+	
+	asyncTestCase.waitForAsync();
+	d1.callback();
+}
+
+// test for assocChainDeferred to bind like : d1+(d2+d3) = (d1+d2)+d3 
+function testDeferredArg() {
+	var d1 = new D().addCallback(function(e){return 'd1';});
+	var d2 = new D().addCallback(function(e){return 'd2';});
+	var d3 = new D().addCallback(function(e){return 'd3';});
+	
+	d1.assocChainDeferred( d2.assocChainDeferred(d3) ).addCallback(function(e){
+		assertEquals(e, 'd3');
+		asyncTestCase.continueTesting();
+	});
+	
+	d1.name = 'd1';
+	d2.name = 'd2';
+	d3.name = 'd3';
+	
+	asyncTestCase.waitForAsync();
+	d1.callback();
+};
+
+function testSimpleAwait() {
+	
+	var d1 = new D().addCallback(function(e){
+		return 'd1';
+	});
+	
+	var dWait = new synthjs.utility.Deferred();
+	d1.addCallback(function(){
+		setTimeout(function(){dWait.callback();}, 0);
+	})
+	d1.awaitDeferred(dWait).addCallback(function(e){
+		asyncTestCase.continueTesting();
+	});
+	
+	asyncTestCase.waitForAsync();
+	d1.callback();
+}
+
+// test for awaitDeferred no-async
+function testDeferredWait() {
+	var cnt = 0;
+	var dWait = new D();
+	var d1 = new D().addCallback(function(e){return 'd1';});
+	var d2 = new D().addCallback(function(e){return 'd2';});
+	var d3 = new D().addCallback(function(e){return 'd3';});
+	
+	d1.assocChainDeferred( d2.assocChainDeferred(d3).awaitDeferred(dWait) ).addCallback(function(e){
+		assertEquals(e, 'fromd3');
+		asyncTestCase.continueTesting();
+	});
+	
+	dWait.name = 'wait';
+	d1.name = 'd1';
+	d2.name = 'd2';
+	d3.name = 'd3';
+	
+	asyncTestCase.waitForAsync();
+	d1.callback();
+	dWait.callback('fromd3');
+};
+
+// test for awaitDeferred async
+function testDeferredWaitAsync() {
+	var dWait = new D();
+	
+	var d1 = new D().addCallback(function(e){return 'd1';});
+	var d2 = new D().addCallback(function(e){return 'd2';});
+	var d3 = new D().addCallback(function(e){
+		setTimeout(function(){console.log('[ASYNC START]');dWait.callback('fromd3');}, 0);return 'd3';});
+	
+	d1.assocChainDeferred( d2.assocChainDeferred(d3).awaitDeferred(dWait) ).addCallback(function(e){
+		assertEquals(e, 'fromd3');
+		asyncTestCase.continueTesting();
+	});
+	
+	dWait.name = 'wait';
+	d1.name = 'd1';
+	d2.name = 'd2';
+	d3.name = 'd3';
+	
+	asyncTestCase.waitForAsync();
+	d1.callback();
+	
+}
+
+function testDeferredMultiChain() {
+	var cnt = 0;
+	
+	var d1 = new D().addCallback(function(e){
+		//console.log('d1');
+		assertEquals(++cnt, 1);
+		return('d1');
+	});
+	var d2 = new D().addCallback(function(e){
+		//console.log('d2');
+		assertEquals(++cnt, 2);
+		return('d2');
+	});
+	var d3 = new D().addCallback(function(e){
+		//console.log('d3');
+		assertEquals(++cnt, 3);
+		return('d3');
+	});
+	var d4 = new D().addCallback(function(e){
+		//console.log('d4');
+		assertEquals(++cnt, 4);
+		return('d4');
+	});
+	var d5 = new D().addCallback(function(e){
+		//console.log('d5');
+		assertEquals(++cnt, 5);
+		return('d5');
+	});
+	var d6 = new D().addCallback(function(e){
+		//console.log('d6');
+		assertEquals(++cnt, 6);
+		return('d6');
+	});
+	
+	var wd3 = new D();
+	var wd4 = new D();
+	var wd5 = new D();
+	var wd6 = new D();
+	
+	d1.assocChainDeferred(d2)
+		.assocChainDeferred(
+			d3.addCallback(function(){
+				setTimeout(function(){wd3.callback('wd3');},0);
+			})
+			.awaitDeferred(wd3)
+			.assocChainDeferred(
+				d4.addCallback(function(){
+					setTimeout(function(){wd4.callback('wd4');},0);
+				})
+				.awaitDeferred(wd4)
+			)	
+		)
+		.assocChainDeferred(
+			d5.addCallback(function(){
+				setTimeout(function(){wd5.callback('wd5');},0);
+			})
+			.awaitDeferred(wd5)
+		)
+		.assocChainDeferred(
+			d6.addCallback(function(){
+				setTimeout(function(){wd6.callback('wd6');},0);
+			})
+			.awaitDeferred(wd6)
+		).addCallback(function(){
+			asyncTestCase.continueTesting();
+		});
+	
+	asyncTestCase.waitForAsync();
+	d1.callback();
+}
+</script>
+</body>
+</html>
+

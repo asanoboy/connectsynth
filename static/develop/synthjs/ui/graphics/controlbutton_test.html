@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../../closure/goog/base.js"></script>
+<script src="../../../deps.js"></script>
+<script>
+	goog.require("goog.testing.jsunit");
+	goog.require("goog.testing.AsyncTestCase");
+	goog.require("goog.testing.events");
+	goog.require("goog.events");
+	goog.require("goog.graphics");
+	goog.require("goog.graphics.ext");
+	goog.require("goog.math.Coordinate");
+	
+	goog.require("synthjs.ui.graphics.ControlButton");
+	goog.require("synthjs.model.PluginControlParam");
+	goog.require("synthjs.model.EventType");
+	
+</script>
+</head>
+<body>
+	<div id="target"></div>
+<script>
+
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
+
+function setUp() {
+}
+
+function tearDown() {
+}
+
+function testSetAndAdd() {
+	var name = "ctrl",
+		value = 0.5,
+		type = "control",
+		width = 40,
+		height = 40,
+		offsetX = 100,
+		offsetY = 100,
+		imagepath = "button_test_off.png"
+		param = new synthjs.model.PluginControlParam(
+			name, value, type, width, height, offsetX, offsetY, imagepath
+		);
+	
+	var control = new synthjs.ui.graphics.ControlButton(param);
+	var dom = goog.dom;
+	var $target = dom.getElement("target");
+	
+	
+	//var graphics = new goog.graphics.ext.Graphics(300, 300);
+	var graphics = goog.graphics.createGraphics(300, 300);
+	
+	goog.events.listen(
+		param,
+		synthjs.model.EventType.CHANGE,
+		function(e){
+			asyncTestCase.continueTesting();
+		}
+	);
+	
+	control.decorate(graphics);
+	
+	graphics.render($target); 
+	asyncTestCase.waitForAsync();
+	
+	var $image = control.getImageElement();
+	assert(!!$image);
+	
+	goog.testing.events.fireMouseDownEvent($image);
+	goog.testing.events.fireMouseMoveEvent($image, new goog.math.Coordinate(0, 1000));
+	goog.testing.events.fireMouseUpEvent($image);
+}
+
+</script>
+</body>
+</html>

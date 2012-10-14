@@ -1,0 +1,45 @@
+{% extends "page.html" %}
+
+{% block cssfile %}
+{{ block.super }}
+{% endblock %}
+
+{% block scriptfile %}
+{{ block.super }}
+<script type="text/javascript">
+$(function(){
+	$("#loginFormButton").click(function(){
+		var $form = $("#loginForm");
+		
+		$.ajax($form.attr("action"), 
+			{
+				type:"POST",
+				data: $form.serialize()
+			})
+			.then(function(rt){
+				{% if request.GET.next %}
+				document.location = '{{ request.GET.next }}';
+				{% else %}
+				document.location = '/';
+				{% endif %}
+			},
+			function(err){
+				
+			})
+		return false;
+	})
+});
+</script>
+{% endblock %}
+
+{% block content %}
+
+<form id="loginForm" action="{% url autho_login %}" type="POST">
+{{ form }}
+{% csrf_token %}
+<input id="loginFormButton" type="button" value="submit">
+</form>
+
+{% endblock %}
+
+

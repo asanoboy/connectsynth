@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+	goog.require("goog.testing.jsunit");
+	goog.require("goog.testing.AsyncTestCase");
+	
+	goog.require("synthjs.utility.Deferred");
+	goog.require("synthjs.audiocore.FilterPlugin");
+	goog.require("synthjs.audiocore.DynamicGenerator");
+	goog.require("synthjs.audiocore.WavePlugin");
+	goog.require("synthjs.audiocore.Note");
+</script>
+</head>
+<body>
+<script>
+
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
+var D = synthjs.utility.Deferred;
+
+function setUp() {
+
+}
+
+function tearDown() {
+
+}
+
+// test for only FilterPlugin
+function testFilterPluginMinimum() {
+	var filter = new synthjs.audiocore.FilterPlugin("test_filter_worker.js"), // This filter is to devide val by 2.
+		sampleRate = 48000;
+	filter.setSampleRate(sampleRate);
+	
+	var iniBuffer = new Float32Array(10);
+	for(var i=0; i<iniBuffer.length; i++){
+		iniBuffer[i] = Math.random();
+	}
+	
+	var d = new D().addCallback(function(){
+		return {
+			leftBuffer: new Float32Array(iniBuffer),
+			rightBuffer: new Float32Array(iniBuffer)
+		};
+	})
+	.assocChainDeferred(filter.getFilterDeferred())
+	.addCallback(function(e){
+		for(var i=0; i<iniBuffer.length; i++){
+			assertEquals(iniBuffer[i]/2, e.leftBuffer[i]);
+		}
+		asyncTestCase.continueTesting();
+	})
+	
+	asyncTestCase.waitForAsync();
+	d.callback();
+}
+
+function testInsideDynamicGenerator() {
+	var filter = new synthjs.audiocore.FilterPlugin("test_filter_worker.js"), // This filter is to devide val by 2.
+		sampleRate = 48000,
+		len = 10,
+		cnt = 0,
+		wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000});
+	
+	filter.setSampleRate(sampleRate);
+	
+	var d = wave.getBufferDeferred(len)
+	.assocChainDeferred(filter.getFilterDeferred().addCallback(function(){
+		assertEquals(cnt++, 0);
+	}))
+	.addCallback(function(e){
+		assertEquals(cnt++, 1);
+		asyncTestCase.continueTesting();
+	});
+	
+	asyncTestCase.waitForAsync();
+	d.callback();
+	
+}
+
+// chain test
+function testFilterPlugin1() {
+	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}),
+		filter = new synthjs.audiocore.FilterPlugin("test_filter_worker.js"),
+		len = 21,
+		sampleRate = 48000,
+		cnt = 0,
+		note = synthjs.audiocore.Note.create('c', 0, 2),
+		gen = new synthjs.audiocore.DynamicGenerator(wave).addFilter(filter);
+	
+	gen.setSampleRate(sampleRate);
+	var d = gen.getBufferDeferred(len).addCallback(function(buffers){
+		assertEquals(cnt++, 0);
+	})
+	.assocChainDeferred(gen.addNoteDeferred(note))
+	.assocChainDeferred(gen.getBufferDeferred(len).addCallback(function(buffers){
+		assertEquals(cnt++, 1);
+	}))
+	.assocChainDeferred(gen.removeNoteDeferred(note).addCallback(function(){
+		assertEquals(cnt++, 2);
+		asyncTestCase.continueTesting();
+	}));
+	
+	
+	asyncTestCase.waitForAsync();
+	d.callback();
+	
+}
+
+</script>
+</body>
+</html>

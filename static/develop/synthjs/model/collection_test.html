@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+	goog.require("goog.testing.jsunit");
+	goog.require("goog.testing.AsyncTestCase");
+	goog.require("goog.events");
+	goog.require("synthjs.model.Base");
+	goog.require("synthjs.model.Collection");
+	goog.require("synthjs.model.Collection.EventType");
+</script>
+</head>
+<body>
+<script>
+
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
+var Model = function(value1, value2){
+	goog.base(this, {
+		"col1": value1,
+		"col2": value2
+	});
+}
+goog.inherits(Model, synthjs.model.Base);
+
+function setUp() {
+}
+
+function tearDown() {
+}
+
+function testAdd() {
+	var collection = new synthjs.model.Collection(Model);
+	var data = new Model("hoge", "fuga");
+	
+	goog.events.listen(collection, synthjs.model.Collection.EventType.ADD, function(e){
+		assertEquals(e.target, data);
+	});
+	
+	collection.add(data);
+}
+
+function testRemove() {
+	var collection = new synthjs.model.Collection(Model);
+	var data = new Model("hoge", "fuga");
+	collection.add(data);
+	
+	goog.events.listen(collection, synthjs.model.Collection.EventType.REMOVE, function(e){
+		assertEquals(e.target, data);
+	});
+	
+	collection.remove(data);
+}
+
+function testReset() {
+	var collection = new synthjs.model.Collection(Model);
+	var data = new Model("hoge", "fuga");
+	collection.add(data);
+	
+	goog.events.listen(collection, synthjs.model.Collection.EventType.RESET, function(e){
+		asyncTestCase.continueTesting();
+	});
+	
+	asyncTestCase.waitForAsync();
+	collection.reset();
+}
+
+
+
+</script>
+</body>
+</html>

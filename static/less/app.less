@@ -1,0 +1,254 @@
+#application * {
+    cursor: default;
+}
+
+@app-bg-color: #001133;
+
+@appmenu-height: 26px;
+@appmenu-padding: 10px;
+@appmenu-color: #FFFFFF;
+
+@menu-fontsize: 0.85em;
+
+@menu-horizonal-padding: 20px;
+@menu-vertical-padding: 5px;
+@menu-bg-color: #FFFFFF;
+@menu-border-color: #999999;
+
+.gradation(@from, @to) {
+    background-image: linear-gradient(@from, @to);
+    background-image: -moz-linear-gradient(top, @from, @to);
+    background-image: -ms-linear-gradient(top, @from, @to);
+    background-image: -o-linear-gradient(top, @from, @to);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(@from), to(@to));
+}
+
+#application {
+    height: auto;
+    position: relative;
+    _background-color: @app-bg-color;
+}
+
+
+
+#appmenu, .synthjs-sdkoscillator-menu-container {
+    background-color: @appmenu-color;
+    .gradation(#FFFFFF, #DDDDDD);
+    border-bottom: 1px solid #666666;
+}
+
+body {
+    overflow: hidden;
+    background-color: @app-bg-color;
+    width: 100%;
+    height: 100%;
+}
+
+#workspace {
+    _height: 100%;
+}
+
+
+/*
+ * start window section LESS VARIABLE
+ */
+@windowsection-outer-border-color: #BBBBBB;
+@windowsection-outer-border-width: 1px;
+@windowsection-border-width: 2px;
+@windowsection-normal-color: #EEEEEE;
+@windowsection-active-color: #DDDDEE;
+@windowsection-header-width: 24px;
+
+.windowsection-label-common() {
+    background-color: @windowsection-normal-color;
+    height: @windowsection-header-width;
+    box-sizing: border-box;
+    display: inline-block;
+    border-style: solid;
+    border-color: @windowsection-outer-border-color;
+}
+
+.windowsection-label-common-active() {
+    background-color: @windowsection-active-color;
+    height: @windowsection-outer-border-width + @windowsection-header-width;
+}
+
+/*
+ * start window section LESS STYLE
+ */
+
+.windowsection-header {
+    height: @windowsection-header-width;
+}
+
+.windowsection-header-label-inner-wrapper {
+    display: inline-block;
+    position: relative;
+    z-index: 10;
+    _margin-top: 0px;
+    height: @windowsection-header-width;
+}
+
+.windowsection-header-label-inner-wrapper.active {
+    _height: @windowsection-outer-border-width + @windowsection-header-width;
+}
+
+.windowsection-header-label.left {
+    .windowsection-label-common();
+    width: 5px;
+    border-width: @windowsection-outer-border-width 0 0 @windowsection-outer-border-width;
+}
+.windowsection-header-label.left.active {
+    .windowsection-label-common-active()
+}
+
+.windowsection-header-label.center {
+    .windowsection-label-common();
+    vertical-align: top;
+    border-width: @windowsection-outer-border-width 0 0 0;
+    
+    span {
+        line-height: @windowsection-header-width;
+        height: 100%;
+    }
+}
+.windowsection-header-label.center.active {
+    .windowsection-label-common-active()
+}
+
+.windowsection-header-label.right {
+    .windowsection-label-common();
+    width: 5px;
+    border-width: @windowsection-outer-border-width @windowsection-outer-border-width 0 0;
+}
+.windowsection-header-label.right.active {
+    .windowsection-label-common-active()
+}
+
+.windowsection-body {
+    position: relative;
+    box-sizing: border-box;
+    _background-color: #FFFFFF;
+    _border: @windowsection-outer-border-width solid @windowsection-outer-border-color;
+}
+
+.windowsection-body-inner-wrapper.active {
+    border-color: @windowsection-active-color;
+    _overflow: scroll;
+}
+
+.windowsection-body-inner-wrapper {
+    position: absolute;
+    box-sizing: border-box;
+    background-color: #FFFFFF;
+    border: @windowsection-border-width solid @windowsection-normal-color;
+    width: 100%;
+    height: 100%;
+}
+
+/*
+ * vertical keyboard
+ */
+@verticalkeyboard-borderbox-width: 100px;
+@verticalkeyboard-borderwidth: 1px; 
+
+#application .white-keybord > div.top, #application .black-keybord > div.top {
+    border-top-width: @verticalkeyboard-borderwidth;
+}
+
+
+#application .white-keybord > div.mouseover, #application .black-keybord > div.mouseover {
+    background-color: #999;
+}
+
+#application .white-keybord > div {
+    width: @verticalkeyboard-borderbox-width - @verticalkeyboard-borderwidth * 2;
+    cursor: pointer;
+    border-style: solid;
+    border-color:  #CCC;
+    border-top-width: 0px;
+    border-right-width: @verticalkeyboard-borderwidth;
+    border-bottom-width: @verticalkeyboard-borderwidth;
+    border-left-width: @verticalkeyboard-borderwidth;
+    background-color: #FFF;
+}
+
+#application .white-keybord > div.edge_short {
+    height: 9px;
+}
+
+#application .white-keybord > div.short {
+    height: 14px;
+}
+
+#application .white-keybord > div.long {
+    height: 19px;
+}
+
+#application .black-keybord > div {
+    width: @verticalkeyboard-borderbox-width / 2 - @verticalkeyboard-borderwidth * 2;
+    height: 10px;
+    cursor: pointer;
+    border: solid #CCC @verticalkeyboard-borderwidth;
+    background-color: #000;
+}
+
+/*
+ * start oscillator-window section LESS style 
+ */
+
+#application .window-oscillator-keyboard {
+    overflow-y: scroll;
+    width: @verticalkeyboard-borderbox-width + 17px;
+    height: 100%;
+    float: left;
+}
+
+#application .window-oscillator-oscillator {
+    float: right;
+    height: 100%;
+}
+
+/*
+ * closure library modal prompt ui
+ */
+.modal-dialog-bg {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: #FFF;
+}
+.modal-dialog {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 300px;
+    background-color: #AAF;
+    border: 2px solid #99c0ff;
+}
+.modal-dialog-title {
+    position: relative;
+    background: #C3D9FF;
+    padding: 4px;
+    font: bold 11px verdana;
+    cursor: default;
+}
+.modal-dialog-content {
+    background: #E8EEF7;
+    padding: 12px 18px 12px 18px;
+    font: normal 12px verdana;
+    font: normal 12px verdana;
+}
+.modal-dialog-userInput {
+    font: normal 12px verdana;
+    width: 90%;
+}
+.modal-dialog-buttons {
+    background: #E8EEF7;
+    padding: 4px;
+    font: normal 12px verdana;
+    text-align: right;
+}
+.modal-dialog-buttons button {
+    margin: 5px;
+}

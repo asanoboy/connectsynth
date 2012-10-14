@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+	goog.require("goog.testing.jsunit");
+	goog.require("goog.testing.AsyncTestCase");
+	goog.require("goog.events");
+	goog.require("synthjs.model.FileSystem");
+	goog.require("synthjs.model.TextFile");
+	goog.require("synthjs.model.Directory");
+</script>
+</head>
+<body>
+<script>
+
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
+var TextFile = synthjs.model.TextFile;
+var FileSystem = synthjs.model.FileSystem;
+var Directory = synthjs.model.Directory;
+
+function setUp() {
+}
+
+function tearDown() {
+}
+
+function _testSimple() {
+	
+	var sys = new synthjs.model.FileSystem();
+	
+	sys.add(new TextFile("main.js", "content"));
+	
+}
+
+function testDirectory() {
+	
+	var sys = new synthjs.model.FileSystem();
+	var dir = new Directory("testdir");
+	
+	sys.add(dir);
+	
+	var file1 = new TextFile("sub.js", "subcontent");
+	var file2 = new TextFile("sub2.js", "subcontent2");
+	sys.add(file1, dir);
+	sys.add(file2, dir);
+	assertTrue(sys.has(dir));
+	assertTrue(sys.has(file1));
+	assertTrue(sys.has(file2));
+	
+	sys.remove(file1);
+	assertTrue(!sys.has(file1));
+	
+	try{
+		// remove not recursive
+		sys.remove(dir);
+		assertTrue(false);
+	}
+	catch(e){
+		
+	}
+	
+	assertEquals(file2, sys.getFileByPath(['testdir', 'sub2.js']));
+	
+	// remove recursive
+	sys.remove(dir, true);
+	
+	assertTrue(!sys.has(dir));
+	assertTrue(!sys.has(file2));
+	
+}
+
+function testPath(){
+	var sys = new synthjs.model.FileSystem();
+	var file = new TextFile("main.js", "content"); 
+	sys.add(file);
+	
+	var dir = new Directory("testdir");
+	sys.add(dir);
+	
+	var childfile = new TextFile("child.js", "content");
+	sys.add(childfile, dir);
+	
+	var files = sys.getAllFiles();
+	assertEquals(files.length, 2);
+	
+	var paths = goog.array.map(files, function(file){
+		return sys.getPath(file).join("/");
+	});
+	
+	assertTrue( goog.array.contains(paths, "main.js") );
+	assertTrue( goog.array.contains(paths, "testdir/child.js") );
+}
+
+function testDuplicate(){
+	var sys = new synthjs.model.FileSystem();
+	var file1 = new TextFile("main.js", "content"); 
+	var file2 = new TextFile("main.js", "content");
+	var file3 = new TextFile("main.js", "content");
+	sys.add(file1);
+	sys.add(file2);
+	sys.add(file3);
+	assertEquals(file2.get("filename"), "main_1.js");
+	assertEquals(file3.get("filename"), "main_2.js");
+	
+	
+}
+
+</script>
+</body>
+</html>
