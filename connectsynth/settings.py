@@ -129,7 +129,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 #    'connectsynth.sdkoscillator',
-    'south',
+#    'south',
 #    'storages',
     'common',
     'sdk',
@@ -188,18 +188,8 @@ DATABASES = {
     },
 }
 
-REPO_URLBASE = "http://int.dev.repoo.net"
-REPO_API = {
-    'UPDATE': REPO_URLBASE + "/update/",
-    'GET': REPO_URLBASE + "/get/",
-    'INFO': REPO_URLBASE + "/info/",
-    'DELETE': REPO_URLBASE + "/delete/",
-}
 
 LOGIN_URL = "/auth/login/"
-
-REPO_ROOT_TEST = "/var/connectsynth/testrepo/"
-REPO_ROOT_PRODUCT = "/var/connectsynth/repo/"
 
 
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
