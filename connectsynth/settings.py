@@ -184,7 +184,7 @@ AWS_STORAGE_BUCKET_NAME = 'asanoboyredmine'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+#STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 #COMPRESS_STORAGE = 'storageis.CachedS3BotoStorage'
 #COMPRESS_URL = STATIC_URL
