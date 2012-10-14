@@ -167,7 +167,6 @@ TEMPLATE_DIRS += (os.path.join(BASE_DIR, 'templates'),)
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-print STATIC_ROOT
 LOGIN_URL = "/auth/login/"
 
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
@@ -184,5 +183,9 @@ AWS_STORAGE_BUCKET_NAME = 'asanoboyredmine'
 
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+TATICFILES_STORAGE = 'storage.CachedS3BotoStorage'
 
-#STATICFILES_DIRS += (os.path.join(BASE_DIR, 'static'),)
+COMPRESS_STORAGE = 'storage.CachedS3BotoStorage'
+COMPRESS_URL = STATIC_URL
+COMPRESS_OUTPUT_DIR = 'cache'
+STATICFILES_DIRS += (os.path.join(BASE_DIR, 'static'),)
