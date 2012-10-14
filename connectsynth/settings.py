@@ -171,7 +171,7 @@ from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
 
 
 TEMPLATE_CONTEXT_PROCESSORS += (
-#    "common.template.context",
+    "common.template.context",
     "django.core.context_processors.request",
 )
 
