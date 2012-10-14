@@ -157,3 +157,22 @@ DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
 import sys, os
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
+
+TEMPLATE_DIRS += (os.path.join(BASE_DIR, 'templates'),)
+
+LOGIN_URL = "/auth/login/"
+
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+
+
+TEMPLATE_CONTEXT_PROCESSORS += (
+#    "common.template.context",
+    "django.core.context_processors.request",
+)
+
+AWS_ACCESS_KEY_ID = 'AKIAJQNZW6EMCL3EYFSQ'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'asanoboyredmine'
+
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
