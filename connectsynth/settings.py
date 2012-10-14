@@ -131,12 +131,12 @@ INSTALLED_APPS = (
 #    'connectsynth.sdkoscillator',
 #    'south',
 #    'storages',
-    'common',
-    'sdk',
+#    'common',
+#    'sdk',
     #'plugin',
-    'autho',
-    'account',
-    'public',
+#    'autho',
+#    'account',
+#    'public',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -172,10 +172,10 @@ LOGGING = {
 ##############################################
 
 import sys
-BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
+#BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+#sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
-TEMPLATE_DIRS += (os.path.join(BASE_DIR, 'templates'),)
+#TEMPLATE_DIRS += (os.path.join(BASE_DIR, 'templates'),)
 
 DATABASES = {
     'default': {
@@ -196,7 +196,7 @@ from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
 
 
 TEMPLATE_CONTEXT_PROCESSORS += (
-    "common.template.context",
+#    "common.template.context",
     "django.core.context_processors.request",
 )
 

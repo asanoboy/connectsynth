@@ -7,13 +7,14 @@ admin.autodiscover()
 urlpatterns = patterns('',
     #('^hello/$', hello),
     # Examples:
-    # url(r'^$', 'connectsynth.views.home', name='home'),
+    url(r'^$', 'connectsynth.views.home', name='home'),
     # url(r'^connectsynth/', include('connectsynth.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
+    """
     url(r'^admin/', include(admin.site.urls)),
     
     url(r'^sdk/', include('sdk.urls')),
@@ -24,6 +25,6 @@ urlpatterns = patterns('',
     
     #url(r'^sdk/oscillator/$', 'connectsynth.sdkoscillator.views.showsdk'),
     #url(r'^sdk/plugin/$', 'connectsynth.sdkplugin.views.api'),
-    
+    """
  
 )
