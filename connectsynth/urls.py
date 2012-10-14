@@ -7,6 +7,7 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'connectsynth.views.home', name='home'),
+    url(r'^hoge/$', 'hoge.views.hoge_home', name='hoge_home'),
     # url(r'^connectsynth/', include('connectsynth.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

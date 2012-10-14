@@ -119,6 +119,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'hoge',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -152,3 +153,7 @@ LOGGING = {
 
 import dj_database_url
 DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
+
+import sys, os
+BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
