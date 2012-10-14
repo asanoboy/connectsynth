@@ -218,3 +218,6 @@ AWS_STORAGE_BUCKET_NAME = 'asanoboyredmine'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 #STATICFILES_STORAGE = 'common.s3utils.StaticRootS3BotoStorage'
+
+import dj_database_url
+DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
