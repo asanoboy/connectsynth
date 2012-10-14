@@ -183,3 +183,4 @@ AWS_STORAGE_BUCKET_NAME = 'asanoboyredmine'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
+STATICFILES_DIRS += (os.path.join(BASE_DIR, 'static'),)
