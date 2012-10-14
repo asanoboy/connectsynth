@@ -60,7 +60,7 @@ STATIC_ROOT = ''
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+STATIC_URL = ''
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -165,6 +165,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 TEMPLATE_DIRS += (os.path.join(BASE_DIR, 'templates'),)
 
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 LOGIN_URL = "/auth/login/"
 
