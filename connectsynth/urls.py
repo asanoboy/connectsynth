@@ -1,30 +1,17 @@
 from django.conf.urls import patterns, include, url
 
 # Uncomment the next two lines to enable the admin:
-from django.contrib import admin
-admin.autodiscover()
+# from django.contrib import admin
+# admin.autodiscover()
 
 urlpatterns = patterns('',
-    #('^hello/$', hello),
     # Examples:
-    url(r'^$', 'connectsynth.views.home', name='home'),
+    # url(r'^$', 'connectsynth.views.home', name='home'),
     # url(r'^connectsynth/', include('connectsynth.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    """
-    url(r'^admin/', include(admin.site.urls)),
-    
-    url(r'^sdk/', include('sdk.urls')),
-    #url(r'^plugin/', include('plugin.urls')),
-    url(r'^auth/', include('autho.urls')),
-    url(r'^account/', include('account.urls')),
-    url(r'', include('public.urls')),
-    
-    #url(r'^sdk/oscillator/$', 'connectsynth.sdkoscillator.views.showsdk'),
-    #url(r'^sdk/plugin/$', 'connectsynth.sdkplugin.views.api'),
-    """
- 
+    # url(r'^admin/', include(admin.site.urls)),
 )

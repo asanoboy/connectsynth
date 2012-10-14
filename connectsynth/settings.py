@@ -23,10 +23,7 @@ DATABASES = {
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
-# On Unix systems, a value of None will cause Django to use the same
-# timezone as the operating system.
-# If running in a Windows environment this must be set to the same as your
-# system time zone.
+# In a Windows environment this must be set to your system time zone.
 TIME_ZONE = 'America/Chicago'
 
 # Language code for this installation. All choices can be found here:
@@ -53,7 +50,7 @@ MEDIA_ROOT = ''
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = 'http://www.dev.connectsynth.com/static/'
+MEDIA_URL = ''
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -81,7 +78,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '%@_j9^=49kyf+y9tpvcb8ks171jmb-xt2_j8!$ym7(gqy%blh5'
+SECRET_KEY = 'mvuo)id8ijkwl7$z_+p=2nhe4as_p@_^5(02)84slt&amp;vv$l5s#'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -109,7 +106,6 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    #os.path.join(SITE_ROOT, 'templates')
 )
 
 INSTALLED_APPS = (
@@ -120,18 +116,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-#    'connectsynth.sdkoscillator',
-#    'south',
-#    'storages',
-#    'common',
-#    'sdk',
-    #'plugin',
-#    'autho',
-#    'account',
-#    'public',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -163,46 +150,5 @@ LOGGING = {
     }
 }
 
-
-##############################################
-"""
-import sys
-#BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-#sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
-
-#TEMPLATE_DIRS += (os.path.join(BASE_DIR, 'templates'),)
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': os.path.join(BASE_DIR, 'sqlite.db'),                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    },
-}
-
-
-LOGIN_URL = "/auth/login/"
-
-
-from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
-
-
-TEMPLATE_CONTEXT_PROCESSORS += (
-#    "common.template.context",
-    "django.core.context_processors.request",
-)
-
-
-AWS_ACCESS_KEY_ID = 'AKIAJQNZW6EMCL3EYFSQ'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'asanoboyredmine'
-
-
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-#STATICFILES_STORAGE = 'common.s3utils.StaticRootS3BotoStorage'
-"""
 import dj_database_url
 DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
