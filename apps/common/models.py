@@ -24,7 +24,7 @@ class Plugin(models.Model):
     
     class Admin:
         pass
-
+"""
 def get_plugin_image_upload_path(self, filename):
     return os.path.join("plugin", "image", self.code, filename)
 
@@ -57,7 +57,7 @@ class RepositoryFile(models.Model):
     path = models.CharField(max_length=100, unique=True, editable=False)
     is_enabled = models.BooleanField(default=True)
 
-
+"""
 """
 class Repository(models.Model):
     user = models.ForeignKey(User, editable=False)
