@@ -1,8 +1,3 @@
-import os
-
-SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-
-
 # Django settings for connectsynth project.
 
 DEBUG = True
@@ -53,7 +48,7 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = '/var/repo/'
+MEDIA_ROOT = ''
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -170,7 +165,7 @@ LOGGING = {
 
 
 ##############################################
-
+"""
 import sys
 #BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 #sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
@@ -208,6 +203,6 @@ AWS_STORAGE_BUCKET_NAME = 'asanoboyredmine'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 #STATICFILES_STORAGE = 'common.s3utils.StaticRootS3BotoStorage'
-
+"""
 import dj_database_url
 DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
