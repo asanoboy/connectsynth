@@ -1,7 +1,0 @@
-<form class="ajaxPublishForm" action="{% url publish_instrument code %}" method="POST">
-<table>
-{{ form.as_table }}
-<tr><td colspan='2'><input class="ajaxPublishFormButton" type="button" value="submit"></td></tr>
-</table>
-{% csrf_token %}
-</form>
