@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../../closure/goog/base.js"></script>
+<script src="../../../deps.js"></script>
+<script>
+	goog.require("goog.testing.jsunit");
+	goog.require("goog.testing.AsyncTestCase");
+	goog.require("goog.testing.events");
+	goog.require("goog.events");
+	goog.require("goog.graphics");
+	goog.require("goog.graphics.ext");
+	goog.require("goog.math.Coordinate");
+	
+	goog.require("synthjs.ui.graphics.ToggleButton");
+	goog.require("synthjs.model.PluginToggleParam");
+	goog.require("synthjs.model.EventType");
+	
+</script>
+</head>
+<body>
+	<div id="target"></div>
+<script>
+
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
+
+function setUp() {
+}
+
+function tearDown() {
+}
+
+function testSetAndAdd() {
+	var name = "ctrl",
+		value = 0,
+		width = 40,
+		height = 40,
+		offsetX = 100,
+		offsetY = 100,
+		imagepathOn = "button_test_on.png",
+		imagepathOff = "button_test_off.png",
+		param = new synthjs.model.PluginToggleParam(
+			name, 
+			value, 
+			width, 
+			height, 
+			offsetX, 
+			offsetY, 
+			imagepathOn,
+			imagepathOff
+		);
+	
+	var control = new synthjs.ui.graphics.ToggleButton(param);
+	var dom = goog.dom;
+	var $target = dom.getElement("target");
+	
+	
+	//var graphics = new goog.graphics.ext.Graphics(300, 300);
+	var graphics = goog.graphics.createGraphics(300, 300);
+	
+	goog.events.listen(
+		param,
+		synthjs.model.EventType.CHANGE,
+		function(e){
+			asyncTestCase.continueTesting();
+		}
+	);
+	
+	control.decorate(graphics);
+	
+	graphics.render($target); 
+	asyncTestCase.waitForAsync();
+	
+	var $image = control.getImageElement();
+	assert(!!$image);
+	
+	goog.testing.events.fireClickEvent($image);
+}
+
+</script>
+</body>
+</html>

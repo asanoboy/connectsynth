@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../closure/goog/base.js"></script>
+<script src="../deps.js"></script>
+<link rel="stylesheet" type="text/css" href="../closure/goog/css/multitestrunner.css">
+<script>
+	goog.require("goog.testing.MultiTestRunner");
+	goog.require("goog.dom");
+</script>
+</head>
+<body>
+	<div id="runner"></div>
+	<script type="text/javascript">
+		var testRunner = new goog.testing.MultiTestRunner();
+
+		testRunner.addTests([
+			"audiocore/dynamicgenerator_test.html",
+			"audiocore/filter_plugin_test.html",
+			"audiocore/note_test.html",
+			"audiocore/player_test.html",
+			"audiocore/wave_plugin_test.html",
+			
+			"model/base_test.html",
+			"model/collection_test.html",
+			"model/filesystem_test.html",
+			"model/textfile_test.html",
+			
+			"net/pluginposter_test.html",
+			
+			"ui/graphics/controlbutton_test.html",
+			"ui/graphics/radiobutton_test.html",
+			"ui/graphics/togglebutton_test.html",
+			"ui/plugincontrolpanel_test.html",
+			
+			"utility/ajaxdeferred_test.html",
+			"utility/deferred_test.html",
+			"utility/worker_deferred_manager_test.html",
+			"utility/worker_deferred_test.html",
+			
+			"deferred_test.html"
+			
+			]);
+		
+		testRunner.render(goog.dom.getElement("runner"));
+
+	</script>
+</body>
+</html>

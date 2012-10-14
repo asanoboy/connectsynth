@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+	goog.require("goog.testing.jsunit");
+	goog.require("synthjs.audiocore.Player");
+	goog.require("synthjs.audiocore.WavePlugin");
+	goog.require("synthjs.audiocore.DynamicGenerator");
+</script>
+</head>
+<body>
+<script>
+
+function setUp() {
+
+}
+
+function tearDown() {
+
+}
+
+function testNote() {
+	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}),
+		note = synthjs.audiocore.Note.create('c', 0),
+		gen = new synthjs.audiocore.DynamicGenerator(wave),
+		player = synthjs.audiocore.Player.getInstance();
+	
+	gen.setSampleRate(48000);
+	player.addGenerator(gen);
+	//gen.addNoteDeferred(note).addCallback(function(){
+		player.play();
+	// })
+	// .callback();
+	
+	//setTimeout(function(){player.stop();}, 1000);
+	
+}
+
+
+</script>
+<div id="testid"></div>
+</body>
+</html>

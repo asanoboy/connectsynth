@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+	goog.require("goog.testing.jsunit");
+	goog.require("goog.testing.AsyncTestCase");
+	goog.require("goog.events");
+	goog.require("synthjs.model.Base");
+	goog.require("synthjs.model.EventType");
+</script>
+</head>
+<body>
+<script>
+
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
+var Model = function(value1, value2){
+	goog.base(this, {
+		"col1": value1,
+		"col2": value2
+	});
+}
+goog.inherits(Model, synthjs.model.Base);
+
+function setUp() {
+}
+
+function tearDown() {
+}
+
+function testSetAndAdd() {
+	var data = new Model("hoge", "fuga");
+	
+	assertEquals(data.get("col1"), "hoge");
+	assertEquals(data.get("col2"), "fuga");
+	
+	data.set("col1", "piyo");
+	assertEquals(data.get("col1"), "piyo");
+	
+	goog.events.listen(data, synthjs.model.EventType.CHANGE, function(e){
+		assertEquals(e.target.attr, "col2");
+		assertEquals(e.target.before, "fuga");
+		assertEquals(e.target.after, "habesi");
+		asyncTestCase.continueTesting();
+	});
+	
+	setTimeout(function(){
+		data.set("col2", "habesi");
+	}, 0);
+	asyncTestCase.waitForAsync();
+}
+
+</script>
+</body>
+</html>
