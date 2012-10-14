@@ -167,6 +167,7 @@ TEMPLATE_DIRS += (os.path.join(BASE_DIR, 'templates'),)
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+print STATIC_ROOT
 LOGIN_URL = "/auth/login/"
 
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
