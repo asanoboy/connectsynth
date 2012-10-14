@@ -166,7 +166,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 TEMPLATE_DIRS += (os.path.join(BASE_DIR, 'templates'),)
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'statica')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 LOGIN_URL = "/auth/login/"
 
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
@@ -188,4 +188,4 @@ TATICFILES_STORAGE = 'storage.CachedS3BotoStorage'
 COMPRESS_STORAGE = 'storage.CachedS3BotoStorage'
 COMPRESS_URL = STATIC_URL
 COMPRESS_OUTPUT_DIR = 'cache'
-STATICFILES_DIRS += (os.path.join(BASE_DIR, 'static'),)
+STATICFILES_DIRS += (os.path.join(BASE_DIR, 'statica'),)
