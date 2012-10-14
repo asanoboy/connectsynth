@@ -1,0 +1,43 @@
+{% extends "app.html" %}
+
+{% block cssfile %}
+{{ block.super }}
+<link rel="stylesheet" href="{{ MEDIA_URL }}css/closure/tree.css">
+<link rel="stylesheet" href="{{ MEDIA_URL }}css/closure/menu.css">
+<link rel="stylesheet" href="{{ MEDIA_URL }}css/closure/menubar.css">
+<link rel="stylesheet" href="{{ MEDIA_URL }}css/closure/menubutton.css">
+<link rel="stylesheet" href="{{ MEDIA_URL }}css/closure/menuitem.css">
+<link rel="stylesheet" href="{{ MEDIA_URL }}css/closure/menuseparator.css">
+<link rel="stylesheet" href="{{ MEDIA_URL }}css/codemirror/codemirror.css">
+<!--<link rel="stylesheet" href="{{ MEDIA_URL }}css/codemirror/docs.css">-->
+
+<link rel="stylesheet/less" type="text/css" href="{{ MEDIA_URL }}less/app.less">
+<link rel="stylesheet/less" type="text/css" href="{{ MEDIA_URL }}less/sdk.less">
+{% endblock %}
+
+{% block scriptfile %}
+
+<script src="{{ MEDIA_URL }}js/extern/underscore-min.js" type="text/javascript"></script>
+<script src="{{ MEDIA_URL }}js/extern/codemirror/codemirror.js" type="text/javascript"></script>
+<script src="{{ MEDIA_URL }}js/extern/codemirror/javascript.js" type="text/javascript"></script>
+{% if 1 %}
+<script src="{{ MEDIA_URL }}develop/closure/goog/base.js" type="text/javascript"></script>
+<script src="{{ MEDIA_URL }}develop/deps.js" type="text/javascript"></script>
+<script src="{{ MEDIA_URL }}develop/synthjs/sdkoscillator.js" type="text/javascript"></script>
+{% else %}
+<script src="{{ MEDIA_URL }}develop/optimized.js" type="text/javascript"></script>
+{% endif %}
+
+<script type="text/javascript">
+	//var app = new synthjs.application.SDKOscillator(
+	var app = new SDKOscillator(
+		"application", 
+		{
+			"name": "[workspace]",
+			"api": "{% url sdk_restful_api code %}",
+			"infoapi": "{% url sdk_private_filelist_api code %}",
+			"publishapi": "{% url sdk_publish_api code %}",
+			"bootstrapJs": "{% url sdk_private_get_api code, 'main.js' %}"
+		});
+</script>
+{% endblock %}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+	goog.require("goog.testing.jsunit");
+	goog.require("goog.testing.AsyncTestCase");
+	goog.require("goog.events");
+	goog.require("synthjs.ui.PluginControlPanel");
+	goog.require("synthjs.model.Collection");
+	goog.require("synthjs.model.PluginControlParam");
+</script>
+</head>
+<body>
+	<div id="target"></div>
+<script>
+
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
+var PluginControlPanel = synthjs.ui.PluginControlPanel;
+
+function setUp() {
+}
+
+function tearDown() {
+}
+
+function testSetAndAdd() {
+	var name = "ctrl",
+		value = 0.5,
+		type = "control",
+		width = 40,
+		height = 40,
+		offsetX = 100,
+		offsetY = 100,
+		backgroundImage = "plugincontrolpanel_test_background.png",
+		param = new synthjs.model.PluginControlParam(
+			name, value, type, width, height, offsetX, offsetY
+		),
+		collection = new synthjs.model.Collection(synthjs.model.PluginControlParam);
+	
+	collection.add(param);
+	
+	var panel = new PluginControlPanel(collection, backgroundImage, "");
+	var dom = panel.getDomHelper();
+	var $target = dom.getElement("target");
+	panel.decorate($target);
+}
+
+</script>
+</body>
+</html>

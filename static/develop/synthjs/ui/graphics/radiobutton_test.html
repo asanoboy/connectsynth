@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../../closure/goog/base.js"></script>
+<script src="../../../deps.js"></script>
+<script>
+	goog.require("goog.testing.jsunit");
+	goog.require("goog.testing.AsyncTestCase");
+	goog.require("goog.testing.events");
+	goog.require("goog.events");
+	goog.require("goog.graphics");
+	goog.require("goog.graphics.ext");
+	goog.require("goog.math.Coordinate");
+	
+	goog.require("synthjs.ui.graphics.RadioButton");
+	goog.require("synthjs.model.PluginRadioParam");
+	goog.require("synthjs.model.EventType");
+	
+</script>
+</head>
+<body>
+	<div id="target"></div>
+<script>
+
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
+
+function setUp() {
+}
+
+function tearDown() {
+}
+
+function testSetAndAdd() {
+	var name = "ctrl",
+		value = 0,
+		width = 40,
+		height = 40,
+		offsetList = [
+			{offsetX: 30, offsetY: 100},
+			{offsetX: 130, offsetY: 100},
+			{offsetX: 230, offsetY: 100}
+		],
+		imagepathOn = "button_test_on.png",
+		imagepathOff = "button_test_off.png",
+		param = new synthjs.model.PluginRadioParam(
+			name, 
+			value, 
+			width, 
+			height, 
+			offsetList,
+			imagepathOn,
+			imagepathOff
+		);
+	
+	var control = new synthjs.ui.graphics.RadioButton(param);
+	var dom = goog.dom;
+	var $target = dom.getElement("target");
+	
+	
+	//var graphics = new goog.graphics.ext.Graphics(300, 300);
+	var graphics = goog.graphics.createGraphics(300, 300);
+	
+	var expectedList = [1,2,0];
+	goog.events.listen(
+		param,
+		synthjs.model.EventType.CHANGE,
+		function(e){
+			if( expectedList.length > 0 ){
+				var expected = expectedList.shift();
+				assertEquals(e.target.after, expected); 
+				if( expectedList.length==0 ){
+					asyncTestCase.continueTesting();
+				}
+			}
+			
+		}
+	);
+	
+	control.decorate(graphics);
+	
+	graphics.render($target); 
+	asyncTestCase.waitForAsync();
+	
+	var $image;
+	$image = control.getImageElement(1);
+	assert(!!$image);
+	goog.testing.events.fireClickEvent($image);
+	
+	$image = control.getImageElement(2);
+	assert(!!$image);
+	goog.testing.events.fireClickEvent($image);
+	
+	$image = control.getImageElement(0);
+	assert(!!$image);
+	goog.testing.events.fireClickEvent($image);
+}
+
+</script>
+</body>
+</html>
