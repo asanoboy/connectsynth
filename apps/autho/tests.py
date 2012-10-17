@@ -10,6 +10,8 @@ from django.test.client import Client
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
+from common.models import TwitterUser
+
 
 class AuthTest(TestCase):
     def setUp(self):
@@ -43,6 +45,12 @@ class AuthTest(TestCase):
         user = User.objects.create_user(username=self.username,
                                  email='',
                                  password=self.password)
+        twitteruser = TwitterUser.objects.create(twitterid=123,
+                                              user=user,
+                                              screen_name='testname',
+                                              profile_image_url="http://hoge.com"
+                                              )
+        
         self.assertTrue(user.is_authenticated())
         res = self.c.post(reverse('autho_login'), {
                                                    'username': self.username,

@@ -7,9 +7,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 import os.path
-from common.models import Plugin
+from common.models import Plugin, TwitterUser
 from models import File
-
 
 class SDKTest(TestCase):
     
@@ -18,11 +17,17 @@ class SDKTest(TestCase):
     """
     def setUp(self):
         
+        
+        
         self.c = Client()
         
         self.login_password = "passw0rd"
         self.user = User.objects.create_user("testuser", 'test@test.com', self.login_password)
-        
+        self.twitteruser = TwitterUser.objects.create(twitterid=123,
+                                                      user=self.user,
+                                                      screen_name='testname',
+                                                      profile_image_url="http://hoge.com"
+                                                      )
         """
         uploaded file information
         """

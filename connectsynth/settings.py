@@ -119,7 +119,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'hoge',
     'common',
     'sdk',
     'autho',
@@ -156,10 +155,11 @@ LOGGING = {
     }
 }
 
+import sys, os
+
 import dj_database_url
 DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
 
-import sys, os
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
@@ -190,3 +190,4 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 #COMPRESS_URL = STATIC_URL
 #COMPRESS_OUTPUT_DIR = 'cache'
 STATICFILES_DIRS += (os.path.join(BASE_DIR, 'static'),)
+

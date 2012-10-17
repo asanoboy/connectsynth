@@ -2,7 +2,7 @@
 import os, sys
 sys.path.append('/usr/local/connectsynth')
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'connectsynth.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'connectsynth.settings_dev'
 
 import django.core.handlers.wsgi
 
