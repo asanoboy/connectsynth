@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 import os.path
 
 class TwitterUser(models.Model):
-    user = models.ForeignKey(User, unique=True)
+    user = models.OneToOneField(User)
     twitterid = models.IntegerField(max_length=100, unique=True)
     profile_image_url = models.CharField(max_length=200)
     screen_name = models.CharField(max_length=100)

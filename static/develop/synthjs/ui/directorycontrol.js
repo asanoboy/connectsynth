@@ -23,7 +23,9 @@ goog.require("goog.fs.FileReader.EventType");
  * @param {synthjs.model.FileSystem}
  */
 synthjs.ui.DirectoryControl = function(fileSystem, opt_editable, opt_folderOnly, opt_domHelper){
+	
 	this._editable = typeof opt_editable=='undefined' ? true : !!opt_editable;
+	
 	this._fileSystem = fileSystem;
 	this.folderOnly_ = opt_folderOnly;
 	this._contextMenu = new goog.ui.PopupMenu(opt_domHelper);
@@ -187,7 +189,7 @@ synthjs.ui.DirectoryControl.prototype.disposeInternal = function(){
 
 synthjs.ui.DirectoryControl.prototype._onDropFile = function(e){
 	
-	goog.asserts.assert(this._editale, "Catch change event on filesystem, but this is set non-editable.");
+	goog.asserts.assert(this._editable, "Catch change event on filesystem, but this is set non-editable.");
 	
 	var files = e.getBrowserEvent().dataTransfer.files;
 	this._addFileListToSystem(files);

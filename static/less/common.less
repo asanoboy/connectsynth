@@ -1,3 +1,5 @@
+@import "mixins.less";
+
 /*
  * LESS variable
  */
@@ -19,6 +21,15 @@
 .box-shadow(@style, @alpha: 50%) when (isnumber(@alpha)) {
     .box-shadow(@style, rgba(0, 0, 0, @alpha));
 }
+
+.gradation(@from, @to) {
+    background-image: linear-gradient(@from, @to);
+    background-image: -moz-linear-gradient(top, @from, @to);
+    background-image: -ms-linear-gradient(top, @from, @to);
+    background-image: -o-linear-gradient(top, @from, @to);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(@from), to(@to));
+}
+
 /* 
  * reset
  */
@@ -90,3 +101,25 @@ div.section {
 
 }
 
+
+#content div.plugin-block:hover {
+    .gradation(#DDDDDD, #DDDDDD);
+}
+
+#content div.plugin-block {
+    .gradation(#EEEEEE, #DDDDDD);
+    float: left;
+    width: 458px;
+    padding: 10px;
+    margin: 4px;
+    border: 1px solid #999999;
+    .border-radius(15px);
+}
+
+#content div.plugin-info {
+    
+}
+
+#content div.plugin-created {
+    float: right;
+}

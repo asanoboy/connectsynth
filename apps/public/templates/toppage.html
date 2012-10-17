@@ -9,13 +9,31 @@
 {% endblock %}
 
 {% block content %}
-<h1>TopPage</h1>
-<a href="{% url sdk_instrument_workspace %}">MyInstrument</a>
-<ul>
+<div>
+	<div style="float:left;">
+		<h1>ConnectSynth</h1>
+		<p>ConnectSynth is experimental plugin hosting system using Web Audio API. You can post a plugin in Javascript and publish.</p>
+	</div>
+	<div style="float:right;">
+		<a href="{% url sdk_instrument_workspace %}">MyInstrument</a>	
+	</div>
+</div>
+<div style="clear:both;">
+
 	{% for plugin in object_list %}
-	<li>
-	    <a href='{% url sdk_instrument_player plugin.code %}'>{{ plugin.name }}</a>
-	</li>
+	<div class="plugin-block">
+		
+	    <div class="plugin-created">
+	    	<p>created by <a href='https://twitter.com/{{ plugin.user.twitteruser.screen_name }}/' target="_blank">{{ plugin.user.twitteruser.screen_name }}</a></p>
+	    	<p>({{ plugin.createdat|date:"Y/m/d" }})</p>
+	    </div>
+		<div class="plugin-info">
+		    <h2><a href='{% url sdk_instrument_player plugin.code %}'>{{ plugin.name }}</a></h2>
+		    <p>{{ plugin.description }}</p>
+	    </div>
+	</div>
 	{% endfor %}
-</ul>
+
+</div>
+{{ sql_queries }}
 {% endblock %}
