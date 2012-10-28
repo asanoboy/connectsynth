@@ -33,13 +33,11 @@ synthjs.encode.Wav = function(opt_params){
 };
 
 synthjs.encode.Wav.prototype.setBuffer = function(buffer){
-	console.log("size="+buffer.length);
 	this._buffer = this.getWavInt16Array(buffer);
 	this._bufferNeedle = 0;
 	this._internalBuffer = '';
 	this._hasOutputHeader = false;
 	this._eof = false;
-	console.log("size="+buffer.length);
 }
 
 synthjs.encode.Wav.prototype.getBuffer = function(len){
@@ -74,8 +72,8 @@ synthjs.encode.Wav.prototype.getWavInt16Array = function(buffer){
 	intBuffer[0] = 0x4952; // "RI"
 	intBuffer[1] = 0x4646; // "FF"
 	
-	intBuffer[2] = (2*buffer.length + 15) & 0x0000ffff; // RIFFサイズ
-	intBuffer[3] = ((2*buffer.length + 15) & 0xffff0000) >> 16; // RIFFサイズ
+	intBuffer[2] = (2*buffer.length + 15) & 0x0000ffff; // RIFF size
+	intBuffer[3] = ((2*buffer.length + 15) & 0xffff0000) >> 16; // RIFF size
 	
 	intBuffer[4] = 0x4157; // "WA"
 	intBuffer[5] = 0x4556; // "VE"
@@ -97,11 +95,11 @@ synthjs.encode.Wav.prototype.getWavInt16Array = function(buffer){
 	
 	intBuffer[16] = 0x0004; // block align
 	intBuffer[17] = 0x0010; // bit per sample
-	intBuffer[18] = 0x0000; // cb size 拡張情報サイズ
+	intBuffer[18] = 0x0000; // cb size
 	intBuffer[19] = 0x6164; // "da"
 	intBuffer[20] = 0x6174; // "ta"
-	intBuffer[21] = (2*buffer.length) & 0x0000ffff; // dataサイズ byte
-	intBuffer[22] = ((2*buffer.length) & 0xffff0000) >> 16; // dataサイズ byte	
+	intBuffer[21] = (2*buffer.length) & 0x0000ffff; // data size[byte]
+	intBuffer[22] = ((2*buffer.length) & 0xffff0000) >> 16; // data size[byte]	
 
 	for (var i = 0; i < buffer.length; i++) {
 		tmp = buffer[i];

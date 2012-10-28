@@ -5,6 +5,9 @@ goog.require("synthjs.application.OscillatorPlayer");
 goog.require("synthjs.model.Collection");
 goog.require("synthjs.model.FileSystem");
 goog.require("synthjs.model.TextFile");
+
+goog.require("synthjs.ui.AjaxLoader");
+
 /**
  * @constructor
  * @extends {synthjs.application.OscillatorPlayer}
@@ -34,6 +37,8 @@ synthjs.application.SDKOscillatorBase = function(id, params){
 	this._infoapiUri = new goog.Uri(infoapi);
 	
 
+	var ajaxLoader = new synthjs.ui.AjaxLoader();
+	ajaxLoader.setVisible(true);
 	
 	var self = this;
 	new synthjs.utility.AjaxDeferred(this._infoapiUri.toString(), {
@@ -47,6 +52,7 @@ synthjs.application.SDKOscillatorBase = function(id, params){
 			
 			d.addCallback(function(){
 				//this.init();
+				ajaxLoader.dispose();
 			}, this).callback();
 		}
 	}, this).callback();
@@ -110,13 +116,13 @@ synthjs.application.SDKOscillatorBase.prototype._attachEvents = function(){
 /**
  *  
  */
-synthjs.application.SDKOscillatorBase.prototype.onDebugRun = function(){
-	this.closeOscillator();
-	this.postAllDeferred()
-		.addCallback(goog.bind(this.launchOscillator, this))
-		.callback();
-
-}
+// synthjs.application.SDKOscillatorBase.prototype.onDebugRun = function(){
+	// this.closeOscillator();
+	// this.postAllDeferred()
+		// .addCallback(goog.bind(this.launchOscillator, this))
+		// .callback();
+// 
+// }
 
 
 /**
