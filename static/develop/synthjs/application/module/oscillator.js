@@ -30,19 +30,6 @@ synthjs.application.module.Oscillator = function(bootstrapUri){
 	
 	this._bootstrapUri = bootstrapUri;
 	
-// 	
-	// /**
-	 // * This is root uri of the plugin.
-	 // * ex. /path/to/plugin/
-	 // * @private
-	 // */
-	// this._baseUri = baseUri;
-// 	
-	// /**
-	 // * This is main javascript filename.
-	 // * @private 
-	 // */
-	// this._filename = filename;
 }
 
 goog.inherits(synthjs.application.module.Oscillator, synthjs.utility.EventTarget);
@@ -87,7 +74,6 @@ synthjs.application.module.Oscillator.prototype.getWindow = function(){
 }
 
 synthjs.application.module.Oscillator.prototype.disposeInternal = function(){
-	alert("dispose");
 	goog.ui.Component.superClass_.disposeInternal.call(this);
 	
 }
@@ -101,7 +87,7 @@ synthjs.application.module.Oscillator.prototype._offHandler = function(e){
 };
 
 synthjs.application.module.Oscillator.prototype._errorHandler = function(e){
-	
+
 	this._audioplayer.removeGenerator(this._generator);
 	this.getHandler()
 		.unlisten( this._keyboard, synthjs.ui.KeyboardEventType.ON, this._onHandler)
@@ -117,6 +103,7 @@ synthjs.application.module.Oscillator.prototype._errorHandler = function(e){
  * 
  */
 synthjs.application.module.Oscillator.prototype._initHandler = function(e){
+	
 	var collection = new synthjs.model.Collection(synthjs.model.Base);
 		
 	var controller = e.target['controller'];

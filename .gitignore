@@ -3,3 +3,4 @@ venv
 *.project
 *.pydevproject
 sqlite.db
+/.settings

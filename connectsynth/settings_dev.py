@@ -1,6 +1,7 @@
 from settings import *
 
-print 'aaaa'
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 # override
 DATABASES = {    

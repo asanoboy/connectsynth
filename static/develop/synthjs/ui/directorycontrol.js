@@ -138,7 +138,8 @@ synthjs.ui.DirectoryControl.prototype._attachEvents = function(){
 	if( this._editable ){
 			
 		var data = [
-			[synthjs.ui.DirectoryControl.PopupMenuId.ADD_DIRECTORY, 'New Directory']
+					[synthjs.ui.DirectoryControl.PopupMenuId.ADD_DIRECTORY, 'New Directory'],
+					[synthjs.ui.DirectoryControl.PopupMenuId.ADD_FILE, 'New File']
 		];
 		var dom = this._contextMenu.getDomHelper();
 		goog.array.forEach(data, function(entry) {
@@ -422,6 +423,11 @@ synthjs.ui.DirectoryControl.prototype._onPopupActive = function(e){
 				new synthjs.model.Directory("new")
 			);
 			break;
+		case synthjs.ui.DirectoryControl.PopupMenuId.ADD_FILE:
+			this._fileSystem.add(
+				new synthjs.model.TextFile("new", "")
+			);
+			break;
 		default :
 			goog.asserts.assert(false);
 			break;
@@ -429,7 +435,8 @@ synthjs.ui.DirectoryControl.prototype._onPopupActive = function(e){
 }
 
 synthjs.ui.DirectoryControl.PopupMenuId = {
-	ADD_DIRECTORY: 'add-directory'
+		ADD_DIRECTORY: 'add-directory',
+		ADD_FILE: 'add-file'
 } 
 
 synthjs.ui.DirectoryControl.EventType = {

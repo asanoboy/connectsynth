@@ -117,9 +117,9 @@ def unregister_handler(reqeust):
 
 def autho_twitter_auth_handler(request):
     
-    url=request.GET.get("re")
+    url=request.GET.get("next")
     if url:
-        request.session['re'] = url
+        request.session['next'] = url
     
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET, "http://%s%s" % (request.META['HTTP_HOST'], reverse("autho_twitter_callback")) )
     
@@ -163,7 +163,7 @@ def autho_twitter_callback_handler(request):
     #return HttpResponse( reduce(lambda a, b: a+"<br/>"+b, dir(me)) )
     
     if twitter_login(request, me):#me.id, me.screen_name):
-        return HttpResponseRedirect( request.session.get('re') or reverse("toppage") )
+        return HttpResponseRedirect( request.session.get('next') or reverse("toppage") )
     else:
         return HttpResponse( "invalid access" )
 
