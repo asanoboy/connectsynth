@@ -166,7 +166,10 @@ synthjs.application.OscillatorPlayer.prototype.onPressKey = function(e){
 synthjs.application.OscillatorPlayer.prototype.closeOscillator = function(){
 	
 	if( this._oscillatorModule ){
-		this._windowHolder.removeWindow( this._oscillatorModule.getWindow() );
+		var window = this._oscillatorModule.getWindow();
+		if( window ){
+			this._windowHolder.removeWindow( this._oscillatorModule.getWindow() );
+		}
 		this._oscillatorModule.dispose();
 		delete this._oscillatorModule; 
 	}
@@ -199,7 +202,20 @@ synthjs.application.OscillatorPlayer.prototype.launchOscillator = function(){
  * When instrument crushes, this is called.
  */
 synthjs.application.OscillatorPlayer.prototype._onOscillatorError = function(e){
-
+	var dialog = new goog.ui.Dialog(null, false);
+	dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
+	dialog.setTitle("Alert");
+	console.log(e);
+	dialog.setContent(e.target.error.message + " on " + e.target.error.filename);
+	this.getHandler()
+		.listen(
+			dialog,
+			goog.ui.Dialog.EventType.SELECT,
+			function(e){
+				this.getHandler().unlisten(dialog);
+			}
+		)
+	dialog.setVisible(true);	
 }
 
 synthjs.application.OscillatorPlayer.prototype._onOscillatorInit = function(e){
