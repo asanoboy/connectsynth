@@ -47,7 +47,6 @@ synthjs.ui.PluginControlPanel.prototype.decorateInternal = function(element){
 		this._backgroundImageSrc);
 	
 	goog.style.setStyle( this._wrapper, {
-		marginTop: "100px",
 		"width": this._width+"px",
 		"height": this._height+"px"
 	});
@@ -88,6 +87,14 @@ synthjs.ui.PluginControlPanel.prototype.enterDocument = function(){
 			}
 		)
 	
+}
+
+synthjs.ui.PluginControlPanel.prototype.getBackgroundWidth = function(){
+	return this._backgroundWidth;
+}
+
+synthjs.ui.PluginControlPanel.prototype.getBackgroundHeight = function(){
+	return this._backgroundHeight;
 }
 
 /**

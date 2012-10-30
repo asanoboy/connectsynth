@@ -6,6 +6,7 @@ goog.require("synthjs.model.PluginToggleParam");
 goog.require("synthjs.model.PluginRadioParam");
 goog.require("synthjs.model.Collection");
 goog.require("synthjs.ui.PluginControlPanel");
+goog.require("synthjs.ui.PluginControlPanelContainer");
 
 goog.require("goog.events.EventTarget");
 goog.require("synthjs.utility.EventTarget");
@@ -24,8 +25,8 @@ goog.require("synthjs.audiocore.DynamicGenerator");
  * @extends {synthjs.utility.EventTarget}
  * @param {goog.Uri} bootstrapUri
  */
-synthjs.application.module.Oscillator = function(bootstrapUri){
-	
+synthjs.application.module.Oscillator = function(bootstrapUri, opt_isEditable){
+	this._isEditable = goog.isNull(opt_isEditable) ? false : true;
 	goog.base(this);
 	
 	this._bootstrapUri = bootstrapUri;
@@ -187,11 +188,29 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 			collection,
 			this._bootstrapUri.resolve(new goog.Uri(controller['background']['image'])).toString(),
 			controller['background']['width'],
-			controller['background']['height']);		
+			controller['background']['height']);
+		this._controlPanelContainer = new synthjs.ui.PluginControlPanelContainer(this._controlPanel, this._isEditable);	
+		
+		this.getHandler().listen(
+				this._controlPanelContainer,
+				synthjs.ui.PluginControlPanelContainer.EventType.PRESET_ADD,
+				this.onPresetAdd
+			)
+			.listen(
+				this._controlPanelContainer,
+				synthjs.ui.PluginControlPanelContainer.EventType.PRESET_CHANGE,
+				this.onPresetChange
+			)
+			.listen(
+				this._controlPanelContainer,
+				synthjs.ui.PluginControlPanelContainer.EventType.PRESET_DELETE,
+				this.onPresetDelete
+			);
+		
 	}
 
-	if( this._controlPanel ){
-		this._oscillatorWindow = new synthjs.ui.window.Oscillator( this._keyboard, this._controlPanel );
+	if( this._controlPanelContainer ){
+		this._oscillatorWindow = new synthjs.ui.window.Oscillator( this._keyboard, this._controlPanelContainer );
 	}
 	else {
 		this._oscillatorWindow = new synthjs.ui.window.Oscillator( this._keyboard );
@@ -199,6 +218,22 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 		
 	this.dispatchEvent(new goog.events.Event(synthjs.application.module.OscillatorEventType.INIT) );
 }
+
+synthjs.application.module.Oscillator.prototype.onPresetAdd = function(e){
+	console.log('add');
+	console.log(e);
+};
+
+synthjs.application.module.Oscillator.prototype.onPresetChange = function(e){
+	console.log('change');
+	console.log(e);
+};
+
+synthjs.application.module.Oscillator.prototype.onPresetDelete = function(e){
+	console.log("delete");
+	console.log(e);
+};
+
 
 /**
  * If plugin params are changed, this function posts message to plugin.
