@@ -3,11 +3,15 @@ from privates import sdk_instrument_workspace_handler, \
     sdk_publish_api_handler,\
     sdk_private_filelist_api_handler, \
     sdk_private_get_api_handler, \
-    sdk_restful_api_handler
+    sdk_restful_api_handler, \
+    sdk_private_presetlist_handler, \
+    sdk_preset_post_api_handler, \
+    sdk_preset_delete_api_handler
 
 from publics import sdk_filelist_api_handler, \
     sdk_get_api_handler, \
-    sdk_instrument_player_handler
+    sdk_instrument_player_handler, \
+    sdk_presetlist_handler
     
     
 

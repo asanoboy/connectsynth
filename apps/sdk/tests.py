@@ -230,6 +230,47 @@ class SDKTest(TestCase):
         get_rs = self.c.get(reverse("sdk_private_get_api", args=[plugin.code, filepath]))
         self.assertEqual(get_rs.content, "file2")
         
+    
+    def test_preset(self):
+        self.login()
+        plugin = self.create_plugin()
+        
+        preset_name = "hoge"
+        preset_value = "piyo"
+        
+        # Confirm presets is empty.
+        get_rs = self.c.get(reverse("sdk_private_presetlist", args=[plugin.code]))
+        self.assertEqual(get_rs.status_code, 200)
+        self.assertEqual(get_rs.content, "[]")
+        
+        # Post preset
+        post_rs = self.c.post(reverse("sdk_preset_post_api", args=[plugin.code]), 
+                              {"name": preset_name,
+                               "value": preset_value})
+        self.assertEqual(post_rs.status_code, 200)
+        self.assertEqual(post_rs.content, "ok")
+        
+        # Confirm the preset exists.
+        get_rs = self.c.get(reverse("sdk_private_presetlist", args=[plugin.code]))
+        self.assertEqual(get_rs.status_code, 200)
+        rs = simplejson.loads(get_rs.content)
+        self.assertEqual(len(rs), 1)
+        self.assertEqual(rs[0]['name'], preset_name)
+        self.assertEqual(rs[0]['value'], preset_value)
+        
+        preset_code = rs[0]['code']
+        
+        # Delete preset
+        delete_rs = self.c.delete(reverse("sdk_preset_delete_api", args=[plugin.code, preset_code]))
+        self.assertEqual(delete_rs.status_code, 200)
+        self.assertEqual(delete_rs.content, "ok")
+        
+        # Confirm the preset is deleted.
+        get_rs = self.c.get(reverse("sdk_private_presetlist", args=[plugin.code]))
+        self.assertEqual(get_rs.status_code, 200)
+        rs = simplejson.loads(get_rs.content)
+        self.assertEqual(len(rs), 0)
+        
         
     def test_simple(self):
         
