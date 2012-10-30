@@ -9,12 +9,11 @@ from django.contrib.auth.decorators import login_required
 from common.models import Plugin
 from django.http import HttpResponse, HttpResponseRedirect 
 from decorators import reject_invalid_code
-from helpers import get_plugin_if_exists, get_unique_plugin_code
+from helpers import get_plugin_if_exists, get_unique_plugin_code, get_unique_preset_code
 from helpers import is_writable, is_readable, get_failure_response, get_success_response
-from publics import sdk_filelist_api_handler, sdk_get_api_handler
 from django.shortcuts import render_to_response
-from forms import FilesForm, PluginForm
-from sdk.models import File
+from forms import FilesForm, PluginForm, PresetForm
+from sdk.models import File, Preset
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -194,3 +193,60 @@ def sdk_private_get_api_handler(request, code, path, plugin):
         
     return HttpResponse(file.content.read(), content_type=mimetypes.guess_type(path))
 
+
+"""
+Preset restful api
+"""
+@csrf_exempt
+@login_required
+@reject_invalid_code
+def sdk_preset_post_api_handler(request, code, plugin):
+    if plugin.is_public or request.user!=plugin.user:
+        return get_failure_response()
+    
+    if request.method == "POST" :
+        form = PresetForm(request.POST)
+        if form.is_valid():
+            preset = Preset.objects.create(user=request.user,
+                                  plugin=plugin,
+                                  code=get_unique_preset_code(),
+                                  name=form.cleaned_data['name'],
+                                  value=form.cleaned_data['value'],
+                                  is_enabled=True)
+            #preset.save()
+            return get_success_response()
+        
+    return get_failure_response()
+
+@csrf_exempt
+@login_required
+@reject_invalid_code
+def sdk_preset_delete_api_handler(request, code, preset_code, plugin):
+    if plugin.is_public or request.user!=plugin.user:
+        return get_failure_response()
+    
+    
+    if request.method == "DELETE" :
+        try :
+            preset = Preset.objects.get(user=request.user,
+                               plugin=plugin,
+                               code=preset_code,
+                               is_enabled=True)
+            preset.is_enabled=False
+            preset.save()
+            
+            return get_success_response()
+        except ObjectDoesNotExist:
+            return get_failure_response()
+        
+    return get_failure_response()
+
+
+@login_required
+@reject_invalid_code
+def sdk_private_presetlist_handler(request, code, plugin):
+    if plugin.is_public or request.user!=plugin.user:
+        return get_failure_response()
+    
+    preset_infos = [ {'name': preset.name, 'code': preset.code, 'value': preset.value} for preset in Preset.objects.filter(plugin=plugin, is_enabled=True).all() ]
+    return HttpResponse(simplejson.dumps(preset_infos))    

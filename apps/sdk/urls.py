@@ -12,11 +12,21 @@ urlpatterns = patterns('sdk.views',
             'sdk_restful_api_handler', name="sdk_restful_api"),
     url(r'^workspace/plugin/(?P<code>[^/]+)/(?P<path>.+)$', 
             'sdk_private_get_api_handler', name="sdk_private_get_api"),
+    
+    # preset
+    url(r'^workspace/preset/post/(?P<code>[^/]+)/$', 
+            'sdk_preset_post_api_handler', name="sdk_preset_post_api"),
+    url(r'^workspace/preset/delete/(?P<code>[^/]+)/(?P<preset_code>[^/]+)/$', 
+            'sdk_preset_delete_api_handler', name="sdk_preset_delete_api"),
+    url(r'^workspace/preset/list/(?P<code>[^/]+)/$', 
+            'sdk_private_presetlist_handler', name="sdk_private_presetlist"),
+    
     url(r'^workspace/filelist/(?P<code>.+)/$', 
             'sdk_private_filelist_api_handler', name="sdk_private_filelist_api"),
+                       
+    # publish
     url(r'^workspace/publish/(?P<code>.+)/$', 
             'sdk_publish_api_handler', name="sdk_publish_api"),
-    
     
     ### public ###
     
@@ -26,5 +36,8 @@ urlpatterns = patterns('sdk.views',
             'sdk_filelist_api_handler', name="sdk_filelist_api"),
     url(r'^instrument/(?P<code>.+)/$', 
             'sdk_instrument_player_handler', name="sdk_instrument_player"),
+                       
+    url(r'^instrument/presetlist/(?P<code>[^/]+)/$', 
+            'sdk_presetlist_handler', name="sdk_presetlist"),
     
 )

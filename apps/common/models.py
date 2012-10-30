@@ -24,6 +24,8 @@ class Plugin(models.Model):
     
     class Admin:
         pass
+
+
 """
 def get_plugin_image_upload_path(self, filename):
     return os.path.join("plugin", "image", self.code, filename)

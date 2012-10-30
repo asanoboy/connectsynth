@@ -3,7 +3,7 @@ from django.template import RequestContext
 from decorators import reject_invalid_code
 from django.shortcuts import render_to_response
 from helpers import is_writable, is_readable, get_failure_response, get_success_response
-from sdk.models import File
+from sdk.models import File, Preset
 from django.http import HttpResponse
 from django.utils import simplejson
 from forms import FilesForm, PluginForm
@@ -31,8 +31,6 @@ def sdk_filelist_api_handler(request, code, plugin):
     
     if not plugin.is_public:
         return get_failure_response()
-#    if not is_readable(request.user, plugin):
-#        return get_failure_response()
     
     paths = [ file.path for file in File.objects.filter(plugin=plugin, is_enabled=True).all() ]
     return HttpResponse(simplejson.dumps(paths))
@@ -51,21 +49,14 @@ def sdk_get_api_handler(request, code, path, plugin):
         return get_failure_response()
     
     file = File.objects.get(plugin=plugin, path__exact=path)
-    #res = file.content
-    
-#    suffixToContentTypeList =[
-#                              [".jpg", "image/jpeg"],
-#                              [".jpeg", "image/jpeg"],
-#                              [".png", "image/png"],
-#                              [".gif", "image/gif"],
-#                              [".js", "text/javascript"],
-#                              ] 
-#    
-#    content_type = "text/html"
-#    while len(suffixToContentTypeList)>0 :
-#        suffixToContentType=suffixToContentTypeList.pop()
-#        if( path.rfind(suffixToContentType[0])== len(path)-len(suffixToContentType[0]) ):
-#            content_type = suffixToContentType[1]
+
     
     return HttpResponse(file.content.read(), content_type=mimetypes.guess_type(path))
     
+@reject_invalid_code
+def sdk_presetlist_handler(request, code, plugin):
+    if not plugin.is_public:
+        return get_failure_response()
+    
+    preset_infos = [ {'name': preset.name, 'code': preset.code, 'value': preset.value} for preset in Preset.objects.filter(plugin=plugin, is_enabled=True).all() ]
+    return HttpResponse(simplejson.dumps(preset_infos))  

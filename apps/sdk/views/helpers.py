@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from common.models import Plugin
+from sdk.models import Preset
 
 def is_writable(user, plugin):
     
@@ -44,6 +45,15 @@ def get_unique_plugin_code():
         code = uuid.uuid4()
         
         if Plugin.objects.filter(code=code).exists():
+            continue;
+        
+        return code;
+
+def get_unique_preset_code():
+    while( True ):
+        code = uuid.uuid4()
+        
+        if Preset.objects.filter(code=code).exists():
             continue;
         
         return code;
