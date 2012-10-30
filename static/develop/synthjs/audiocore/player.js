@@ -20,7 +20,8 @@ synthjs.audiocore.Player = function(){
 	this._keysPubsub = [];
 	
 	/** @private */
-	this._hasWebAudioApi = typeof webkitAudioContext == 'function';
+	this._hasWebAudioApi = ( typeof webkitAudioContext == 'function' ) ||
+		( typeof webkitAudioContext == 'object' ) ;
 	
 	/** @private */
 	this._hasAudioDataApi = false;
@@ -109,6 +110,7 @@ synthjs.audiocore.Player.prototype.play = function(){
 		return this._playByWebAudioApi();
 	}
 	else {
+		goog.asserts.fail("Audio API is not available.")
 		return false;
 	}
 	

@@ -1,6 +1,6 @@
 # Django settings for connectsynth project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -166,8 +166,8 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 TEMPLATE_DIRS += (os.path.join(BASE_DIR, 'templates'),)
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
-LOGIN_URL = "/auth/login/"
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+LOGIN_URL = "/auth/twitter/auth/" #"/auth/login/"
 
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
 
@@ -175,6 +175,8 @@ from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
 TEMPLATE_CONTEXT_PROCESSORS += (
     "common.template.context",
     "django.core.context_processors.request",
+    "django.core.context_processors.debug",
+    'django.core.context_processors.static',
 )
 
 AWS_ACCESS_KEY_ID = 'AKIAJQNZW6EMCL3EYFSQ'

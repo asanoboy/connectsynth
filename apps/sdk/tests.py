@@ -171,17 +171,33 @@ class SDKTest(TestCase):
         plugins = Plugin.objects.filter(user=self.user)
         self.assertEqual(plugins.count(), 2)
         
-        each_plugin = plugins[0]   
-        each_files = File.objects.filter(plugin=each_plugin)
-        self.assertEqual(each_files.count(), 1)
-        self.assertEqual(each_files[0].content.read(), self.content)
+        public_plugin = Plugin.objects.get(user=self.user, is_public=True)#plugins[0]
+        #print "each_code0 = %s" % each_plugin.code   
+        public_files = File.objects.filter(plugin=public_plugin)
+        self.assertEqual(public_files.count(), 1)
+        self.assertEqual(public_files[0].content.read(), self.content)
         
-        each_plugin = plugins[1]   
-        each_files = File.objects.filter(plugin=each_plugin)
-        self.assertEqual(each_files.count(), 1)
-        self.assertEqual(each_files[0].content.read(), self.content)
+        #each_plugin = plugins[1]
+        private_plugin = Plugin.objects.get(user=self.user, is_public=False)
+        private_files = File.objects.filter(plugin=private_plugin)
+        self.assertEqual(private_files.count(), 1)
+        self.assertEqual(private_files[0].content.read(), self.content)
         
+        # Advance test
+        # add file
+        self.c.post(reverse("sdk_restful_api", args=[private_plugin.code]), {
+            self.image_filepath: self.image_file_handler
+        })
         
+        # Copy plugin again
+        rs = self.c.get(reverse("sdk_extend_instrument", args=[plugin.code]), follow=True)
+        self.assertEqual(rs.status_code, 200)
+        self.assertEqual(simplejson.loads(rs.content)["status"], "ok")
+        
+        # Confirm number of plugin increments.
+        plugins = Plugin.objects.filter(user=self.user)
+        self.assertEqual(plugins.count(), 2)
+                
     def test_overwrite(self):
         
         self.login()

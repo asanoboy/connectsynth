@@ -1,16 +1,21 @@
+@import "mixins.less";
+
 /*
  * LESS variable
  */
-@bg-color: #EEEEEE;
-@hd-color: #333333;
-@ft-color: #333333;
-@content-color: #FFFFFF;
-
+@bg-color: #001133;
+@content-color: #F8F8F8;
+@hd-color: #2B2D38;
+@ft-color: #2B2D38;
+@container-width: 1000px;
+@link-color: #CC9977;
+@link-color-hover: orange;
 @menu-font-color: #EEEEEE;
-
+@container-width: 1000px;
+@container-inner-padding: 20px;
 @hd-height: 42px;
 
-
+/*
 .box-shadow(@style, @c) when (iscolor(@c)) {
     box-shadow:         @style @c;
     -webkit-box-shadow: @style @c;
@@ -19,6 +24,15 @@
 .box-shadow(@style, @alpha: 50%) when (isnumber(@alpha)) {
     .box-shadow(@style, rgba(0, 0, 0, @alpha));
 }
+*/
+.gradation(@from, @to) {
+    background-image: linear-gradient(@from, @to);
+    background-image: -moz-linear-gradient(top, @from, @to);
+    background-image: -ms-linear-gradient(top, @from, @to);
+    background-image: -o-linear-gradient(top, @from, @to);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(@from), to(@to));
+}
+
 /* 
  * reset
  */
@@ -36,28 +50,52 @@ body {
 }
 
 /*
+ * text
+ */
+#content h1,#content h2,#content p,#content a,#content span,#content pre {
+    font-family: Helvetica Neue,Helvetica,"Hiragino Kaku Gothic Pro","Lucida Grande",Verdana,Arial,Meiryo,"メイリオ",sans-serif;
+}
+
+a {
+    color: @link-color;
+}
+a:hover {
+    color: @link-color-hover;
+}
+
+/*
  * layout
  */
 div.section {
     width: 100%;
     div.sectioncontainer {
-        width: 980px;
+        width: @container-width;
         margin: 0 auto;
+        
+        
+        div.sectioninnercontainer {
+            padding-left: @container-inner-padding;
+            padding-right: @container-inner-padding;
+            
+        }
+        
     }
 }
+
 
 #header {
     z-index: 5;
     position: fixed;
     background-color: @hd-color;
     height: @hd-height;
-    .box-shadow(0 0 10px, 60%);
+    .box-shadow(0px 0px 10px rgba(0,0,0,.40));
+    /*.box-shadow(0 0 10px, 60%);*/
     #logo {
         float: left;
-        a { /* only before Logo image */
+        a, span { /* only before Logo image */
             display: inline-block;
             font-weight: bolder;
-            padding: 0 10px;
+            _padding: 0 10px;
             line-height: @hd-height;
             color: @menu-font-color;
             font-size: 1.4em;
@@ -65,9 +103,9 @@ div.section {
     }
     #menu {
         float: right;
-        a {
+        a, span {
             display: inline-block;
-            padding: 0 10px;
+            _padding: 0 10px;
             line-height: @hd-height;
             color: @menu-font-color;
             
@@ -79,14 +117,142 @@ div.section {
 #content, #application {
     
     padding-top: @hd-height;
-    // div.sectioncontainer {
-        // background-color: @content-color;
-    // }
+    
+    div.sectioncontainer {
+        background-color: @content-color;
+        .box-shadow(inset 0px 0px 10px rgba(0,0,0,.15));
+        
+    }
 }
 
 #footer {
+    padding: 10px 5px 30px 5px;
     background-color: @ft-color;
-
-
+    clear: both;
+    color: @menu-font-color;
 }
 
+// TODO: move the following to top.css
+
+#content div.inner-section {
+    padding-top: @container-inner-padding;
+    clear: both;
+}
+
+@open-instrument-container-height: 100px;
+@open-instrument-container-width: 240px;
+
+
+#content .section-title {
+    font-weight: 0.8em;
+    border-bottom: 2px solid #D62A13;
+}
+
+
+#content div.plugin-block:hover {
+    border-color: #BBBBBB;
+}
+
+@plugin-block-border-width: 1px;
+@plugin-block-margin: 10px;
+#content div.plugin-block {
+    float: left;
+    _display: inline-block;
+    _width: (@container-width - 20 - @container-inner-padding*4) / 2;
+    width: @container-width / 2 - 2 * @plugin-block-border-width - @plugin-block-margin / 2 - @container-inner-padding;
+    _padding: @container-inner-padding;
+    _margin: 5 - @plugin-block-border-width;
+    margin: @plugin-block-margin 0 0 0;
+    border: @plugin-block-border-width solid #D7D7D7;
+}
+
+#content div.plugin-block:nth-child(even){
+    margin-right: @plugin-block-margin;
+}
+
+@plugin-header-height: 30px;
+
+#content div.plugin-header {
+    background-color: #EEEEEE;
+    padding-top: @container-inner-padding;
+    padding-left: @container-inner-padding;
+    padding-right: @container-inner-padding;
+    padding-bottom: 3px;
+}
+
+#content div.plugin-title {
+    height: @plugin-header-height;
+}
+
+#content div.plugin-title h3 {
+    height: @plugin-header-height;
+}
+
+#content div.plugin-created {
+    float: right;
+    height: @plugin-header-height;
+}
+
+#content div.plugin-created p {
+    font-size: 0.8em;
+    line-height: @plugin-header-height;
+    
+    
+}
+
+#content div.plugin-info {
+    padding: @container-inner-padding;
+}
+
+#content div.about-this-container {
+    float: left;
+    width: @container-width - @open-instrument-container-width - 2 * @container-inner-padding;
+}
+
+#content div.open-instrument-container {
+    float: right;
+    height: @open-instrument-container-height; 
+}
+
+@open-instrument-border-width: 1px;
+#content a.open-instrument {
+    display: inline-block;
+    text-align: center;
+    line-height: 98px;
+    font-size: 1.5em;
+    width: @open-instrument-container-width - @open-instrument-border-width * 2;
+    height: @open-instrument-container-height - @open-instrument-border-width * 2; 
+    background-color: white;
+    .border-radius(5px);
+    border: @open-instrument-border-width solid red;
+}
+
+#content a.open-instrument:hover {
+    border: @open-instrument-border-width solid blue;
+}
+
+#content div.inner-header {
+    _padding-top: @container-inner-padding;
+}
+
+#content div.plugin-area {
+    _clear: both;
+    _padding-top: @container-inner-padding;
+    
+}
+
+#content .title {
+    line-height: 50px;
+}
+
+#content .description {
+    position: relative;
+    top: 10px;
+    line-height: 20px;
+    vertical-align: text-bottom;
+}
+
+#content div.develop-info {
+    padding-bottom: @container-inner-padding;
+    
+}

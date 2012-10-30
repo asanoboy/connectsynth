@@ -11,6 +11,7 @@ goog.require("synthjs.model.TextFile");
 goog.require("synthjs.net.PluginPoster");
 goog.require("synthjs.utility.BlobBuilder");
 goog.require("synthjs.utility.AjaxDeferred");
+goog.require("synthjs.ui.TextPrompt");
 goog.require("goog.ui.Prompt");
 goog.require("goog.ui.Dialog");
 goog.require("goog.ui.Dialog.ButtonSet");
@@ -55,27 +56,57 @@ synthjs.application.SDKOscillator.prototype.onPublish = function(){
 }
 
 synthjs.application.SDKOscillator.prototype._showPublishPrompt = function(){
-	var prompt = new goog.ui.Prompt("Input your instrument name", "Instrument Name:", goog.bind(function(name){
+	var self = this;
+	//var prompt = new goog.ui.Prompt("Input your instrument name", "Instrument Name:", goog.bind(function(name){
+	var prompt = new synthjs.ui.TextPrompt("Publish Form", "Name and description of your instrument are required.", goog.bind(function(name, description){
+		if( goog.isNull(name) ){
+			return;
+		}
+		
+		if( !name || !description ){
+			var dialog = new goog.ui.Dialog(null, false);
+			dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK);
+			self.getHandler()
+				.listen(
+					dialog,
+					goog.ui.Dialog.EventType.SELECT,
+					function(e){
+						self.getHandler().unlisten(dialog);
+					}
+				)
+			dialog.setTitle("Abort");
+			dialog.setContent("Fill both forms.");
+			dialog.setVisible(true);
+			return;
+		}
+		
+		var ajaxLoader = new synthjs.ui.AjaxLoader();
+		ajaxLoader.setVisible(true);
 		new synthjs.utility.AjaxDeferred(this._publishUri.toString(), {
-			data: {'name': name, "description": name},
+			data: {'name': name, "description": description},
 			method: 'post',
 			responseType: goog.net.XhrIo.ResponseType.TEXT,
 			success: function(r){
+				
 				var rt = r.getResponseJson();
 				if( rt['status']=='ok' && rt['next'] ){
 					document.location = rt['next'];
 				}
 				else{
 					alert("Error Occurred!");
+					ajaxLoader.dispose();
 				}
 			},
 			error: function(e){
 				alert("Error Ocurred!");
+				ajaxLoader.dispose();
 			}
 		}).callback();
 		return false;
 	}, this));
 	
+	prompt.setCols(70);
+	prompt.setTextRows(10);
 	prompt.setVisible(true);
 }
 
@@ -187,9 +218,12 @@ synthjs.application.SDKOscillator.prototype.onPostAll = function(){
  *  @override
  */
 synthjs.application.SDKOscillator.prototype.onDebugRun = function(){
+	var ajaxLoader = new synthjs.ui.AjaxLoader();
+	ajaxLoader.setVisible(true);
 	this.closeOscillator();
 	this.postAllDeferred()
 		.addCallback(goog.bind(this.launchOscillator, this))
+		.addCallback(function(){ajaxLoader.dispose();})
 		.callback();
 
 }

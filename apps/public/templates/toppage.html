@@ -9,13 +9,48 @@
 {% endblock %}
 
 {% block content %}
-<h1>TopPage</h1>
-<a href="{% url sdk_instrument_workspace %}">MyInstrument</a>
-<ul>
+<div class="inner-section inner-header">
+	<div class="about-this-container">
+		<h1 class="title">ConnectSynth</h1>
+		<p class="description">ConnectSynth is experimental plugin hosting system using Web Audio API. You can post a plugin in Javascript and publish.</p>
+	</div>
+	<div class="open-instrument-container">
+		<a class="open-instrument" href="{% url sdk_instrument_workspace %}">Go to workspace</a>	
+	</div>
+</div>
+<div class="inner-section plugin-area">
+	<div class="section-title">
+		<h2>Public Plugins</h2>
+	</div>
 	{% for plugin in object_list %}
-	<li>
-	    <a href='{% url sdk_instrument_player plugin.code %}'>{{ plugin.name }}</a>
-	</li>
+	<div class="plugin-block">
+	    <div class="plugin-header">
+	    	<div class="plugin-created">
+		    	<p>by <a href='https://twitter.com/{{ plugin.user.twitteruser.screen_name }}/' target="_blank">{{ plugin.user.twitteruser.screen_name }}</a>
+		    		at {{ plugin.createdat|date:"Y/m/d" }}</p>
+	    	</div>
+	    	<div class="plugin-title">
+	    		<h3><a href='{% url sdk_instrument_player plugin.code %}'>{{ plugin.name }}</a></h2>
+	    	</div>
+	    </div>
+		<div class="plugin-info">
+		    
+		    <pre>{{ plugin.description }}</pre>
+	    </div>
+	</div>
 	{% endfor %}
-</ul>
+
+</div>
+<div class="inner-section develop-info">
+	<div class="section-title">
+		<h2>Developer's Document</h2>
+	</div>
+	
+</div>
+{% endblock %}
+
+{% block footer %}
+	<p>
+		created by asanoboy
+	</p>
 {% endblock %}

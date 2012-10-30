@@ -23,7 +23,9 @@ goog.require("goog.fs.FileReader.EventType");
  * @param {synthjs.model.FileSystem}
  */
 synthjs.ui.DirectoryControl = function(fileSystem, opt_editable, opt_folderOnly, opt_domHelper){
+	
 	this._editable = typeof opt_editable=='undefined' ? true : !!opt_editable;
+	
 	this._fileSystem = fileSystem;
 	this.folderOnly_ = opt_folderOnly;
 	this._contextMenu = new goog.ui.PopupMenu(opt_domHelper);
@@ -136,7 +138,8 @@ synthjs.ui.DirectoryControl.prototype._attachEvents = function(){
 	if( this._editable ){
 			
 		var data = [
-			[synthjs.ui.DirectoryControl.PopupMenuId.ADD_DIRECTORY, 'New Directory']
+					[synthjs.ui.DirectoryControl.PopupMenuId.ADD_DIRECTORY, 'New Directory'],
+					[synthjs.ui.DirectoryControl.PopupMenuId.ADD_FILE, 'New File']
 		];
 		var dom = this._contextMenu.getDomHelper();
 		goog.array.forEach(data, function(entry) {
@@ -187,7 +190,7 @@ synthjs.ui.DirectoryControl.prototype.disposeInternal = function(){
 
 synthjs.ui.DirectoryControl.prototype._onDropFile = function(e){
 	
-	goog.asserts.assert(this._editale, "Catch change event on filesystem, but this is set non-editable.");
+	goog.asserts.assert(this._editable, "Catch change event on filesystem, but this is set non-editable.");
 	
 	var files = e.getBrowserEvent().dataTransfer.files;
 	this._addFileListToSystem(files);
@@ -420,6 +423,11 @@ synthjs.ui.DirectoryControl.prototype._onPopupActive = function(e){
 				new synthjs.model.Directory("new")
 			);
 			break;
+		case synthjs.ui.DirectoryControl.PopupMenuId.ADD_FILE:
+			this._fileSystem.add(
+				new synthjs.model.TextFile("new", "")
+			);
+			break;
 		default :
 			goog.asserts.assert(false);
 			break;
@@ -427,7 +435,8 @@ synthjs.ui.DirectoryControl.prototype._onPopupActive = function(e){
 }
 
 synthjs.ui.DirectoryControl.PopupMenuId = {
-	ADD_DIRECTORY: 'add-directory'
+		ADD_DIRECTORY: 'add-directory',
+		ADD_FILE: 'add-file'
 } 
 
 synthjs.ui.DirectoryControl.EventType = {

@@ -4,23 +4,26 @@ from django.template import RequestContext
 from django.views.generic import ListView
 from common.models import Plugin
 
-"""
-[DEVELOPMENT]
-Show list of public plugins.
+from django.db import connection
 
-[PRODUCT]
-Pending
-"""
+
 class InstrumentListView(ListView):
     """queryset = Plugin.objects.filter(is_public=True, 
                                          #type='instrument'
                                          )
     """
     def get_queryset(self):
-        return Plugin.objects.filter(is_public=True, 
-                                         #type='instrument'
-                                         )
+        plugins = Plugin.objects.filter(is_public=True)
+        return plugins
+    
+    
     template_name = "toppage.html"
-
+    
+    """    
+    def get_context_data(self, **kwargs):
+        context = RequestContext(self.request)
+        return context
+    """
+    
 def notfound_handler(request):
     return HttpResponse("Not found")

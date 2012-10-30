@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+	goog.require("goog.testing.jsunit");
+	goog.require("synthjs.encode.Wav");
+</script>
+</head>
+<body>
+<script>
+
+var Wav = synthjs.encode.Wav;
+
+function setUp() {
+
+}
+
+function tearDown() {
+
+}
+
+function testNote() {
+	var i=0, 
+		sampleRate = 48000, 
+		wav = new Wav({sampleRate: sampleRate, channels: 1}),
+		buffer = new Float32Array(sampleRate);
+	
+	while(i<sampleRate){
+		if( parseInt(i/100) % 2 ){
+			buffer[i] = -1;
+		}
+		else {
+			buffer[i] = 1;
+		}
+		i++;
+	}
+	wav.setBuffer(buffer);
+	
+	var srclist = [];
+	while( !wav.eof() ){
+		srclist.push(wav.getBuffer(1000));
+	}
+	
+	var b = new Blob(srclist, {type:'audio/wav'});
+	var url = webkitURL.createObjectURL(b);
+	document.write("<a href='"+url+"'>download</a>");
+	
+	
+}
+
+</script>
+</body>
+</html>

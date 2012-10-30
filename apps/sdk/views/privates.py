@@ -57,25 +57,29 @@ def sdk_extend_instrument_handler(request, code, plugin):
         return HttpResponse(simplejson.dumps({"status":"signout", "next":reverse("autho_twitter_auth")})) 
         
     
-    copy_plugin, created = Plugin.objects.get_or_create(user=request.user, is_public=False,
+    dest_plugin, created = Plugin.objects.get_or_create(user=request.user, is_public=False,
                                                defaults={
                                                          'code': get_unique_plugin_code(),
                                                          'user': request.user,
                                                          'is_public': False
                                                          })
     
-    updated_flags = { file.path: False for file in File.objects.filter(plugin=copy_plugin).all()}
+    
+    updated_flags = { file.path: False for file in File.objects.filter(plugin=dest_plugin).all()}
         
     org_files = File.objects.filter(plugin=plugin)
     for org_file in org_files:
                  
-        dest_file, created = File.objects.get_or_create(plugin=copy_plugin, 
+        dest_file, created = File.objects.get_or_create(plugin=dest_plugin, 
                                                    path=org_file.path, 
-                                                   defaults={"plugin": copy_plugin,
+                                                   defaults={"plugin": dest_plugin,
                                                             "path": org_file.path,
                                                             "content": org_file.content})
+        
         if not created:
+            org_file.content.seek(0)
             dest_file.content.save(org_file.path, org_file.content)
+            
         dest_file.is_enabled = True
         dest_file.save()
 
@@ -83,7 +87,7 @@ def sdk_extend_instrument_handler(request, code, plugin):
             updated_flags[dest_file.path] = True
     
     for path in [ path for path, updated in updated_flags.items() if not updated ]:
-        file = File.objects.get(plugin=plugin, path=path)
+        file = File.objects.get(plugin=dest_plugin, path=path)
         file.is_enabled = False
         file.save()
     
