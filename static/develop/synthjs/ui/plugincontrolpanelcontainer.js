@@ -62,8 +62,7 @@ synthjs.ui.PluginControlPanelContainer.prototype.decorateInternal = function(ele
 		position: 'absolute',
 		top: '100px'
 	});
-	
-	this.updatePresets([]);
+
 };
 
 synthjs.ui.PluginControlPanelContainer.prototype.enterDocument = function(){
@@ -112,41 +111,44 @@ synthjs.ui.PluginControlPanelContainer.prototype.dispatchPresetEvent = function(
 		return e.selected;
 	});
 	
-	if( !selected || !selected.value ){
-		return false;
+	if( type == synthjs.ui.PluginControlPanelContainer.EventType.PRESET_ADD ){
+		var event = new goog.events.Event(type);
+	}
+	else {
+		if( !selected || !selected.value ){
+			return false;
+		}
+		var event = new goog.events.Event(type,
+			selected.value);
 	}
 	
-	var event = new goog.events.Event(type,
-		selected.value);
 	this.dispatchEvent(event);
 }
 
 /**
- * @param {Array} presets
- * ex. [{name: 'hoge', view: 'view'}, {...}]
+ * @param {synthjs.model.Collection} presetCollection
  * 
  */
-synthjs.ui.PluginControlPanelContainer.prototype.updatePresets = function(presets){
+synthjs.ui.PluginControlPanelContainer.prototype.updatePresets = function(presetCollection){
 	var dom = this.getDomHelper();
 	if( this._presetComboBox ){
-	//	this._presetComboBox.dispose();
+		dom.removeNode( this._presetComboBox );
 		this.getHandler().unlisten(this._presetComboBox);
 		this._presetComboBox = null;
 	}
 	
-	if( presets.length==0 ){
-		//return;
+	this._presetComboBox = dom.createDom("select");
+	dom.appendChild(this._presetComboBox, dom.createDom("option", {value: ""}, "select preset.."))
+	var exist = false;
+	goog.array.forEach(presetCollection.getAll(), function(preset){
+		exist = true;
+		dom.appendChild(this._presetComboBox, dom.createDom("option", {value: preset.get('code')}, preset.get('name')))
+	}, this);
+	
+	if( !exist ){
+		return;
 	}
 	
-	this._presetComboBox = dom.createDom("select");//new goog.ui.ComboBox();
-	//this._presetComboBox.setUseDropdownArrow(true);
-	//this._presetComboBox.setDefaultText('Select preset');
-	dom.appendChild(this._presetComboBox, dom.createDom("option", {value: ""}, "select preset.."))
-	for( var i=0; i<5; i++){
-		dom.appendChild(this._presetComboBox, dom.createDom("option", {value: "fuga"+i}, "hoge"+i))
-		//this._presetComboBox.addItem(new goog.ui.ComboBoxItem('hoge'));
-		
-	}
 	this.getHandler().listen(
 		this._presetComboBox,
 		goog.events.EventType.CHANGE,

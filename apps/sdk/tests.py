@@ -261,7 +261,8 @@ class SDKTest(TestCase):
         preset_code = rs[0]['code']
         
         # Delete preset
-        delete_rs = self.c.delete(reverse("sdk_preset_delete_api", args=[plugin.code, preset_code]))
+        delete_rs = self.c.post(reverse("sdk_preset_delete_api", args=[plugin.code]),
+                                {"preset_code": preset_code})
         self.assertEqual(delete_rs.status_code, 200)
         self.assertEqual(delete_rs.content, "ok")
         
