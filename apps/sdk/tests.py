@@ -244,11 +244,16 @@ class SDKTest(TestCase):
         self.assertEqual(get_rs.content, "[]")
         
         # Post preset
+        print reverse("sdk_preset_post_api", args=[plugin.code])
         post_rs = self.c.post(reverse("sdk_preset_post_api", args=[plugin.code]), 
                               {"name": preset_name,
                                "value": preset_value})
         self.assertEqual(post_rs.status_code, 200)
-        self.assertEqual(post_rs.content, "ok")
+        #self.assertEqual(post_rs.content, "ok")
+        rs_obj = simplejson.loads(post_rs.content)
+        self.assertEqual(rs_obj['status'], "ok")
+        self.assertTrue(rs_obj['code'])
+        
         
         # Confirm the preset exists.
         get_rs = self.c.get(reverse("sdk_private_presetlist", args=[plugin.code]))
@@ -296,8 +301,9 @@ class SDKTest(TestCase):
         self.assertEqual(update_res.content, "ok")
         
         
+        
         """
-        Confirm that plugin includes the file of self.file_handler.
+        Confirm that plugin includes the file corresponding to self.file_handler.
         """
         #info_res = self.c.get(self.get_info_api(plugin.code), {})
         info_res = self.c.get(reverse("sdk_private_filelist_api", args=[plugin.code]), {})

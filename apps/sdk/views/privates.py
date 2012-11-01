@@ -211,14 +211,15 @@ def sdk_preset_post_api_handler(request, code, plugin):
     if request.method == "POST" :
         form = PresetForm(request.POST)
         if form.is_valid():
+            preset_code = get_unique_preset_code()
             preset = Preset.objects.create(user=request.user,
                                   plugin=plugin,
-                                  code=get_unique_preset_code(),
+                                  code=preset_code,
                                   name=form.cleaned_data['name'],
                                   value=form.cleaned_data['value'],
                                   is_enabled=True)
             #preset.save()
-            return get_success_response()
+            return HttpResponse( simplejson.dumps({"status":"ok", "code":preset_code}) )
         
     return get_failure_response()
 

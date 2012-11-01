@@ -121,4 +121,12 @@ synthjs.application.PublicOscillator.prototype.onDirectoryNodeSelect = function(
 	}
 }
 
+/**
+ * @override 
+ */
+synthjs.application.PublicOscillator.prototype.createOscillatorInternal = function(){
+	return new synthjs.application.module.Oscillator(new goog.Uri(this._bootstrapJs), false);
+}
+
+
 window['PublicOscillator'] = synthjs.application.PublicOscillator;

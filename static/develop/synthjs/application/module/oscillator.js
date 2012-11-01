@@ -11,6 +11,10 @@ goog.require("synthjs.ui.PluginControlPanelContainer");
 
 goog.require("goog.events.EventTarget");
 goog.require("goog.json");
+goog.require("goog.ui.Prompt");
+goog.require("goog.ui.Dialog");
+goog.require("goog.ui.Dialog.ButtonSet");
+
 goog.require("synthjs.utility.EventTarget");
 goog.require("synthjs.utility.AjaxDeferred");
 goog.require("synthjs.audiocore.WavePluginEventType");
@@ -31,7 +35,9 @@ goog.require("synthjs.audiocore.DynamicGenerator");
  * @param {Object} opt_presetApis
  */
 synthjs.application.module.Oscillator = function(bootstrapUri, opt_isEditable, opt_presetApis){
-	this._isEditable = goog.isNull(opt_isEditable) ? false : true;
+	this._isEditable = goog.isNull(opt_isEditable) ? false : goog.isNull(opt_isEditable) ;
+	this._isEditable ? console.log("true") : console.log("false");
+	
 	if( this._isEditable ){
 		if( !opt_presetApis.post || !opt_presetApis.del || !opt_presetApis.list ){
 			goog.asserts.fail("If editable, opt_presetApis is repuired.");
@@ -238,7 +244,10 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 	this.dispatchEvent(new goog.events.Event(synthjs.application.module.OscillatorEventType.INIT) );
 }
 
-synthjs.application.module.Oscillator.prototype._updatePresets = function(e){
+/**
+ * @param {string=} opt_presetCode Initial preset code 
+ */
+synthjs.application.module.Oscillator.prototype._updatePresets = function(opt_presetCode){
 	new synthjs.utility.AjaxDeferred(this._presetListUri.toString(), {
 		method: "GET",
 		success: function(e){
@@ -256,7 +265,8 @@ synthjs.application.module.Oscillator.prototype._updatePresets = function(e){
 				}, this);
 				
 				this._controlPanelContainer.updatePresets(
-					this._presetCollection
+					this._presetCollection,
+					opt_presetCode
 				);
 			}
 		}
@@ -290,20 +300,69 @@ synthjs.application.module.Oscillator.prototype.onPresetAdd = function(e){
 	}, this);
 	
 	var value = goog.json.serialize(param);
-	new synthjs.utility.AjaxDeferred(this._presetPostUri.toString(), {
-		method: "POST",
-		data: {"name": "oraora", "value": value},
-		success: function(e){
-			var rs = e.getResponse();
-			if( rs == 'ok'){
-				this._updatePresets();
-			}
-			else {
-				alert("server error.")
-			}
-		}
-	}, this).callback();
+	
+	var prompt = new goog.ui.Prompt("Add Preset", 
+		"Input preset name:", 
+		goog.bind(function(name){
+			new synthjs.utility.AjaxDeferred(this._presetPostUri.toString(), {
+				method: "POST",
+				data: {"name": name, "value": value},
+				success: function(e){
+					var rs = e.getResponseJson();
+					if( rs['status'] == 'ok'){
+						goog.asserts.assert(rs['code'], "Invalid response from post preset api.");
+						this._updatePresets(rs['code']);
+					}
+					else {
+						alert("server error.")
+					}
+				}
+			}, this).callback();
+
+		}, this)
+	);
+	prompt.setVisible(true);
 			
+			
+};
+
+synthjs.application.module.Oscillator.prototype._deletePreset = function(code){
+	var preset = goog.array.find(this._presetCollection.getAll(), function(p){
+		return p.get("code")==code;
+	});
+	
+	goog.asserts.assert(preset, "Invalid preset code was deleted.");
+	
+	if( preset ){
+		var dialog = new goog.ui.Dialog();
+		dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
+		dialog.setTitle("Confirmation");
+		dialog.setContent("Do you delete '"+preset.get('name')+"' preset?");
+		this.getHandler().listen(
+			dialog,
+			goog.ui.Dialog.EventType.SELECT,
+			function(e){
+				this.getHandler().unlisten(dialog);
+				if( e.key=='ok' ){
+					new synthjs.utility.AjaxDeferred(this._presetDeleteUri.toString(), {
+						method: "POST",
+						data: {"preset_code": code},
+						success: function(e){
+							var rs = e.getResponse();
+							if( rs == 'ok'){
+								this._updatePresets();
+							}
+							else {
+								alert("server error.")
+							}
+						}
+					}, this).callback();
+				}
+			}
+		)
+		dialog.setVisible(true);
+		
+	}
 };
 
 synthjs.application.module.Oscillator.prototype.onPresetChange = function(e){
@@ -311,8 +370,7 @@ synthjs.application.module.Oscillator.prototype.onPresetChange = function(e){
 };
 
 synthjs.application.module.Oscillator.prototype.onPresetDelete = function(e){
-	console.log("delete");
-	console.log(e);
+	this._deletePreset(e.target);
 };
 
 

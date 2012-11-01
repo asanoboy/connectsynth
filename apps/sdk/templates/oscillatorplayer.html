@@ -37,7 +37,9 @@
 			"bootstrapJs": "{% url sdk_get_api plugin.code, 'main.js' %}",
 			"api": "{% url sdk_get_api plugin.code, '' %}",
 			"extendapi": "{% url sdk_extend_instrument plugin.code %}",
-			"infoapi": "{% url sdk_filelist_api plugin.code %}"
+			"infoapi": "{% url sdk_filelist_api plugin.code %}",
+			"presetlistapi": "{% url sdk_private_presetlist code %}"
+			
 		});
 </script>
 {% endblock %}

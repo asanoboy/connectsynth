@@ -42,7 +42,7 @@ def get_success_response():
 
 def get_unique_plugin_code():
     while( True ):
-        code = uuid.uuid4()
+        code = str(uuid.uuid4())
         
         if Plugin.objects.filter(code=code).exists():
             continue;
@@ -51,7 +51,7 @@ def get_unique_plugin_code():
 
 def get_unique_preset_code():
     while( True ):
-        code = uuid.uuid4()
+        code = str(uuid.uuid4())
         
         if Preset.objects.filter(code=code).exists():
             continue;

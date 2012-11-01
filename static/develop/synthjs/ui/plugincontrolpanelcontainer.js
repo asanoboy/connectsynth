@@ -127,9 +127,9 @@ synthjs.ui.PluginControlPanelContainer.prototype.dispatchPresetEvent = function(
 
 /**
  * @param {synthjs.model.Collection} presetCollection
- * 
+ * @param {string=} opt_presetCode The code of initial preset.
  */
-synthjs.ui.PluginControlPanelContainer.prototype.updatePresets = function(presetCollection){
+synthjs.ui.PluginControlPanelContainer.prototype.updatePresets = function(presetCollection, opt_presetCode){
 	var dom = this.getDomHelper();
 	if( this._presetComboBox ){
 		dom.removeNode( this._presetComboBox );
@@ -142,7 +142,11 @@ synthjs.ui.PluginControlPanelContainer.prototype.updatePresets = function(preset
 	var exist = false;
 	goog.array.forEach(presetCollection.getAll(), function(preset){
 		exist = true;
-		dom.appendChild(this._presetComboBox, dom.createDom("option", {value: preset.get('code')}, preset.get('name')))
+		var attr = {'value': preset.get('code')};
+		if( preset.get('code')==opt_presetCode ){
+			attr['selected'] = 'selected';
+		}
+		dom.appendChild(this._presetComboBox, dom.createDom("option", attr, preset.get('name')))
 	}, this);
 	
 	if( !exist ){
