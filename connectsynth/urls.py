@@ -20,6 +20,6 @@ urlpatterns = patterns('',
     url(r'^sdk/', include('sdk.urls')),
     #url(r'^plugin/', include('plugin.urls')),
     url(r'^auth/', include('autho.urls')),
-    url(r'^account/', include('account.urls')),
+    #url(r'^account/', include('account.urls')),
     url(r'', include('public.urls')),
 )

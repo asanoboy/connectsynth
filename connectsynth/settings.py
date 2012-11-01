@@ -122,7 +122,6 @@ INSTALLED_APPS = (
     'common',
     'sdk',
     'autho',
-    'account',
     'public',
 )
 
