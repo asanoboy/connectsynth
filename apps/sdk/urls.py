@@ -16,7 +16,7 @@ urlpatterns = patterns('sdk.views',
     # preset
     url(r'^workspace/preset/post/(?P<code>[^/]+)/$', 
             'sdk_preset_post_api_handler', name="sdk_preset_post_api"),
-    url(r'^workspace/preset/delete/(?P<code>[^/]+)/(?P<preset_code>[^/]+)/$', 
+    url(r'^workspace/preset/delete/(?P<code>[^/]+)/$', 
             'sdk_preset_delete_api_handler', name="sdk_preset_delete_api"),
     url(r'^workspace/preset/list/(?P<code>[^/]+)/$', 
             'sdk_private_presetlist_handler', name="sdk_private_presetlist"),

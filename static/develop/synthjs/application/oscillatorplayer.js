@@ -176,12 +176,19 @@ synthjs.application.OscillatorPlayer.prototype.closeOscillator = function(){
 }
 
 /**
+ * @protected 
+ */
+synthjs.application.OscillatorPlayer.prototype.createOscillatorInternal = function(){
+	return new synthjs.application.module.Oscillator(new goog.Uri(this._bootstrapJs));
+}
+
+/**
  * @private
  */
 synthjs.application.OscillatorPlayer.prototype.launchOscillator = function(){
 
 
-	this._oscillatorModule = new synthjs.application.module.Oscillator(new goog.Uri(this._bootstrapJs));
+	this._oscillatorModule = this.createOscillatorInternal();
 	
 	this.getHandler()
 		.listen(

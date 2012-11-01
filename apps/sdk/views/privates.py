@@ -225,12 +225,13 @@ def sdk_preset_post_api_handler(request, code, plugin):
 @csrf_exempt
 @login_required
 @reject_invalid_code
-def sdk_preset_delete_api_handler(request, code, preset_code, plugin):
+def sdk_preset_delete_api_handler(request, code, plugin):
     if plugin.is_public or request.user!=plugin.user:
         return get_failure_response()
     
     
-    if request.method == "DELETE" :
+    if request.method == "POST" :
+        preset_code = request.POST.get("preset_code", False)
         try :
             preset = Preset.objects.get(user=request.user,
                                plugin=plugin,

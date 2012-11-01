@@ -4,12 +4,15 @@ goog.provide("synthjs.application.module.OscillatorEventType");
 goog.require("synthjs.model.PluginControlParam");
 goog.require("synthjs.model.PluginToggleParam");
 goog.require("synthjs.model.PluginRadioParam");
+goog.require("synthjs.model.PluginPreset");
 goog.require("synthjs.model.Collection");
 goog.require("synthjs.ui.PluginControlPanel");
 goog.require("synthjs.ui.PluginControlPanelContainer");
 
 goog.require("goog.events.EventTarget");
+goog.require("goog.json");
 goog.require("synthjs.utility.EventTarget");
+goog.require("synthjs.utility.AjaxDeferred");
 goog.require("synthjs.audiocore.WavePluginEventType");
 goog.require("synthjs.ui.window.Oscillator");
 goog.require("synthjs.ui.Keyboard");
@@ -24,9 +27,22 @@ goog.require("synthjs.audiocore.DynamicGenerator");
  * @constructor
  * @extends {synthjs.utility.EventTarget}
  * @param {goog.Uri} bootstrapUri
+ * @param {boolean=} opt_isEditable
+ * @param {Object} opt_presetApis
  */
-synthjs.application.module.Oscillator = function(bootstrapUri, opt_isEditable){
+synthjs.application.module.Oscillator = function(bootstrapUri, opt_isEditable, opt_presetApis){
 	this._isEditable = goog.isNull(opt_isEditable) ? false : true;
+	if( this._isEditable ){
+		if( !opt_presetApis.post || !opt_presetApis.del || !opt_presetApis.list ){
+			goog.asserts.fail("If editable, opt_presetApis is repuired.");
+		}
+		/** @type {goog.Uri} */
+		this._presetPostUri = opt_presetApis.post;
+		/** @type {goog.Uri} */
+		this._presetDeleteUri = opt_presetApis.del;
+		/** @type {goog.Uri} */
+		this._presetListUri = opt_presetApis.list;
+	}
 	goog.base(this);
 	
 	this._bootstrapUri = bootstrapUri;
@@ -105,7 +121,8 @@ synthjs.application.module.Oscillator.prototype._errorHandler = function(e){
  */
 synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 	
-	var collection = new synthjs.model.Collection(synthjs.model.Base);
+	this._paramCollection = new synthjs.model.Collection(synthjs.model.Base);
+	
 		
 	var controller = e.target['controller'];
 	if( controller ){
@@ -166,12 +183,12 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 					throw new Error("invalid param");
 			}
 			
-			collection.add(control);
+			this._paramCollection.add(control);
 
 		}, this);
 		
 		if( isValid ){
-			goog.array.forEach(collection.getAll(), function(model){
+			goog.array.forEach(this._paramCollection.getAll(), function(model){
 				this.getHandler().listen(model, 
 					synthjs.model.EventType.CHANGE,
 					this._updateParam);				
@@ -185,7 +202,7 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 		}
 		
 		this._controlPanel = new synthjs.ui.PluginControlPanel(
-			collection,
+			this._paramCollection,
 			this._bootstrapUri.resolve(new goog.Uri(controller['background']['image'])).toString(),
 			controller['background']['width'],
 			controller['background']['height']);
@@ -215,18 +232,82 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 	else {
 		this._oscillatorWindow = new synthjs.ui.window.Oscillator( this._keyboard );
 	}
+	
+	this._updatePresets();
 		
 	this.dispatchEvent(new goog.events.Event(synthjs.application.module.OscillatorEventType.INIT) );
 }
 
+synthjs.application.module.Oscillator.prototype._updatePresets = function(e){
+	new synthjs.utility.AjaxDeferred(this._presetListUri.toString(), {
+		method: "GET",
+		success: function(e){
+			/* validate */
+			var rs = e.getResponseJson();
+			if( goog.isArray(rs) ){
+				this._presetCollection = new synthjs.model.Collection(synthjs.model.PluginPreset);
+				goog.array.forEach(rs, function(r){
+					if( goog.isDef(r['name']) && goog.isDef(r['value']) && goog.isDef(r['code']) ){
+						var presetParam = new synthjs.model.PluginPreset(r['name'], r['code'], r['value']);
+						if( presetParam.isValid() ){
+							this._presetCollection.add(presetParam);
+						}
+					}
+				}, this);
+				
+				this._controlPanelContainer.updatePresets(
+					this._presetCollection
+				);
+			}
+		}
+	}, this).callback();
+};
+
+synthjs.application.module.Oscillator.prototype._setPreset = function(code){
+	var preset = goog.array.find(this._presetCollection.getAll(), function(p){
+		return p.get("code")==code;
+	});
+	
+	goog.asserts.assert(preset, "Invalid preset code was set.");
+	
+	if( preset ){
+		goog.array.forEach(preset.get("value"), function(param){
+			if( goog.isDef(param.name) && goog.isDef(param.value) ){
+				var model = goog.array.find(this._paramCollection.getAll(), function(p){
+					return param.name == p.get("name");
+				}, this);
+				if (model){
+					model.set("value", param.value);
+				}	
+			}
+		}, this);
+	}
+}
 synthjs.application.module.Oscillator.prototype.onPresetAdd = function(e){
-	console.log('add');
-	console.log(e);
+	var param = [];
+	goog.array.forEach(this._paramCollection.getAll(), function(model){
+		param.push({'name':model.get('name'), 'value':model.get("value")});
+	}, this);
+	
+	var value = goog.json.serialize(param);
+	new synthjs.utility.AjaxDeferred(this._presetPostUri.toString(), {
+		method: "POST",
+		data: {"name": "oraora", "value": value},
+		success: function(e){
+			var rs = e.getResponse();
+			if( rs == 'ok'){
+				this._updatePresets();
+			}
+			else {
+				alert("server error.")
+			}
+		}
+	}, this).callback();
+			
 };
 
 synthjs.application.module.Oscillator.prototype.onPresetChange = function(e){
-	console.log('change');
-	console.log(e);
+	this._setPreset(e.target);
 };
 
 synthjs.application.module.Oscillator.prototype.onPresetDelete = function(e){
