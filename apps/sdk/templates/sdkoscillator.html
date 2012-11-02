@@ -34,13 +34,13 @@
 		"application", 
 		{
 			"name": "[workspace]",
-			"api": "{% url sdk_restful_api code %}",
-			"infoapi": "{% url sdk_private_filelist_api code %}",
+			"api": "{% url sdk_plugin_api code %}",
+			"infoapi": "{% url sdk_plugin_filelist_api code %}",
 			"publishapi": "{% url sdk_publish_api code %}",
-			"presetpostapi": "{% url sdk_preset_post_api code %}",
-			"presetdeleteapi": "{% url sdk_preset_delete_api code %}",
-			"presetlistapi": "{% url sdk_private_presetlist code %}",
-			"bootstrapJs": "{% url sdk_private_get_api code, 'main.js' %}"
+			"presetpostapi": "{% url sdk_preset_post code %}",
+			"presetdeleteapi": "{% url sdk_preset_delete code %}",
+			"presetlistapi": "{% url sdk_preset_list code %}",
+			"bootstrapJs": "{% url sdk_plugin_get_api code, 'main.js' %}"
 		});
 </script>
 {% endblock %}

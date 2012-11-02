@@ -25,7 +25,7 @@ def sdk_instrument_player_handler(request, code, plugin):
 
     
     
-
+"""
 @reject_invalid_code
 def sdk_filelist_api_handler(request, code, plugin):
     
@@ -34,10 +34,10 @@ def sdk_filelist_api_handler(request, code, plugin):
     
     paths = [ file.path for file in File.objects.filter(plugin=plugin, is_enabled=True).all() ]
     return HttpResponse(simplejson.dumps(paths))
-
+"""
 """
 requset.method = "GET"
-"""
+""""""
 @reject_invalid_code
 def sdk_get_api_handler(request, code, path, plugin):
     
@@ -52,11 +52,12 @@ def sdk_get_api_handler(request, code, path, plugin):
 
     
     return HttpResponse(file.content.read(), content_type=mimetypes.guess_type(path))
-    
+"""
+"""    
 @reject_invalid_code
 def sdk_presetlist_handler(request, code, plugin):
     if not plugin.is_public:
         return get_failure_response()
     
     preset_infos = [ {'name': preset.name, 'code': preset.code, 'value': preset.value} for preset in Preset.objects.filter(plugin=plugin, is_enabled=True).all() ]
-    return HttpResponse(simplejson.dumps(preset_infos))  
+    return HttpResponse(simplejson.dumps(preset_infos))"""  

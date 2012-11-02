@@ -72,7 +72,8 @@ class SDKTest(TestCase):
         self.login()
         plugin = self.create_plugin()
         
-        update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        #update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        update_res = self.c.post(reverse("sdk_plugin_api", args=[plugin.code]), {
             self.filepath: self.file_handler,
         })
         self.assertEqual(update_res.status_code, 200)
@@ -85,14 +86,17 @@ class SDKTest(TestCase):
         res_obj = simplejson.loads(publish_res.content)
         self.assertEqual(res_obj['status'], "ok")
         
-        info_res = self.c.get(reverse('sdk_private_filelist_api', args=[plugin.code]))
-        self.assertEqual(info_res.status_code, 302)
+        #info_res = self.c.get(reverse('sdk_private_filelist_api', args=[plugin.code]))
+        #info_res = self.c.get(reverse('sdk_plugin_filelist_api', args=[plugin.code]))
+        #self.assertEqual(info_res.status_code, 302)
         
-        info_res = self.c.get(reverse('sdk_filelist_api', args=[plugin.code]))
+        #info_res = self.c.get(reverse('sdk_filelist_api', args=[plugin.code]))
+        info_res = self.c.get(reverse('sdk_plugin_filelist_api', args=[plugin.code]))
         self.assertEqual(info_res.status_code, 200)
         self.assertEqual(info_res.content, simplejson.dumps([self.filepath]))
         
-        get_res = self.c.get(reverse('sdk_get_api', args=[plugin.code, self.filepath]))
+        #get_res = self.c.get(reverse('sdk_get_api', args=[plugin.code, self.filepath]))
+        get_res = self.c.get(reverse('sdk_plugin_get_api', args=[plugin.code, self.filepath]))
         self.assertEqual(get_res.status_code, 200)
         self.assertEqual(get_res.content, self.content)
         
@@ -115,33 +119,39 @@ class SDKTest(TestCase):
         filepath1 = "file1.txt"
         filepath2 = "file2.txt"
         
-        update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        #update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        update_res = self.c.post(reverse("sdk_plugin_api", args=[plugin.code]), {
             filepath1: self.file_handler,
             filepath2: self.file_handler
         })
         self.assertEqual(update_res.status_code, 200)
         self.assertEqual(update_res.content, 'ok')
         
-        list_res = self.c.get(reverse("sdk_private_filelist_api", args=[plugin.code]))
+        #list_res = self.c.get(reverse("sdk_private_filelist_api", args=[plugin.code]))
+        list_res = self.c.get(reverse("sdk_plugin_filelist_api", args=[plugin.code]))
         self.assertEqual(list_res.content, simplejson.dumps([filepath1, filepath2]))
         
         # Post only filepath1 to expect that filepath2 will be removed.
-        update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        #update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        update_res = self.c.post(reverse("sdk_plugin_api", args=[plugin.code]), {
             filepath1: self.file_handler,
         })
         
         # Confirm that filepath2 is removed.
-        list_res = self.c.get(reverse("sdk_private_filelist_api", args=[plugin.code]))
+        #list_res = self.c.get(reverse("sdk_private_filelist_api", args=[plugin.code]))
+        list_res = self.c.get(reverse("sdk_plugin_filelist_api", args=[plugin.code]))
         self.assertEqual(list_res.content, simplejson.dumps([filepath1]))
         
         # Reupdate filepath2
-        update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        #update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        update_res = self.c.post(reverse("sdk_plugin_api", args=[plugin.code]), {
             filepath1: self.file_handler,
             filepath2: self.file_handler
         })
         
         # Confirm that filepath2 exists again.
-        list_res = self.c.get(reverse("sdk_private_filelist_api", args=[plugin.code]))
+        #list_res = self.c.get(reverse("sdk_private_filelist_api", args=[plugin.code]))
+        list_res = self.c.get(reverse("sdk_plugin_filelist_api", args=[plugin.code]))
         self.assertEqual(list_res.content, simplejson.dumps([filepath1, filepath2]))
         
         
@@ -150,7 +160,8 @@ class SDKTest(TestCase):
         self.login()
         plugin = self.create_plugin()
         
-        self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        #self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        self.c.post(reverse("sdk_plugin_api", args=[plugin.code]), {
             self.filepath: self.file_handler
         })
         
@@ -185,7 +196,8 @@ class SDKTest(TestCase):
         
         # Advance test
         # add file
-        self.c.post(reverse("sdk_restful_api", args=[private_plugin.code]), {
+        #self.c.post(reverse("sdk_restful_api", args=[private_plugin.code]), {
+        self.c.post(reverse("sdk_plugin_api", args=[private_plugin.code]), {
             self.image_filepath: self.image_file_handler
         })
         
@@ -212,22 +224,26 @@ class SDKTest(TestCase):
         file2.write("file2")
         file2.seek(0)
         
-        update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        #update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        update_res = self.c.post(reverse("sdk_plugin_api", args=[plugin.code]), {
             filepath: file1
         })
         self.assertEqual(update_res.status_code, 200)
         self.assertEqual(update_res.content, "ok")
         
-        get_rs = self.c.get(reverse("sdk_private_get_api", args=[plugin.code, filepath]))
+        #get_rs = self.c.get(reverse("sdk_private_get_api", args=[plugin.code, filepath]))
+        get_rs = self.c.get(reverse("sdk_plugin_get_api", args=[plugin.code, filepath]))
         self.assertEqual(get_rs.content, "file1")
         
-        update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        #update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        update_res = self.c.post(reverse("sdk_plugin_api", args=[plugin.code]), {
             filepath: file2
         })
         self.assertEqual(update_res.status_code, 200)
         self.assertEqual(update_res.content, "ok")
         
-        get_rs = self.c.get(reverse("sdk_private_get_api", args=[plugin.code, filepath]))
+        #get_rs = self.c.get(reverse("sdk_private_get_api", args=[plugin.code, filepath]))
+        get_rs = self.c.get(reverse("sdk_plugin_get_api", args=[plugin.code, filepath]))
         self.assertEqual(get_rs.content, "file2")
         
     
@@ -239,13 +255,14 @@ class SDKTest(TestCase):
         preset_value = "piyo"
         
         # Confirm presets is empty.
-        get_rs = self.c.get(reverse("sdk_private_presetlist", args=[plugin.code]))
+        #get_rs = self.c.get(reverse("sdk_private_presetlist", args=[plugin.code]))
+        get_rs = self.c.get(reverse("sdk_preset_list", args=[plugin.code]))
         self.assertEqual(get_rs.status_code, 200)
         self.assertEqual(get_rs.content, "[]")
         
         # Post preset
-        print reverse("sdk_preset_post_api", args=[plugin.code])
-        post_rs = self.c.post(reverse("sdk_preset_post_api", args=[plugin.code]), 
+        #post_rs = self.c.post(reverse("sdk_preset_post_api", args=[plugin.code]), 
+        post_rs = self.c.post(reverse("sdk_preset_post", args=[plugin.code]), 
                               {"name": preset_name,
                                "value": preset_value})
         self.assertEqual(post_rs.status_code, 200)
@@ -256,7 +273,8 @@ class SDKTest(TestCase):
         
         
         # Confirm the preset exists.
-        get_rs = self.c.get(reverse("sdk_private_presetlist", args=[plugin.code]))
+        #get_rs = self.c.get(reverse("sdk_private_presetlist", args=[plugin.code]))
+        get_rs = self.c.get(reverse("sdk_preset_list", args=[plugin.code]))
         self.assertEqual(get_rs.status_code, 200)
         rs = simplejson.loads(get_rs.content)
         self.assertEqual(len(rs), 1)
@@ -266,13 +284,15 @@ class SDKTest(TestCase):
         preset_code = rs[0]['code']
         
         # Delete preset
-        delete_rs = self.c.post(reverse("sdk_preset_delete_api", args=[plugin.code]),
+        #delete_rs = self.c.post(reverse("sdk_preset_delete_api", args=[plugin.code]),
+        delete_rs = self.c.post(reverse("sdk_preset_delete", args=[plugin.code]),
                                 {"preset_code": preset_code})
         self.assertEqual(delete_rs.status_code, 200)
         self.assertEqual(delete_rs.content, "ok")
         
         # Confirm the preset is deleted.
-        get_rs = self.c.get(reverse("sdk_private_presetlist", args=[plugin.code]))
+        #get_rs = self.c.get(reverse("sdk_private_presetlist", args=[plugin.code]))
+        get_rs = self.c.get(reverse("sdk_preset_list", args=[plugin.code]))
         self.assertEqual(get_rs.status_code, 200)
         rs = simplejson.loads(get_rs.content)
         self.assertEqual(len(rs), 0)
@@ -287,14 +307,16 @@ class SDKTest(TestCase):
         """
         Confirm that plugin is empty.
         """
-        info_res = self.c.get(reverse('sdk_private_filelist_api', args=[plugin.code]))
+        #info_res = self.c.get(reverse('sdk_private_filelist_api', args=[plugin.code]))
+        info_res = self.c.get(reverse('sdk_plugin_filelist_api', args=[plugin.code]))
         self.assertEquals(info_res.status_code, 200)
         self.assertEquals(info_res.content, '[]')
         
         """
         Post self.file_handler to plugin
         """
-        update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        #update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        update_res = self.c.post(reverse("sdk_plugin_api", args=[plugin.code]), {
             self.filepath: self.file_handler,
         })
         self.assertEqual(update_res.status_code, 200)
@@ -306,13 +328,15 @@ class SDKTest(TestCase):
         Confirm that plugin includes the file corresponding to self.file_handler.
         """
         #info_res = self.c.get(self.get_info_api(plugin.code), {})
-        info_res = self.c.get(reverse("sdk_private_filelist_api", args=[plugin.code]), {})
+        #info_res = self.c.get(reverse("sdk_private_filelist_api", args=[plugin.code]), {})
+        info_res = self.c.get(reverse("sdk_plugin_filelist_api", args=[plugin.code]), {})
         self.assertEqual(info_res.status_code, 200)
         self.assertEqual(info_res.content, simplejson.dumps([self.filepath]))
         
         
         #get_res = self.c.get(os.path.join(self.get_main_api(plugin.code), self.filepath))
-        get_res = self.c.get(reverse("sdk_private_get_api", args=[plugin.code, self.filepath]))
+        #get_res = self.c.get(reverse("sdk_private_get_api", args=[plugin.code, self.filepath]))
+        get_res = self.c.get(reverse("sdk_plugin_get_api", args=[plugin.code, self.filepath]))
         self.assertEqual(get_res.status_code, 200)
         self.assertEqual(get_res.content, self.content)
         
@@ -320,7 +344,8 @@ class SDKTest(TestCase):
         """
         Delete posted file from plugin.
         """
-        delete_res = self.c.delete(reverse("sdk_restful_api", args=[plugin.code]))
+        #delete_res = self.c.delete(reverse("sdk_restful_api", args=[plugin.code]))
+        delete_res = self.c.delete(reverse("sdk_plugin_api", args=[plugin.code]))
         self.assertEqual(delete_res.status_code, 200)
         self.assertEqual(delete_res.content, "ok")
         
@@ -328,7 +353,8 @@ class SDKTest(TestCase):
         Confirm that plugin is empty.
         """
         #info_res = self.c.get(self.get_info_api(plugin.code), {})
-        info_res = self.c.get(reverse("sdk_private_filelist_api", args=[plugin.code]), {})
+        #info_res = self.c.get(reverse("sdk_private_filelist_api", args=[plugin.code]), {})
+        info_res = self.c.get(reverse("sdk_plugin_filelist_api", args=[plugin.code]), {})
         self.assertEquals(info_res.status_code, 200)
         self.assertEquals(info_res.content, simplejson.dumps([]))
     
@@ -338,17 +364,20 @@ class SDKTest(TestCase):
         plugin = self.create_plugin()
 
         
-        update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        #update_res = self.c.post(reverse("sdk_restful_api", args=[plugin.code]), {
+        update_res = self.c.post(reverse("sdk_plugin_api", args=[plugin.code]), {
             self.image_filepath: self.image_file_handler,
         })
         self.assertEqual(update_res.status_code, 200)
         self.assertEqual(update_res.content, "ok")
         
-        info_res = self.c.get(reverse('sdk_private_filelist_api', args=[plugin.code]), {})
+        #info_res = self.c.get(reverse('sdk_private_filelist_api', args=[plugin.code]), {})
+        info_res = self.c.get(reverse('sdk_plugin_filelist_api', args=[plugin.code]), {})
         self.assertEquals(info_res.status_code, 200)
         self.assertEquals(info_res.content, simplejson.dumps([self.image_filepath]))
         
-        get_res = self.c.get(reverse('sdk_private_get_api', args=[plugin.code, self.image_filepath]))
+        #get_res = self.c.get(reverse('sdk_private_get_api', args=[plugin.code, self.image_filepath]))
+        get_res = self.c.get(reverse('sdk_plugin_get_api', args=[plugin.code, self.image_filepath]))
         self.assertEqual(get_res.status_code, 200)
         self.assertEqual(get_res.content, self.image_content)
         self.assertTrue(get_res.get('Content-Type').find("image/jpeg")>=0)

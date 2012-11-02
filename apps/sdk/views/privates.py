@@ -123,7 +123,7 @@ def sdk_publish_api_handler(request, code, plugin):
 """
 requset.method = "POST" or "DELETE"
 """
-@csrf_exempt
+"""@csrf_exempt
 @login_required
 @reject_invalid_code
 def sdk_restful_api_handler(request, code, plugin):
@@ -196,10 +196,11 @@ def sdk_private_get_api_handler(request, code, path, plugin):
         return get_failure_response()
         
     return HttpResponse(file.content.read(), content_type=mimetypes.guess_type(path))
-
+"""
 
 """
 Preset restful api
+"""
 """
 @csrf_exempt
 @login_required
@@ -256,3 +257,4 @@ def sdk_private_presetlist_handler(request, code, plugin):
     
     preset_infos = [ {'name': preset.name, 'code': preset.code, 'value': preset.value} for preset in Preset.objects.filter(plugin=plugin, is_enabled=True).all() ]
     return HttpResponse(simplejson.dumps(preset_infos))    
+"""
