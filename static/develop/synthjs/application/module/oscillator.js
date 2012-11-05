@@ -30,28 +30,27 @@ goog.require("synthjs.audiocore.DynamicGenerator");
 /**
  * @constructor
  * @extends {synthjs.utility.EventTarget}
- * @param {goog.Uri} bootstrapUri
+ * @param {synthjs.application.api.Plugin} api
  * @param {boolean=} opt_isEditable
- * @param {Object} opt_presetApis
  */
-synthjs.application.module.Oscillator = function(bootstrapUri, opt_isEditable, opt_presetApis){
+synthjs.application.module.Oscillator = function(api, opt_isEditable){
 	this._isEditable = goog.isNull(opt_isEditable) ? false : goog.isNull(opt_isEditable) ;
-	this._isEditable ? console.log("true") : console.log("false");
 	
 	if( this._isEditable ){
-		if( !opt_presetApis.post || !opt_presetApis.del || !opt_presetApis.list ){
-			goog.asserts.fail("If editable, opt_presetApis is repuired.");
-		}
+		//if( !opt_presetApis.post || !opt_presetApis.del || !opt_presetApis.list ){
+		//	goog.asserts.fail("If editable, opt_presetApis is repuired.");
+		//}
 		/** @type {goog.Uri} */
-		this._presetPostUri = opt_presetApis.post;
+		this._presetPostUri = api.postPreset();//opt_presetApis.post;
 		/** @type {goog.Uri} */
-		this._presetDeleteUri = opt_presetApis.del;
-		/** @type {goog.Uri} */
-		this._presetListUri = opt_presetApis.list;
+		this._presetDeleteUri = api.deletePreset();//opt_presetApis.del;
 	}
 	goog.base(this);
-	
-	this._bootstrapUri = bootstrapUri;
+
+	/** @type {goog.Uri} */
+	this._presetListUri = api.getPresetList();//opt_presetApis.list;
+
+	this._bootstrapUri = api.getFile("main.js");
 	
 }
 

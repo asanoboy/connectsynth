@@ -49,7 +49,7 @@ urlpatterns += patterns('sdk.views.preset',
     url(r'^preset/delete/(?P<code>[^/]+)/$', 
             'sdk_preset_delete_handler', name="sdk_preset_delete"),
     url(r'^preset/list/(?P<code>[^/]+)/$', 
-            'sdk_preset_list', name="sdk_preset_list"),
+            'sdk_preset_list_handler', name="sdk_preset_list"),
 )
 
 # PLUGIN API
@@ -58,6 +58,6 @@ urlpatterns += patterns('sdk.views.plugin',
             'sdk_plugin_filelist_api_handler', name="sdk_plugin_filelist_api"),
     url(r'^plugin/(?P<code>[^/]+)/$', 
             'sdk_plugin_api_handler', name="sdk_plugin_api"),
-    url(r'^plugin/(?P<code>[^/]+)/(?P<path>.+)$', 
+    url(r'^plugin/(?P<code>[^/]+)/(?P<path>.*)$', # allow path empty in order to validate reverse('sdk_get_api', args=['']) <= empty string
             'sdk_plugin_get_api_handler', name="sdk_plugin_get_api"),
 )

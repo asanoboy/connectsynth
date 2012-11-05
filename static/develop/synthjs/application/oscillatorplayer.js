@@ -31,6 +31,7 @@ goog.require("synthjs.utility.AjaxDeferred");
 goog.require("goog.ui.Dialog");
 goog.require("goog.ui.Dialog.ButtonSet");
 goog.require("goog.ui.Dialog.DefaultButtonKeys");
+goog.require("synthjs.application.api.Plugin");
 
 /**
  * @constructor
@@ -38,7 +39,10 @@ goog.require("goog.ui.Dialog.DefaultButtonKeys");
  */
 synthjs.application.OscillatorPlayer = function(id, params){
 	
-	console.log(params);
+	/**
+	 * @private 
+	 */
+	this._apiPlugin = new synthjs.application.api.Plugin(params['code']);
 	this._bootstrapJs = params['bootstrapJs'];
 	this._extendUri = new goog.Uri(params['extendapi']);
 	
@@ -48,6 +52,10 @@ synthjs.application.OscillatorPlayer = function(id, params){
 };
 
 goog.inherits(synthjs.application.OscillatorPlayer, synthjs.application.Base);
+
+synthjs.application.OscillatorPlayer.prototype.getApi = function(){
+	return this._apiPlugin;
+}
 
 /**
  * @protected
@@ -106,7 +114,7 @@ synthjs.application.OscillatorPlayer.prototype.onExtendOscillator = function(){
 			goog.ui.Dialog.EventType.SELECT,
 			function(e){
 				if( e.key == goog.ui.Dialog.DefaultButtonKeys.OK ){
-					document.location = this._extendUri.toString();
+					document.location = this.getApi().copyPlugin().toString();//this._extendUri.toString();
 				}
 				this.getHandler().unlisten(dialog);
 			}
@@ -179,7 +187,7 @@ synthjs.application.OscillatorPlayer.prototype.closeOscillator = function(){
  * @protected 
  */
 synthjs.application.OscillatorPlayer.prototype.createOscillatorInternal = function(){
-	return new synthjs.application.module.Oscillator(new goog.Uri(this._bootstrapJs));
+	return new synthjs.application.module.Oscillator(this._getApi() );//new goog.Uri(this._bootstrapJs));
 }
 
 /**

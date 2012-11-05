@@ -85,7 +85,8 @@ synthjs.application.SDKOscillator.prototype._showPublishPrompt = function(){
 		
 		var ajaxLoader = new synthjs.ui.AjaxLoader();
 		ajaxLoader.setVisible(true);
-		new synthjs.utility.AjaxDeferred(this._publishUri.toString(), {
+		//new synthjs.utility.AjaxDeferred(this._publishUri.toString(), {
+		new synthjs.utility.AjaxDeferred(this.getApi().publishPlugin().toString(), {
 			data: {'name': name, "description": description},
 			method: 'post',
 			responseType: goog.net.XhrIo.ResponseType.TEXT,
@@ -179,7 +180,8 @@ synthjs.application.SDKOscillator.prototype.onPressKey = function(e){
  */
 synthjs.application.SDKOscillator.prototype.postAllDeferred = function(){
 	
-	var pluginPoster = new synthjs.net.PluginPoster(this._apiUri);
+	//var pluginPoster = new synthjs.net.PluginPoster(this._apiUri);
+	var pluginPoster = new synthjs.net.PluginPoster(this.getApi().postFile());
 	goog.array.forEach(this._fileSystem.getAllFiles(), function(file){
 		switch(file.get("type")){
 			case synthjs.model.FileType.TEXT:
@@ -204,7 +206,8 @@ synthjs.application.SDKOscillator.prototype.postAllDeferred = function(){
  * @param {synthjs.model.File} file
  */
 synthjs.application.SDKOscillator.prototype.saveDeferred = function(file){
-	var pluginPoster = new synthjs.net.PluginPoster(this._apiUri);
+	//var pluginPoster = new synthjs.net.PluginPoster(this._apiUri);
+	var pluginPoster = new synthjs.net.PluginPoster(this.getApi().postFile());
 	var bb = new synthjs.utility.BlobBuilder();
 	bb.append(file.get('content'));
 	pluginPoster.addFile(file.get('filename'), bb.getBlob("text/plain"));
@@ -251,7 +254,8 @@ synthjs.application.SDKOscillator.prototype._onOscillatorInit = function(e){
  * @override 
  */
 synthjs.application.SDKOscillator.prototype.createOscillatorInternal = function(){
-	return new synthjs.application.module.Oscillator(new goog.Uri(this._bootstrapJs), 
+	//return new synthjs.application.module.Oscillator(new goog.Uri(this._bootstrapJs), 
+	return new synthjs.application.module.Oscillator(this.getApi(), //new goog.Uri(this._bootstrapJs), 
 		true, 
 		{
 			post: this._presetPostUri,

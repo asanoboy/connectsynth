@@ -57,7 +57,7 @@ def sdk_preset_delete_handler(request, code, plugin):
 
 
 @reject_invalid_code
-def sdk_preset_list(request, code, plugin):
+def sdk_preset_list_handler(request, code, plugin):
     
     if not plugin.is_public and request.user!=plugin.user:
         return get_failure_response()

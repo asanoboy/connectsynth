@@ -34,11 +34,12 @@
 		"application", 
 		{
 			"name": "{{ plugin.name }}",
+			"code": "{{ plugin.code }}",
 			"bootstrapJs": "{% url sdk_plugin_get_api plugin.code, 'main.js' %}",
 			"api": "{% url sdk_plugin_get_api plugin.code, '' %}",
 			"extendapi": "{% url sdk_extend_instrument plugin.code %}",
 			"infoapi": "{% url sdk_plugin_filelist_api plugin.code %}",
-			"presetlistapi": "{% url sdk_preset_list code %}"
+			"presetlistapi": "{% url sdk_preset_list plugin.code %}"
 			
 		});
 </script>

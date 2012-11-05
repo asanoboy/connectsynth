@@ -59,7 +59,8 @@ synthjs.application.PublicOscillator.prototype.onExtendOscillator = function(){
 }
 
 synthjs.application.PublicOscillator.prototype.postExtendOscillator = function(){
-	new synthjs.utility.AjaxDeferred(this._extendUri.toString(), {
+	//new synthjs.utility.AjaxDeferred(this._extendUri.toString(), {
+	new synthjs.utility.AjaxDeferred(this.getApi().copyPlugin().toString(), {
 		responseType: goog.net.XhrIo.ResponseType.TEXT,
 		success: function(r){
 			var rt = r.getResponseJson();
@@ -125,7 +126,8 @@ synthjs.application.PublicOscillator.prototype.onDirectoryNodeSelect = function(
  * @override 
  */
 synthjs.application.PublicOscillator.prototype.createOscillatorInternal = function(){
-	return new synthjs.application.module.Oscillator(new goog.Uri(this._bootstrapJs), false);
+	//return new synthjs.application.module.Oscillator(new goog.Uri(this._bootstrapJs), false);
+	return new synthjs.application.module.Oscillator(this.getApi(), false);
 }
 
 

@@ -41,7 +41,8 @@ synthjs.application.SDKOscillatorBase = function(id, params){
 	ajaxLoader.setVisible(true);
 	
 	var self = this;
-	new synthjs.utility.AjaxDeferred(this._infoapiUri.toString(), {
+	//new synthjs.utility.AjaxDeferred(this._infoapiUri.toString(), {
+	new synthjs.utility.AjaxDeferred(this.getApi().getFileList().toString(), {
 		success: function(e){
 			var rt = e.getResponseJson(); // TODO: not json format
 
@@ -132,7 +133,8 @@ synthjs.application.SDKOscillatorBase.prototype._attachEvents = function(){
 synthjs.application.SDKOscillatorBase.prototype.addFileDeferred = function(path){
 	var resType = synthjs.net.XhrIo.guessFileType(path);
 	
-	return new synthjs.utility.AjaxDeferred(this._apiUri.toString()+path, {
+	//return new synthjs.utility.AjaxDeferred(this._apiUri.toString()+path, {
+	return new synthjs.utility.AjaxDeferred(this.getApi().getFile(path).toString(), {
 		responseType: resType,
 		success: function(e){
 			var rt = e.getResponseText();
