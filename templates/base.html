@@ -15,7 +15,7 @@
 		</div>
 		<div id="menu">
 		{% if is_logged_in  %}
-			<span><img widht="32px" height="32px" src='{{ profile_image_url }}'>@{{ screen_name }}</span>			
+			<span>@{{ screen_name }}</span>			
 			<a class="logoutButton" href="{% url autho_logout %}">Logout</a>
 			
 		{% else %}

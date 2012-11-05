@@ -91,10 +91,22 @@ synthjs.application.SDKOscillator.prototype._showPublishPrompt = function(){
 			method: 'post',
 			responseType: goog.net.XhrIo.ResponseType.TEXT,
 			success: function(r){
-				
 				var rt = r.getResponseJson();
 				if( rt['status']=='ok' && rt['next'] ){
-					document.location = rt['next'];
+					var dialog = new goog.ui.Dialog(null, false);
+					dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK);
+					self.getHandler()
+						.listen(
+							dialog,
+							goog.ui.Dialog.EventType.SELECT,
+							function(){
+								document.location = rt['next'];
+							}
+						)
+					dialog.setTitle("Success");
+					dialog.setContent("Move the instrument public page.");
+					dialog.setVisible(true);
+					
 				}
 				else{
 					alert("Error Occurred!");

@@ -12,10 +12,10 @@ synthjs.application.api.Plugin = function(pluginCode){
 };
 
 synthjs.application.api.Plugin.prototype.copyPlugin = function(){
-	return this._baseUri.resolve(new goog.Uri("workspace/extend_instrument/"+this._pluginCode+"/"+path));
+	return this._baseUri.resolve(new goog.Uri("workspace/extend_instrument/"+this._pluginCode+"/"));
 }
 synthjs.application.api.Plugin.prototype.publishPlugin = function(){
-	return this._baseUri.resolve(new goog.Uri("workspace/publish/"+this._pluginCode+"/"+path));
+	return this._baseUri.resolve(new goog.Uri("workspace/publish/"+this._pluginCode+"/"));
 }
 
 

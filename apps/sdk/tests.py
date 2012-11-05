@@ -296,7 +296,8 @@ class SDKTest(TestCase):
         self.assertEqual(get_rs.status_code, 200)
         rs = simplejson.loads(get_rs.content)
         self.assertEqual(len(rs), 0)
-        
+    
+
         
     def test_simple(self):
         

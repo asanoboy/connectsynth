@@ -35,13 +35,17 @@ synthjs.ui.PluginControlPanelContainer.prototype.decorateInternal = function(ele
 		position: 'absolute',
 		top: '70px',
 	});	 
+	dom.appendChild( this._presetSelector, dom.createDom("span", "", "preset: "));
 	
 	if( this._isEditable ){
 		this._controlWrapper = dom.createDom("div");
-		this._addButton = dom.createDom("a", '' , "add");
-		this._deleteButton = dom.createDom("a", '', "delete");
-		dom.appendChild(this._controlWrapper, this._addButton);
-		dom.appendChild(this._controlWrapper, this._deleteButton);
+		this._addButton = dom.createDom("a", 'add-btn' , "add");
+		this._deleteButton = dom.createDom("a", 'delete-btn', "delete");
+		
+		//dom.appendChild(this._controlWrapper, this._addButton);
+		//dom.appendChild(this._controlWrapper, this._deleteButton);
+		dom.appendChild(this._presetSelector, this._addButton);
+		dom.appendChild(this._presetSelector, this._deleteButton);
 		dom.appendChild(this._header, this._controlWrapper);
 		goog.style.setStyle(this._controlWrapper, {
 			

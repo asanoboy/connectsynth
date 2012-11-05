@@ -34,7 +34,8 @@ goog.require("synthjs.audiocore.DynamicGenerator");
  * @param {boolean=} opt_isEditable
  */
 synthjs.application.module.Oscillator = function(api, opt_isEditable){
-	this._isEditable = goog.isNull(opt_isEditable) ? false : goog.isNull(opt_isEditable) ;
+	this._isEditable = goog.isNull(opt_isEditable) ? false : !!opt_isEditable ;
+	console.log(this._isEditable);
 	
 	if( this._isEditable ){
 		//if( !opt_presetApis.post || !opt_presetApis.del || !opt_presetApis.list ){

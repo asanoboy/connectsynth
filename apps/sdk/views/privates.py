@@ -91,6 +91,12 @@ def sdk_extend_instrument_handler(request, code, plugin):
         file.is_enabled = False
         file.save()
     
+    # clear old presets.
+    presets_query = Preset.objects.filter(plugin=dest_plugin).all()
+    for each in presets_query:
+        each.is_enabled = False
+        each.save()
+    
     return HttpResponse(simplejson.dumps({"status":"ok", "next":reverse("sdk_instrument_workspace")}))
     
 
@@ -114,147 +120,9 @@ def sdk_publish_api_handler(request, code, plugin):
         plugin.description = form.cleaned_data['description']
         plugin.save()
         return HttpResponse(simplejson.dumps({"status": "ok",
-                                              "next": reverse("sdk_instrument_player", args=[plugin.code]) 
+                                              "next": reverse("sdk_instrument_player", args=[plugin.code]),
                                               }))
         return get_success_response()
     
     return get_failure_response()
 
-"""
-requset.method = "POST" or "DELETE"
-"""
-"""@csrf_exempt
-@login_required
-@reject_invalid_code
-def sdk_restful_api_handler(request, code, plugin):
-    
-    if not is_writable(request.user, plugin):
-        print "is not writable"
-        return get_failure_response()
-
-    if request.method == "POST" :
-        form = FilesForm(request.POST, request.FILES)
-        
-        if( len(request.FILES) == 0 ):
-            print "files are empty"
-            return get_failure_response()
-        
-        updated_flags = { file.path: False for file in File.objects.filter(plugin=plugin).all()}
-        
-        for name, file in request.FILES.items():
-            
-            file_model, created = File.objects.get_or_create(plugin=plugin, 
-                                                       path=name, 
-                                                       defaults={"plugin": plugin,
-                                                                "path": name,
-                                                                "content": file})
-            if not created:
-                file_model.content.save(name, file)
-            file_model.is_enabled = True
-            file_model.save()
-
-            if updated_flags.has_key(name):
-                updated_flags[name] = True
-        
-        for path in [ path for path, updated in updated_flags.items() if not updated ]:
-            file = File.objects.get(plugin=plugin, path=path)
-            file.is_enabled = False
-            file.save()
-            
-        
-        return get_success_response()
-    
-    elif( request.method=='DELETE' ):
-        
-        File.objects.filter(plugin=plugin).delete()
-        return get_success_response()
-        
-        
-    else:
-        return get_failure_response()
-
-
-@login_required
-@reject_invalid_code
-def sdk_private_filelist_api_handler(request, code, plugin):
-    if plugin.is_public or request.user!=plugin.user:
-        return get_failure_response()
-    
-    paths = [ file.path for file in File.objects.filter(plugin=plugin, is_enabled=True).all() ]
-    return HttpResponse(simplejson.dumps(paths))    
-
-
-@login_required
-@reject_invalid_code
-def sdk_private_get_api_handler(request, code, path, plugin):
-    if plugin.is_public or request.user!=plugin.user:
-        return get_failure_response()
-    
-    try:
-        file = File.objects.get(plugin=plugin, path__exact=path, is_enabled=True)
-    except ObjectDoesNotExist:
-        return get_failure_response()
-        
-    return HttpResponse(file.content.read(), content_type=mimetypes.guess_type(path))
-"""
-
-"""
-Preset restful api
-"""
-"""
-@csrf_exempt
-@login_required
-@reject_invalid_code
-def sdk_preset_post_api_handler(request, code, plugin):
-    if plugin.is_public or request.user!=plugin.user:
-        return get_failure_response()
-    
-    if request.method == "POST" :
-        form = PresetForm(request.POST)
-        if form.is_valid():
-            preset_code = get_unique_preset_code()
-            preset = Preset.objects.create(user=request.user,
-                                  plugin=plugin,
-                                  code=preset_code,
-                                  name=form.cleaned_data['name'],
-                                  value=form.cleaned_data['value'],
-                                  is_enabled=True)
-            #preset.save()
-            return HttpResponse( simplejson.dumps({"status":"ok", "code":preset_code}) )
-        
-    return get_failure_response()
-
-@csrf_exempt
-@login_required
-@reject_invalid_code
-def sdk_preset_delete_api_handler(request, code, plugin):
-    if plugin.is_public or request.user!=plugin.user:
-        return get_failure_response()
-    
-    
-    if request.method == "POST" :
-        preset_code = request.POST.get("preset_code", False)
-        try :
-            preset = Preset.objects.get(user=request.user,
-                               plugin=plugin,
-                               code=preset_code,
-                               is_enabled=True)
-            preset.is_enabled=False
-            preset.save()
-            
-            return get_success_response()
-        except ObjectDoesNotExist:
-            return get_failure_response()
-        
-    return get_failure_response()
-
-
-@login_required
-@reject_invalid_code
-def sdk_private_presetlist_handler(request, code, plugin):
-    if plugin.is_public or request.user!=plugin.user:
-        return get_failure_response()
-    
-    preset_infos = [ {'name': preset.name, 'code': preset.code, 'value': preset.value} for preset in Preset.objects.filter(plugin=plugin, is_enabled=True).all() ]
-    return HttpResponse(simplejson.dumps(preset_infos))    
-"""
