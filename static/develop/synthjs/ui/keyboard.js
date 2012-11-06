@@ -24,7 +24,7 @@ synthjs.ui.Keyboard = function(lowestNote, highestNote, opt_renderer, opt_domHel
 	this._isMouseActive = false;
 	this._singingNoteString = null;
 	
-	this._renderer = opt_renderer ? opt_renderer : synthjs.ui.VerticalKeybordRenderer.getInstance();
+	this._renderer = opt_renderer ? opt_renderer : synthjs.ui.VerticalKeyboardRenderer.getInstance();
 	this._eventHandler = new goog.events.EventHandler();
 	goog.base(this, opt_domHelper);
 }

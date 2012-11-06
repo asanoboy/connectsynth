@@ -24,16 +24,16 @@ synthjs.ui.VerticalKeyboardRenderer.prototype.decorate = function(element,
 		$ = goog.bind(domHelper.createDom, domHelper),
 		addClass = goog.dom.classes.add,
 		addStyle = goog.style.setStyle,
-		$whiteKeybord = $("div"), 
-		$blackKeybord = $("div"),
+		$whiteKeyboard = $("div"), 
+		$blackKeyboard = $("div"),
 		currentNote = highestNote,
 		totalWhiteWidth = borderWidth,
 		whiteWidth, $key;
 	
-	addClass($wrapper, 'keybord-wrapper');
+	addClass($wrapper, 'keyboard-wrapper');
 	addStyle($wrapper, 'position', 'relative');
-	addClass($whiteKeybord, 'white-keybord');
-	addClass($blackKeybord, 'black-keybord');
+	addClass($whiteKeyboard, 'white-keyboard');
+	addClass($blackKeyboard, 'black-keyboard');
 	
 	while( currentNote.freq >= lowestNote.freq  ){
 		$key = $('div');
@@ -57,7 +57,7 @@ synthjs.ui.VerticalKeyboardRenderer.prototype.decorate = function(element,
 			}
 			
 		    
-			$whiteKeybord.appendChild($key);
+			$whiteKeyboard.appendChild($key);
 			totalWhiteWidth += whiteWidth+borderWidth;
 		}
 		else {
@@ -66,14 +66,14 @@ synthjs.ui.VerticalKeyboardRenderer.prototype.decorate = function(element,
 				position:'absolute', 
 				top: totalWhiteWidth-0.5*eachWidth-borderWidth+'px'
 			});
-			$blackKeybord.appendChild($key);
+			$blackKeyboard.appendChild($key);
 		}
 		
         if( currentNote.freq === highestNote.freq ){
         	addClass($key, "top");
         }
 		
-		addClass($key, "keybord-key");
+		addClass($key, "keyboard-key");
 		if( currentNote.freq === highestNote.freq ){
             addClass($key, "first-key");
         }
@@ -81,7 +81,7 @@ synthjs.ui.VerticalKeyboardRenderer.prototype.decorate = function(element,
 		currentNote = currentNote.getNext(false);
 	}
 	
-	$wrapper.appendChild($whiteKeybord);
-	$wrapper.appendChild($blackKeybord);
+	$wrapper.appendChild($whiteKeyboard);
+	$wrapper.appendChild($blackKeyboard);
 		
 }

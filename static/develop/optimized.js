@@ -2690,11 +2690,11 @@ function kf() {
 A(kf);
 kf.prototype.t = function(a, b, c, d) {
   var g = C(d.d, d), f = g("div"), j = g("div"), m = c, n = 1, p, o;
-  S(a, "keybord-wrapper");
+  S(a, "keyboard-wrapper");
   pe(a, "position", "relative");
-  S(f, "white-keybord");
-  for(S(j, "black-keybord");m.ja >= b.ja;) {
-    o = g("div"), d.ei(o, {"data-note":m.getString()}), m.Fh ? (m.ja == c.ja && -1 !== "cdfga".indexOf(m.Q, 0) ? (p = 9, S(o, "edge_short")) : m.ja == b.ja && -1 !== "degab".indexOf(m.Q, 0) ? (p = 9, S(o, "edge_short")) : -1 !== "dga".indexOf(m.Q, 0) ? (p = 19, S(o, "long")) : (p = 14, S(o, "short")), f.appendChild(o), n += p + 1) : (pe(o, {position:"absolute", top:n - 5 - 1 + "px"}), j.appendChild(o)), m.ja === c.ja && S(o, "top"), S(o, "keybord-key"), m.ja === c.ja && S(o, "first-key"), o = p = 
+  S(f, "white-keyboard");
+  for(S(j, "black-keyboard");m.ja >= b.ja;) {
+    o = g("div"), d.ei(o, {"data-note":m.getString()}), m.Fh ? (m.ja == c.ja && -1 !== "cdfga".indexOf(m.Q, 0) ? (p = 9, S(o, "edge_short")) : m.ja == b.ja && -1 !== "degab".indexOf(m.Q, 0) ? (p = 9, S(o, "edge_short")) : -1 !== "dga".indexOf(m.Q, 0) ? (p = 19, S(o, "long")) : (p = 14, S(o, "short")), f.appendChild(o), n += p + 1) : (pe(o, {position:"absolute", top:n - 5 - 1 + "px"}), j.appendChild(o)), m.ja === c.ja && S(o, "top"), S(o, "keyboard-key"), m.ja === c.ja && S(o, "first-key"), o = p = 
     h, "c" === m.Q ? (p = m.ve - 1, o = "b") : (p = m.ve, o = Hd[zb(Hd, m.Q) - 1]), m = new Fd(o, p, m.ff)
   }
   a.appendChild(f);

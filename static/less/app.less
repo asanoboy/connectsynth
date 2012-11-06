@@ -158,16 +158,16 @@ body {
 @verticalkeyboard-borderbox-width: 100px;
 @verticalkeyboard-borderwidth: 1px; 
 
-#application .white-keybord > div.top, #application .black-keybord > div.top {
+#application .white-keyboard > div.top, #application .black-keyboard > div.top {
     border-top-width: @verticalkeyboard-borderwidth;
 }
 
 
-#application .white-keybord > div.mouseover, #application .black-keybord > div.mouseover {
+#application .white-keyboard > div.mouseover, #application .black-keyboard > div.mouseover {
     background-color: #999;
 }
 
-#application .white-keybord > div {
+#application .white-keyboard > div {
     width: @verticalkeyboard-borderbox-width - @verticalkeyboard-borderwidth * 2;
     cursor: pointer;
     border-style: solid;
@@ -179,19 +179,19 @@ body {
     background-color: #FFF;
 }
 
-#application .white-keybord > div.edge_short {
+#application .white-keyboard > div.edge_short {
     height: 9px;
 }
 
-#application .white-keybord > div.short {
+#application .white-keyboard > div.short {
     height: 14px;
 }
 
-#application .white-keybord > div.long {
+#application .white-keyboard > div.long {
     height: 19px;
 }
 
-#application .black-keybord > div {
+#application .black-keyboard > div {
     width: @verticalkeyboard-borderbox-width / 2 - @verticalkeyboard-borderwidth * 2;
     height: 10px;
     cursor: pointer;
@@ -207,6 +207,7 @@ body {
     overflow-y: scroll;
     width: @verticalkeyboard-borderbox-width + 17px;
     height: 100%;
+    z-index: 10;
     float: left;
 }
 

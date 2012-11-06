@@ -2601,11 +2601,11 @@ function of() {
 ga(of);
 of.prototype.t = function(a, b, c, d) {
   var g = C(d.d, d), f = g("div"), k = g("div"), m = c, n = 1, p, q;
-  P(a, "keybord-wrapper");
+  P(a, "keyboard-wrapper");
   Bd(a, "position", "relative");
-  P(f, "white-keybord");
-  for(P(k, "black-keybord");m.ea >= b.ea;) {
-    q = g("div"), d.Ni(q, {"data-note":m.getString()}), m.ki ? (m.ea == c.ea && -1 !== "cdfga".indexOf(m.Z, 0) ? (p = 9, P(q, "edge_short")) : m.ea == b.ea && -1 !== "degab".indexOf(m.Z, 0) ? (p = 9, P(q, "edge_short")) : -1 !== "dga".indexOf(m.Z, 0) ? (p = 19, P(q, "long")) : (p = 14, P(q, "short")), f.appendChild(q), n += p + 1) : (Bd(q, {position:"absolute", top:n - 5 - 1 + "px"}), k.appendChild(q)), m.ea === c.ea && P(q, "top"), P(q, "keybord-key"), m.ea === c.ea && P(q, "first-key"), q = p = 
+  P(f, "white-keyboard");
+  for(P(k, "black-keyboard");m.ea >= b.ea;) {
+    q = g("div"), d.Ni(q, {"data-note":m.getString()}), m.ki ? (m.ea == c.ea && -1 !== "cdfga".indexOf(m.Z, 0) ? (p = 9, P(q, "edge_short")) : m.ea == b.ea && -1 !== "degab".indexOf(m.Z, 0) ? (p = 9, P(q, "edge_short")) : -1 !== "dga".indexOf(m.Z, 0) ? (p = 19, P(q, "long")) : (p = 14, P(q, "short")), f.appendChild(q), n += p + 1) : (Bd(q, {position:"absolute", top:n - 5 - 1 + "px"}), k.appendChild(q)), m.ea === c.ea && P(q, "top"), P(q, "keyboard-key"), m.ea === c.ea && P(q, "first-key"), q = p = 
     h, "c" === m.Z ? (p = m.jf - 1, q = "b") : (p = m.jf, q = pf[vb(pf, m.Z) - 1]), m = new qf(q, p, m.bg)
   }
   a.appendChild(f);

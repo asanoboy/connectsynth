@@ -143,7 +143,7 @@ synthjs.ui.PluginControlPanelContainer.prototype.updatePresets = function(preset
 	
 	this._presetComboBox = dom.createDom("select");
 	dom.appendChild(this._presetComboBox, dom.createDom("option", {value: ""}, "select preset.."))
-	var exist = false;
+	var exist = true;//false;
 	goog.array.forEach(presetCollection.getAll(), function(preset){
 		exist = true;
 		var attr = {'value': preset.get('code')};
