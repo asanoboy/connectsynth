@@ -7,7 +7,7 @@ goog.require("synthjs.model.FileBase");
 /**
  * @constructor
  * @extends{synthjs.model.FileBase}
- * @params {Blob} file
+ * @param {Blob} file
  */
 synthjs.model.ImageFile = function(filename, file){
 	goog.base(this, 

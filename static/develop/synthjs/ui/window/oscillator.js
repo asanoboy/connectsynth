@@ -17,10 +17,17 @@ goog.require("synthjs.ui.VerticalKeyboardRenderer");
 synthjs.ui.window.Oscillator = function(keyboard, opt_controlPanel, opt_settings, opt_domHelper){
 	this._keyboard = keyboard;
 	this._controlPanel = opt_controlPanel;
-	goog.base(this, 'debug', opt_settings, opt_domHelper);
+	goog.base(this, 'instrument', opt_settings, opt_domHelper);
 }
 
 goog.inherits(synthjs.ui.window.Oscillator, synthjs.ui.window.Base);
+
+/**
+ * @override
+ */
+synthjs.ui.window.Oscillator.prototype.equals = function(window){
+	return goog.base(this, 'equals', window) && window==this;
+}
 
 synthjs.ui.window.Oscillator.prototype.disposeInternal = function(){
 	this._keyboard.dispose();

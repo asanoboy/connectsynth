@@ -85,7 +85,7 @@ synthjs.ui.DirectoryNode.prototype._attachFileEvent = function(){
 	
 	var data = [
 		['rename', 'Rename'],
-		['delete', 'Delete'],
+		['delete', 'Delete']
 	];
 	var dom = this._contextMenu.getDomHelper();
 	goog.array.forEach(data, function(entry) {
@@ -120,7 +120,7 @@ synthjs.ui.DirectoryNode.prototype._attachDirectoryEvent = function(){
 		['new-file', 'New File'],
 		['new-directory', 'New Directory'],
 		['rename', 'Rename'],
-		['delete', 'Delete'],
+		['delete', 'Delete']
 	];
 	var dom = this._contextMenu.getDomHelper();
 	goog.array.forEach(data, function(entry) {

@@ -35,7 +35,6 @@ goog.require("synthjs.audiocore.DynamicGenerator");
  */
 synthjs.application.module.Oscillator = function(api, opt_isEditable){
 	this._isEditable = goog.isNull(opt_isEditable) ? false : !!opt_isEditable ;
-	console.log(this._isEditable);
 	
 	if( this._isEditable ){
 		//if( !opt_presetApis.post || !opt_presetApis.del || !opt_presetApis.list ){
@@ -233,7 +232,12 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 	}
 
 	if( this._controlPanelContainer ){
-		this._oscillatorWindow = new synthjs.ui.window.Oscillator( this._keyboard, this._controlPanelContainer );
+		this._oscillatorWindow = new synthjs.ui.window.Oscillator( 
+			this._keyboard, 
+			this._controlPanelContainer, {
+				isDeletable: this._isEditable
+			}
+		);
 	}
 	else {
 		this._oscillatorWindow = new synthjs.ui.window.Oscillator( this._keyboard );

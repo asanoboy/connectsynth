@@ -33,7 +33,7 @@ synthjs.ui.PluginControlPanelContainer.prototype.decorateInternal = function(ele
 	goog.style.setStyle(this._header, {
 		width: this._controlPanel.getBackgroundWidth() + "px",
 		position: 'absolute',
-		top: '70px',
+		top: '70px'
 	});	 
 	dom.appendChild( this._presetSelector, dom.createDom("span", "", "preset: "));
 	
@@ -60,7 +60,7 @@ synthjs.ui.PluginControlPanelContainer.prototype.decorateInternal = function(ele
 	dom.appendChild(element, this._wrapper);
 
 	goog.style.setStyle(element, {
-		position: 'relative',
+		position: 'relative'
 	});
 	goog.style.setStyle(this._panel, {
 		position: 'absolute',
@@ -92,11 +92,11 @@ synthjs.ui.PluginControlPanelContainer.prototype.resize = function(){
 	var dom = this.getDomHelper();
 	
 	goog.style.setStyle(this._panel, {
-		left: (size.width - this._controlPanel.getBackgroundWidth())/2+"px",
+		left: (size.width - this._controlPanel.getBackgroundWidth())/2+"px"
 	});
 	
 	goog.style.setStyle(this._header, {
-		left: (size.width - this._controlPanel.getBackgroundWidth())/2+"px",
+		left: (size.width - this._controlPanel.getBackgroundWidth())/2+"px"
 	});
 }
 
@@ -170,5 +170,5 @@ synthjs.ui.PluginControlPanelContainer.prototype.updatePresets = function(preset
 synthjs.ui.PluginControlPanelContainer.EventType = {
 	PRESET_CHANGE: 'preset_change',
 	PRESET_ADD: 'preset_add',
-	PRESET_DELETE: 'preset_delete',
+	PRESET_DELETE: 'preset_delete'
 };

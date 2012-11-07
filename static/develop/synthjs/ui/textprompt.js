@@ -3,7 +3,7 @@ goog.provide("synthjs.ui.TextPrompt");
 goog.require("goog.ui.Prompt");
 
 /**
- * @contructor
+ * @constructor
  * @extends {goog.ui.Prompt}
  */
 synthjs.ui.TextPrompt = function(promptTitle, promptText, callback, opt_defaultValue,

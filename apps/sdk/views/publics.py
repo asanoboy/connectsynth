@@ -11,16 +11,16 @@ from forms import FilesForm, PluginForm
 
 
 """
-Show only existing plugin.
-Don't show another user's private plugin. 
-Only user's self private plugin is editable. 
+Show only public plugin. 
 """
 @reject_invalid_code
 def sdk_instrument_player_handler(request, code, plugin):
-
+    
+    
     return render_to_response('oscillatorplayer.html', {
         "plugin": plugin,
-        "writable": False
+        "writable": False,
+        "is_owner": request.user==plugin.user 
     }, context_instance=RequestContext(request))
 
     

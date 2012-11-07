@@ -95,15 +95,22 @@ synthjs.ui.window.WindowHolder.prototype.activateWindow = function(window){
 synthjs.ui.window.WindowHolder.prototype.removeWindow = function(window){
 	
 	var removed = 0;
+	var removedSectionList = [];
 	goog.array.forEach(this._windowSectionList, function(section){
 		if( section.hasWindow(window) ){
 			section.removeWindow(window);
 			removed++;
+			if( !goog.array.contains(removedSectionList, section) ){
+				removedSectionList.push(section);
+			}
 		}
 	}, this);
 	
 	if( removed ){
 		window.dispose();
+		goog.array.forEach(removedSectionList, function(section){
+			section.activate();
+		});
 	}
 	return removed;
 }

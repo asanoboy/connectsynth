@@ -22,12 +22,18 @@ goog.inherits(synthjs.ui.window.Base, goog.ui.Component);
  * @param {synthjs.ui.window.Base} window
  */
 synthjs.ui.window.Base.prototype.equals = function(window){
-	return this.constructor == window.constructor; 
+	var rt = this.constructor == window.constructor;
+	return rt; 
 }
 
 synthjs.ui.window.Base.prototype.getLabel = function(){
 	return this._label;
 }
+
+synthjs.ui.window.Base.prototype.isDeletable = function(){
+	return this._isDeletable;
+}
+
 
 synthjs.ui.window.EventType = {
 	CHANGE_LABEL: 'change_label'

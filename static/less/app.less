@@ -58,7 +58,7 @@ body {
 @windowsection-outer-border-width: 1px;
 @windowsection-border-width: 2px;
 @windowsection-normal-color: #EEEEEE;
-@windowsection-active-color: #DDDDEE;
+@windowsection-active-color: #E1EBF5;//#DDDDEE;
 @windowsection-header-width: 24px;
 
 .windowsection-label-common() {
@@ -88,6 +88,7 @@ body {
     position: relative;
     z-index: 10;
     _margin-top: 0px;
+    margin-right: 2px;
     height: @windowsection-header-width;
 }
 
@@ -97,7 +98,7 @@ body {
 
 .windowsection-header-label.left {
     .windowsection-label-common();
-    width: 5px;
+    width: 8px;
     border-width: @windowsection-outer-border-width 0 0 @windowsection-outer-border-width;
 }
 .windowsection-header-label.left.active {
@@ -120,11 +121,23 @@ body {
 
 .windowsection-header-label.right {
     .windowsection-label-common();
-    width: 5px;
+    width: 8px;
     border-width: @windowsection-outer-border-width @windowsection-outer-border-width 0 0;
 }
 .windowsection-header-label.right.active {
     .windowsection-label-common-active()
+}
+.windowsection-header-label-closebutton {
+    display: inline-block;
+    overflow: hidden;
+    text-indent: -20px;
+    margin-left: 2px;
+    width: 20px;
+    height: 20px;
+    background: url('../img/closebutton.png') no-repeat 0px 0px;
+}
+.windowsection-header-label-closebutton:hover {
+    background: url('../img/closebutton.png') no-repeat 0px -20px;
 }
 
 .windowsection-body {
@@ -251,6 +264,10 @@ body {
 }
 .ajaxloader-bg {
     opacity: 0.5;
+    z-index: 100;
+}
+.modal-dialog-bg {
+    z-index: 100;
 }
 .modal-dialog {
     position: absolute;
@@ -259,6 +276,7 @@ body {
     min-width: 300px;
     background-color: #AAF;
     border: 2px solid #99c0ff;
+    z-index: 120;
 }
 .modal-dialog-title {
     position: relative;

@@ -27,6 +27,7 @@ synthjs.ui.MenuBar = function(menuList, opt_domHelper){
 goog.inherits(synthjs.ui.MenuBar, goog.ui.Component);
 
 synthjs.ui.MenuBar.createFromSetting = function(settings){
+	
 	var menubar = goog.ui.menuBar.create();
 	//var eventHandler = new goog.events.EventHandler();
 	var EVENTS = goog.object.getValues(goog.ui.Component.EventType);
@@ -43,7 +44,8 @@ synthjs.ui.MenuBar.createFromSetting = function(settings){
 	return menubar;
 }
 
-synthjs.ui.MenuBar.prototype.decorateInternal = function(el){
+/*
+synthjs.ui.MenuBar.prototype.decorateInternal = function(el){alert("ok");
 	this._menubar = goog.ui.menuBar.create();
 	var EVENTS = goog.object.getValues(goog.ui.Component.EventType);
 	goog.array.forEach(this._menuList, function(info){
@@ -51,8 +53,8 @@ synthjs.ui.MenuBar.prototype.decorateInternal = function(el){
 		if( !info.label ) throw new Exeption("menu info does not have label");
 		if( !info.sublist ) throw new Exeption("menu info does not have submenu");
 		goog.array.forEach( info.sublist, function(subinfo){
-			if( !subinfo.callback ) throw new Exeption("submenu info does not have callback");
 			var item;
+			
 			if( subinfo.label ){
 				item = new goog.ui.MenuItem(subinfo.label);
 				item.setId(subinfo.label);
@@ -61,12 +63,19 @@ synthjs.ui.MenuBar.prototype.decorateInternal = function(el){
 				item = new goog.ui.MenuSeparator();
 			}
 			item.setDispatchTransitionEvents(goog.ui.Component.State.ALL, true);
-
-			this._eventHandler.listen(item, EVENTS, function(e){
-				if( e.type=='action' ){
-					subinfo.callback();
-				}
-			});
+			
+			if( goog.isFunction(subinfo.callback) ) {
+				this._eventHandler.listen(item, EVENTS, function(e){
+					if( e.type=='action' ){
+						subinfo.callback();
+					}
+				});
+			}
+			else {
+				item.setSelectable(false);
+			}
+				
+			
 			menu.addItem(item);
 		}, this);
 		var btn = new goog.ui.MenuButton(info.label, menu);
@@ -76,3 +85,4 @@ synthjs.ui.MenuBar.prototype.decorateInternal = function(el){
 	}, this);
 	this._menubar.render(el);
 };
+*/

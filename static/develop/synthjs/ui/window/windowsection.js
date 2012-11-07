@@ -38,6 +38,12 @@ synthjs.ui.window.WindowSection = function(htmlString, settings, opt_domHelper){
 	this._htmlString = htmlString;
 	this._eventHandler = new goog.events.EventHandler();
 	
+	/**
+	 * @type {Array}
+	 * Keep windowIndex ordered by activation
+	 */
+	this._windowIndexOrder = [];
+	
 	this._windowEventHandlers = [];
 	this._windowEventHandlersIndexToWindow = {};
 	
@@ -128,12 +134,18 @@ synthjs.ui.window.WindowSection.prototype.addWindow = function(window, settings)
 		"<div class='windowIndex"+this._currentIndex+" windowsection-body-inner-wrapper'></div>"
 	);
 	
-	var header = dom.htmlToDocumentFragment(
-		"<div class='windowsection-header-label-inner-wrapper windowHeaderIndex"+this._currentIndex+"'>" + 
+	var headerHtml = "<div class='windowsection-header-label-inner-wrapper windowHeaderIndex"+this._currentIndex+"'>" + 
 			"<div class='windowsection-header-label left'></div>" + 
-			"<div class='windowsection-header-label center'><span class='windowsection-header-label-text'>"+window.getLabel()+"</span><a class='windowsection-header-label-closebutton' href='#'>x</a></div>" + 
+			"<div class='windowsection-header-label center'><span class='windowsection-header-label-text'>"+window.getLabel()+"</span>";
+	if( window.isDeletable() ){
+		headerHtml += "<a class='windowsection-header-label-closebutton' href='#'>x</a>";
+	}
+	
+	headerHtml += "</div>" + 
 			"<div class='windowsection-header-label right'></div>" +
-		"</div>");
+		"</div>"; 
+	
+	var header = dom.htmlToDocumentFragment(headerHtml);
 	
 	this._attachWindowEventInternal(window, header, body);
 	dom.appendChild(this.getBodyElement(), body);
@@ -181,11 +193,36 @@ synthjs.ui.window.WindowSection.prototype.hasWindow = function(window){
 	return rt.length==0 ? false : true;	
 }
 
-synthjs.ui.window.WindowSection.prototype.activate = function(window){
+/**
+ * @param {synthjs.ui.window.Base=} opt_window If opt_window is false, activate last active window in this._windowInfoList.
+ */
+synthjs.ui.window.WindowSection.prototype.activate = function(opt_window){
+	console.log(this._windowIndexOrder);
+	if( !opt_window ){
+		// TODO: performance tuning: too many loop
+		
+		var lastIndex = goog.array.findRight(this._windowIndexOrder, function(index){
+			return goog.array.find(this._windowInfoList, function(info){
+				return info.index==index;
+			});
+		}, this);
+		
+		
+		if( goog.isNumber(lastIndex) ){
+			var windowInfo = goog.array.find(this._windowInfoList, function(info){
+				return info.index==lastIndex;
+			});
+			
+			this.activate(windowInfo.window);
+		}
+		return;
+	}
+	
+	var window = opt_window;
 	
 	var active = goog.array.find(this._windowInfoList, function(info){
 		//return info.window == window;
-		return window.equals(window); 
+		return info.window.equals(window); 
 	})
 	if( !active ) throw new Error("window section doesn't have the window object to activate.")
 	
@@ -214,7 +251,23 @@ synthjs.ui.window.WindowSection.prototype.activate = function(window){
 	
 	this._currentZIndex++;
 	
+	window.resize();
+	this._pushLastActiveIndex(active.index);
 	this._activeWindowInfo  = active;
+}
+
+/**
+ * Pushes last active index and remove non-exist index.  
+ */
+synthjs.ui.window.WindowSection.prototype._pushLastActiveIndex = function(index){
+	this._windowIndexOrder.push(index);
+	// TODO: removeDuplicates from right.
+	//goog.array.removeDuplicates(this._windowIndexOrder);
+	this._windowIndexOrder = goog.array.filter(this._windowIndexOrder, function(index){
+		return goog.array.find(this._windowInfoList, function(info){
+			return info.index==index;
+		})
+	}, this);
 }
 
 /**
@@ -237,16 +290,26 @@ synthjs.ui.window.WindowSection.prototype._attachWindowEventInternal = function(
 			function(e){
 				this.activate(window);
 			})
-		.listen(button, 
-			goog.events.EventType.CLICK, 
-			function(e){
-				this.removeWindow(window);
-				e.preventDefault();
-				e.stopPropagation(); // Stop activating this window.
-			})
+		// .listen(button, 
+			// goog.events.EventType.CLICK, 
+			// function(e){
+				// this.removeWindow(window);
+				// e.preventDefault();
+				// e.stopPropagation(); // Stop activating this window.
+			// })
 		.listen(window, 
 			synthjs.ui.window.EventType.CHANGE_LABEL, 
 			this.onChangeLabel);
+	if( button ){
+		this.getHandler()
+			.listen(button, 
+				goog.events.EventType.CLICK, 
+				function(e){
+					this.removeWindow(window);
+					e.preventDefault();
+					e.stopPropagation(); // Stop activating this window.
+				});	
+	}
 }
 
 /**
@@ -293,6 +356,7 @@ synthjs.ui.window.WindowSection.prototype.removeWindow = function(window){
 	)
 	
 	window.dispose();
+	this.activate();
 	return;
 }
 

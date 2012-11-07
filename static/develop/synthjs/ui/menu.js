@@ -23,7 +23,7 @@ synthjs.ui.Menu.createFromSetting = function(settinglist){
 	var EVENTS = goog.object.getValues(goog.ui.Component.EventType);
 	
 	goog.array.forEach( settinglist, function(subinfo){
-		if( !subinfo.callback ) throw new Exeption("submenu info does not have callback");
+		//if( !subinfo.callback ) throw new Error("submenu info does not have callback");
 		var item;
 		if( subinfo.label ){
 			item = new goog.ui.MenuItem(subinfo.label);
@@ -33,12 +33,19 @@ synthjs.ui.Menu.createFromSetting = function(settinglist){
 			item = new goog.ui.MenuSeparator();
 		}
 		item.setDispatchTransitionEvents(goog.ui.Component.State.ALL, true);
-
-		menu.getHandler().listen(item, EVENTS, function(e){
-			if( e.type=='action' ){
-				subinfo.callback();
-			}
-		});
+		
+		if( goog.isFunction(subinfo.callback) ){
+			menu.getHandler().listen(item, EVENTS, function(e){
+				if( e.type=='action' ){
+					subinfo.callback();
+				}
+			});
+		}
+		else {
+			item.setSelectable(false);
+			item.setEnabled(false);
+		}
+		
 		menu.addItem(item);
 	});
 	return menu;

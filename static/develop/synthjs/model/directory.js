@@ -29,6 +29,6 @@ synthjs.model.Directory.prototype.set_ = function(attr, value){
 	if( attr=='content' ){
 		throw new Error("Directory has not content");
 	}
-	return goog.base(this, 'set', attr, value);
+	return goog.base(this, 'set_', attr, value);
 }
 

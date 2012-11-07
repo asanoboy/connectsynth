@@ -17,6 +17,12 @@ synthjs.application.api.Plugin.prototype.copyPlugin = function(){
 synthjs.application.api.Plugin.prototype.publishPlugin = function(){
 	return this._baseUri.resolve(new goog.Uri("workspace/publish/"+this._pluginCode+"/"));
 }
+synthjs.application.api.Plugin.prototype.deletePlugin = function(){
+	return this._baseUri.resolve(new goog.Uri("plugin/delete/"+this._pluginCode+"/"));
+}
+synthjs.application.api.Plugin.prototype.updateDescription = function(){
+	return this._baseUri.resolve(new goog.Uri("plugin/update/description/"+this._pluginCode+"/"));
+}
 
 
 /**
