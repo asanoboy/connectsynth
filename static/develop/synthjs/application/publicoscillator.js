@@ -3,6 +3,8 @@ goog.provide("synthjs.application.PublicOscillator");
 goog.require("synthjs.application.SDKOscillatorBase");
 goog.require("synthjs.ui.DirectoryControl");
 goog.require("synthjs.utility.AjaxDeferred");
+goog.require("synthjs.ui.Dialog");
+goog.require("goog.string");
 /**
  * @constructor
  * @extends {synthjs.application.SDKOscillatorBase}
@@ -59,24 +61,59 @@ synthjs.application.PublicOscillator.prototype._getMenuComponent = function(){
  * Assume the caller is the owner of plugin.  
  */
 synthjs.application.PublicOscillator.prototype.onEditDescription = function(){
-	var dialog = new goog.ui.Dialog(null, false);
-	dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
-	dialog.setTitle("Attention");
-	dialog.setContent("Do you delete this plugin?");
-			
-	this.getHandler()
-		.listen(
-			dialog,
-			goog.ui.Dialog.EventType.SELECT,
-			function(e){
-				if( e.key == goog.ui.Dialog.DefaultButtonKeys.OK ){
-					this.deletePlugin();
-				}
-				this.getHandler().unlisten(dialog);
+	
+	
+	new synthjs.utility.AjaxDeferred(this.getApi().getDescription().toString(), {
+		responseType: goog.net.XhrIo.ResponseType.TEXT,
+		success: function(r){
+			var rt = r.getResponseJson();
+			if( rt['status']=='ok' ){
+				rt['description']
+				var dialog = new synthjs.ui.Dialog(null, false);
+				dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
+				dialog.setTitle("Edit Description");
+				
+				var dom = goog.dom;
+				var hoge = dom.createDom("textarea", {"rows":10, "cols":80}, rt['description']);
+				
+				dialog.setContentElement(hoge);
+						
+				this.getHandler()
+					.listen(
+						dialog,
+						goog.ui.Dialog.EventType.SELECT,
+						function(e){
+							if( e.key == goog.ui.Dialog.DefaultButtonKeys.OK ){
+								this.updateDescription(hoge.value);
+							}
+							this.getHandler().unlisten(dialog);
+						}
+					)
+				dialog.setVisible(true);
 			}
-		)
-	dialog.setVisible(true);
+			else {
+				alert("Error occurred");
+			}
+		}
+	}, this).callback();
+	
+	
 }
+
+/**
+ * @param {string} description
+ */
+synthjs.application.PublicOscillator.prototype.updateDescription = function(description){
+	new synthjs.utility.AjaxDeferred(this.getApi().updateDescription().toString(), {
+		data: {'description': description},
+		method: 'post',
+		success: function(e){
+			synthjs.ui.Dialog.alertOK("Success", "Description was updated.");
+		}
+	},this).callback();
+	
+}
+
 
 /**
  * Assume the caller is the owner of plugin.  
@@ -196,7 +233,16 @@ synthjs.application.PublicOscillator.prototype.postExtendOscillator = function()
 }
 
 synthjs.application.PublicOscillator.prototype.onShowInformation = function(){
-	
+	new synthjs.utility.AjaxDeferred(this.getApi().getInformation().toString(), {
+		responseType: goog.net.XhrIo.ResponseType.TEXT,
+		success: function(r){
+			// TODO: Error handling
+			var rt = r.getResponseJson();
+			synthjs.ui.Dialog.alertOK("Information", 
+				"<pre>"+goog.string.htmlEscape(rt['description'])+"</pre><br/><br/>"+
+				"<div><p>created by "+rt['screen_name']+"</p></div>");
+		}
+	}).callback();
 }
 
 /**

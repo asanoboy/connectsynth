@@ -6,23 +6,27 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from helpers import get_failure_response, get_success_response, get_unique_preset_code, is_writable
 from sdk.models import Plugin, File
-from forms import FilesForm
+from forms import FilesForm, PluginDescriptionForm
 from django.core.exceptions import ObjectDoesNotExist
+from common.models import TwitterUser
 
 """
 requset.method = "POST" or "DELETE"
 """
 @csrf_exempt
-@login_required
+#@login_required
 @reject_invalid_or_unowned_code
 def sdk_plugin_api_handler(request, code, plugin):
+    if plugin.is_public or request.user!=plugin.user:
+        return get_failure_response()
+    
     """
     if not is_writable(request.user, plugin):
         return get_failure_response()
     """
     
     if request.method == "POST" :
-        form = FilesForm(request.POST, request.FILES)
+        #form = FilesForm(request.POST, request.FILES)
         
         if( len(request.FILES) == 0 ):
             print 'hoge'
@@ -63,7 +67,6 @@ def sdk_plugin_api_handler(request, code, plugin):
         return get_failure_response()
 
 
-@login_required
 @reject_invalid_code
 def sdk_plugin_filelist_api_handler(request, code, plugin):
     if not plugin.is_public and request.user!=plugin.user:
@@ -73,7 +76,6 @@ def sdk_plugin_filelist_api_handler(request, code, plugin):
     return HttpResponse(simplejson.dumps(paths))    
 
 
-@login_required
 @reject_invalid_code
 def sdk_plugin_get_api_handler(request, code, path, plugin):
     if not plugin.is_public and request.user!=plugin.user:
@@ -86,3 +88,42 @@ def sdk_plugin_get_api_handler(request, code, path, plugin):
         
     return HttpResponse(file.content.read(), content_type=mimetypes.guess_type(path))
 
+
+@csrf_exempt
+@reject_invalid_code
+def sdk_plugin_description_api_handler(request, code, plugin):
+    
+    if request.method == "POST" :
+        if request.user!=plugin.user:
+            return get_failure_response()
+        
+        form = PluginDescriptionForm(request.POST)
+        if not form.is_valid():
+            return get_failure_response()
+        
+        plugin.description = form.cleaned_data['description']
+        plugin.save()
+        return HttpResponse(simplejson.dumps({"status":"ok"}))
+        
+    
+    elif request.method == 'GET' :
+        if not plugin.is_public:
+            return get_failure_response()
+        
+        return HttpResponse(simplejson.dumps({"status":"ok",
+                                              "description": plugin.description}))
+        
+    return get_failure_response()
+
+@reject_invalid_code
+def sdk_plugin_information_api_handler(request, code, plugin):
+    if not plugin.is_public:
+        return get_failure_response()
+    
+    # assume that twitter user exists.
+    twitter_user = TwitterUser.objects.get(user=plugin.user)
+    
+    return HttpResponse(simplejson.dumps({"status":"ok",
+                                          "description": plugin.description,
+                                          "screen_name": twitter_user.screen_name,
+                                          "usertype": 'twitter'}))

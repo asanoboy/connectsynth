@@ -7,6 +7,11 @@ class PluginForm(forms.ModelForm):
         model = Plugin
         fields = ('name', 'description')
 
+class PluginDescriptionForm(forms.ModelForm):
+    class Meta:
+        model = Plugin
+        fields = ('description',)
+
 class PresetForm(forms.ModelForm):
     class Meta:
         model = Preset

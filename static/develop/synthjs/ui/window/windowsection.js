@@ -197,7 +197,6 @@ synthjs.ui.window.WindowSection.prototype.hasWindow = function(window){
  * @param {synthjs.ui.window.Base=} opt_window If opt_window is false, activate last active window in this._windowInfoList.
  */
 synthjs.ui.window.WindowSection.prototype.activate = function(opt_window){
-	console.log(this._windowIndexOrder);
 	if( !opt_window ){
 		// TODO: performance tuning: too many loop
 		

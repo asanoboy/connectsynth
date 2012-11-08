@@ -21,7 +21,7 @@ synthjs.application.api.Plugin.prototype.deletePlugin = function(){
 	return this._baseUri.resolve(new goog.Uri("plugin/delete/"+this._pluginCode+"/"));
 }
 synthjs.application.api.Plugin.prototype.updateDescription = function(){
-	return this._baseUri.resolve(new goog.Uri("plugin/update/description/"+this._pluginCode+"/"));
+	return this._baseUri.resolve(new goog.Uri("plugin/description/"+this._pluginCode+"/"));
 }
 
 
@@ -40,6 +40,12 @@ synthjs.application.api.Plugin.prototype.postFile = function(){
 }
 synthjs.application.api.Plugin.prototype.deleteFile = function(){
 	return this.postFile();
+}
+synthjs.application.api.Plugin.prototype.getDescription = function(){
+	return this.updateDescription();
+}
+synthjs.application.api.Plugin.prototype.getInformation = function(){
+	return this._baseUri.resolve(new goog.Uri("plugin/information/"+this._pluginCode+"/"));
 }
 
 
