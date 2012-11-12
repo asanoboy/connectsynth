@@ -38,6 +38,17 @@ synthjs.ui.Keyboard.prototype.decorateInternal = function(el){
 
 synthjs.ui.Keyboard.prototype.enterDocument = function(){
 	goog.base(this, "enterDocument");
+	var dom = this.getDomHelper();
+	var nodes = dom.findNodes(this.getElement(), function(el){
+		return goog.dom.classes.has(el, "keyboard-key");
+	},this);
+	this._keyHash = {};
+	goog.array.forEach(nodes, function(node){
+		this._keyHash[node['dataset']['note']] = node;
+	}, this);
+	
+	//console.log(this._keyHash);
+	
 	this._eventHandler.listen(this.getElement(), [
 		goog.events.EventType.MOUSEDOWN,
 		goog.events.EventType.MOUSEMOVE
@@ -118,16 +129,34 @@ synthjs.ui.Keyboard.prototype.onActivateKey = function(e){
 	}
 }
 
+/**
+ * @param {number} noteNum c4=60 in midi format
+ */
+synthjs.ui.Keyboard.prototype.markKey = function(noteNum){
+	if( !goog.isNull(this._keyHash[noteNum]) ){
+		goog.dom.classes.add( this._keyHash[noteNum], "mouseover" );
+	}
+}
+
+/**
+ * @param {number} noteNum c4=60 in midi format
+ */
+synthjs.ui.Keyboard.prototype.demarkKey = function(noteNum){
+	if( !goog.isNull(this._keyHash[noteNum]) ){
+		goog.dom.classes.remove( this._keyHash[noteNum], "mouseover" );
+	}	
+}
+
 synthjs.ui.Keyboard.prototype._dispatchNoteEvent = function(noteString, eventType){
 	
 	if( this._singingNoteString && eventType==synthjs.ui.KeyboardEventType.ON ){
 		this._dispatchNoteEvent(this._singingNoteString, synthjs.ui.KeyboardEventType.OFF);
 	}
 	
-	event = new goog.events.Event(eventType);
-	event.note = synthjs.audiocore.Note.createByString(noteString);
+	var event = new goog.events.Event(eventType, {note: synthjs.audiocore.Note.createByMidiFormat(noteString)});
+	//event.note = synthjs.audiocore.Note.createByString(noteString);
+	//event.note = synthjs.audiocore.Note.createByMidiFormat(noteString);
 	this.dispatchEvent(event);
-	
 	if( eventType == synthjs.ui.KeyboardEventType.ON ){
 		this._singingNoteString = noteString;
 	}

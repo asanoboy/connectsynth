@@ -4,10 +4,6 @@
 {{ block.super }}
 {% endblock %}
 
-{% block scriptfile %}
-{{ block.super }}
-{% endblock %}
-
 {% block content %}
 <div class="inner-section inner-header">
 	<div class="about-this-container">
@@ -15,30 +11,32 @@
 		<p class="description">ConnectSynth is experimental plugin hosting system using Web Audio API. You can post a plugin in Javascript and publish.</p>
 	</div>
 	<div class="open-instrument-container">
-		<a class="open-instrument" href="{% url sdk_instrument_workspace %}">Go to workspace</a>	
+		<a class="open-instrument" href="{% url sdk_instrument_workspace %}">Open Workspace</a>	
 	</div>
 </div>
 <div class="inner-section plugin-area">
 	<div class="section-title">
 		<h2>Public Plugins</h2>
 	</div>
+	<div class="plugin-list">
 	{% for plugin in object_list %}
-	<div class="plugin-block">
-	    <div class="plugin-header">
-	    	<div class="plugin-created">
-		    	<p>by <a href='https://twitter.com/{{ plugin.user.twitteruser.screen_name }}/' target="_blank">{{ plugin.user.twitteruser.screen_name }}</a>
-		    		at {{ plugin.createdat|date:"Y/m/d" }}</p>
-	    	</div>
-	    	<div class="plugin-title">
-	    		<h3><a href='{% url sdk_instrument_player plugin.code %}'>{{ plugin.name }}</a></h2>
-	    	</div>
-	    </div>
-		<div class="plugin-info">
-		    
-		    <pre>{{ plugin.description }}</pre>
-	    </div>
-	</div>
+		<div class="plugin-block">
+		    <div class="plugin-header">
+		    	<div class="plugin-created">
+			    	<p>by <a href='https://twitter.com/{{ plugin.user.twitteruser.screen_name }}/' target="_blank">{{ plugin.user.twitteruser.screen_name }}</a>
+			    		at {{ plugin.createdat|date:"Y/m/d" }}</p>
+		    	</div>
+		    	<div class="plugin-title">
+		    		<h3><a href='{% url sdk_instrument_player plugin.code %}'>{{ plugin.name }}</a></h2>
+		    	</div>
+		    </div>
+			<div class="plugin-info">
+			    
+			    <pre>{{ plugin.description }}</pre>
+		    </div>
+		</div>
 	{% endfor %}
+	</div>
 
 </div>
 <div class="inner-section develop-info">
@@ -54,3 +52,50 @@
 		created by asanoboy
 	</p>
 {% endblock %}
+
+
+{% block scriptfile %}
+{{ block.super }}
+<script type="text/javascript">
+(function(){
+	$(function(){
+		
+		{# arrange plugin-block like pinterest style #}
+		if( $("div.plugin-block").length>2 ) {
+			
+			var $firstBlock = $("div.plugin-block:eq(0)"),
+				$secondBlock = $("div.plugin-block:eq(1)");
+				
+			var height = 0, leftBottom = 0, rightBottom = 0, leftX = 0,
+				rightX = $secondBlock.offset().left - $firstBlock.offset().left,
+				margin = parseFloat($firstBlock.css("marginRight")) + 
+					parseFloat($firstBlock.css("borderTopWidth")) +
+					parseFloat($firstBlock.css("borderBottomWidth"));
+			
+			
+			$("div.plugin-block").each(function(i, blockElem){
+				var $block = $(blockElem); 
+				if( leftBottom <= rightBottom ) {
+					$block.css({
+						"position": "absolute",
+						"top": leftBottom,
+						"left": leftX});
+					leftBottom += $block.height()+margin; 
+				}
+				else {
+					$block.css({
+						"position": "absolute",
+						"top": rightBottom,
+						"left": rightX});
+					rightBottom += $block.height()+margin;
+				}
+			});
+			$("div.plugin-list").height(Math.max(leftBottom, rightBottom));
+		}
+		
+		
+	});
+})();
+</script>
+{% endblock %}
+

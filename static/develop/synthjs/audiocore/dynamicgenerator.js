@@ -37,7 +37,12 @@ synthjs.audiocore.DynamicGenerator = function(wave){
 synthjs.audiocore.DynamicGenerator.logger = goog.debug.Logger.getLogger('synthjs.audiocore.DynamicGenerator');
 synthjs.audiocore.DynamicGenerator.logger.setLevel(goog.debug.Logger.Level.ALL);
 
-synthjs.audiocore.DynamicGenerator.prototype.addNoteDeferred = function(note){
+/**
+ * @param {synthjs.audiocore.Note} note
+ * @param {number=} opt_velocity
+ */
+synthjs.audiocore.DynamicGenerator.prototype.addNoteDeferred = function(note, opt_velocity){
+	var velo = goog.isDef(opt_velocity) ? parseFloat(opt_velocity) : 1;
 	var d = this._wave.addEventDeferred(
 		new synthjs.audiocore.WaveEvent(
 			synthjs.audiocore.WaveEventType.NOTEON, 
@@ -50,6 +55,9 @@ synthjs.audiocore.DynamicGenerator.prototype.addNoteDeferred = function(note){
 	return d;
 }
 
+/**
+ * @param {synthjs.audiocore.Note} note
+ */
 synthjs.audiocore.DynamicGenerator.prototype.removeNoteDeferred = function(note){
 	var d = this._wave.addEventDeferred(
 		new synthjs.audiocore.WaveEvent(

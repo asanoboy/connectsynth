@@ -19,7 +19,11 @@ synthjs.utility.AjaxDeferred = function(url, settings, opt_context){
 	settings = settings || {};
 
 	this._eventHandler = new goog.events.EventHandler();
-	this._method = (settings.method && ( settings.method.toLowerCase()=='post' || settings.method.toLowerCase()=='put') ) ? 
+	this._method = (settings.method && ( 
+			settings.method.toLowerCase()=='post' || 
+			settings.method.toLowerCase()=='put' ||
+			settings.method.toLowerCase()=='delete') 
+		) ? 
 		settings.method.toLowerCase() : "get";
 	
 	//console.log(settings.data);
@@ -72,5 +76,27 @@ synthjs.utility.AjaxDeferred = function(url, settings, opt_context){
 };
 
 goog.inherits(synthjs.utility.AjaxDeferred, synthjs.utility.Deferred);
+
+/**
+ * Set presend callback and postsend callback.
+ * @override
+ */
+synthjs.utility.AjaxDeferred.prototype.callback = function(r){
+	synthjs.utility.AjaxDeferred.defaultPresend();
+	this.addCallback(synthjs.utility.AjaxDeferred.defaultPostsend);
+	goog.base(this, 'callback', r);
+}
+
+/**
+ * Called before send ajax request. (ex. show ajax loader.) 
+ * @type {Function}
+ */
+synthjs.utility.AjaxDeferred.defaultPresend = goog.nullFunction;
+
+/**
+ * Called after send ajax request. (ex. hide ajax loader.)
+ * @type {Function}
+ */
+synthjs.utility.AjaxDeferred.defaultPostsend = goog.nullFunction;
 
 });

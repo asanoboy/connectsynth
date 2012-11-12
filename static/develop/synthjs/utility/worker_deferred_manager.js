@@ -13,44 +13,91 @@ synthjs.utility.WorkerDeferredManager = function(worker){
 	
 	this._worker = worker;
 	
-	this.onPostMessage = goog.bind(function(e){
-		if( e['data']['callback'] ){
-			if( this._waitDeferredList[e['data']['callback']] ){
-				this._waitDeferredList[e['data']['callback']].callback(e['data']);
-				delete this._waitDeferredList[e['data']['callback']];
-			}
-			else{
-				throw new Error("invalid callback name");
-			}
-			
-			if( this._errorHandlerList[e['data']['callback']] ){
-				delete this._errorHandlerList[e['data']['callback']];
-			}
-		}
-		else{
-			console.log(e['data']);
-		}
-	}, this);
+	// this.onPostMessage = goog.bind(function(e){
+// 		
+		// if( e['data']['callback'] ){
+			// if( this._waitDeferredList[e['data']['callback']] ){
+				// if( Math.random()<0.01 ){
+					// console.log("start");
+					// goog.object.forEach(this._waitDeferredList, function(val, key){
+						// console.log(key);
+					// });
+					// //console.log(this._waitDeferredList);
+				// }
+// 				
+				// this._waitDeferredList[e['data']['callback']].callback(e['data']);
+				// delete this._waitDeferredList[e['data']['callback']];
+			// }
+			// else{
+				// throw new Error("invalid callback name");
+			// }
+// 			
+			// if( this._errorHandlerList[e['data']['callback']] ){
+				// delete this._errorHandlerList[e['data']['callback']];
+			// }
+		// }
+		// else{
+			// console.log(e['data']);
+		// }
+	// }, this);
 	
-	this.onError = goog.bind(function(e){
-		if( e.data['callback'] ){
-			if( this._waitDeferredList[e['data']['callback']] ){
-				this._waitDeferredList[e['data']['callback']].callback(e['data']);
-				delete this._waitDeferredList[e['data']['callback']];
-			}
-			else{
-				throw new Error("invalid callback name");
-			}
-		}
-	}, this);
-	
+	// this.onError = goog.bind(function(e){
+		// if( e.data['callback'] ){
+			// if( this._waitDeferredList[e['data']['callback']] ){
+				// this._waitDeferredList[e['data']['callback']].callback(e['data']);
+				// delete this._waitDeferredList[e['data']['callback']];
+			// }
+			// else{
+				// throw new Error("invalid callback name");
+			// }
+		// }
+	// }, this);
+// 	
 	
 	this._waitDeferredList = {};
 	this._errorHandlerList = {};
-	this._worker.addEventListener("message", this.onPostMessage);
+	this._worker.addEventListener("message", goog.bind(this.onPostMessage, this));
 	
 	
 };
+
+/**
+ * callback from worker.
+ */
+// synthjs.utility.WorkerDeferredManager.prototype.onError = function(e){
+	// if( e.data['callback'] ){
+		// if( this._waitDeferredList[e['data']['callback']] ){
+			// this._waitDeferredList[e['data']['callback']].callback(e['data']);
+			// delete this._waitDeferredList[e['data']['callback']];
+		// }
+		// else{
+			// throw new Error("invalid callback name");
+		// }
+	// }
+// }
+
+/**
+ * callback from worker.
+ */
+synthjs.utility.WorkerDeferredManager.prototype.onPostMessage = function(e){
+	if( e['data']['callback'] ){
+		if( this._waitDeferredList[e['data']['callback']] ){
+			
+			this._waitDeferredList[e['data']['callback']].callback(e['data']);
+			delete this._waitDeferredList[e['data']['callback']];
+		}
+		else{
+			throw new Error("invalid callback name");
+		}
+		
+		if( this._errorHandlerList[e['data']['callback']] ){
+			delete this._errorHandlerList[e['data']['callback']];
+		}
+	}
+	else{
+		console.log(e['data']);
+	}
+}
 
 synthjs.utility.WorkerDeferredManager.prototype.create = function(opt_params, opt_settings){
 	opt_params = opt_params || {};

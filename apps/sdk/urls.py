@@ -36,8 +36,13 @@ urlpatterns += patterns('sdk.views.plugin',
             'sdk_plugin_description_api_handler', name="sdk_plugin_description_api"),
     url(r'^plugin/information/(?P<code>[^/]+)/$', 
             'sdk_plugin_information_api_handler', name="sdk_plugin_information_api"),
+    url(r'^plugin/delete/(?P<code>.+)/$', 
+            'sdk_plugin_delete_handler', name="sdk_plugin_delete"),
+                        
     url(r'^plugin/(?P<code>[^/]+)/$', 
             'sdk_plugin_api_handler', name="sdk_plugin_api"),
     url(r'^plugin/(?P<code>[^/]+)/(?P<path>.*)$', # allow path empty in order to validate reverse('sdk_get_api', args=['']) <= empty string
             'sdk_plugin_get_api_handler', name="sdk_plugin_get_api"),
+    
+    
 )

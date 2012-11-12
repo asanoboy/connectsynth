@@ -13,6 +13,9 @@ goog.require("goog.graphics.ext");
 synthjs.ui.graphics.ControlButton = function(param, grahpics, opt_domHelper){
 	goog.base(this, opt_domHelper);
 	this._param = param;
+	this._mid = (this._param.get("max") + this._param.get("min")) / 2;
+	this._range = this._param.get("max") - this._param.get("min");
+	
 }
 
 goog.inherits(synthjs.ui.graphics.ControlButton, synthjs.ui.graphics.GraphicsComponent);
@@ -68,7 +71,7 @@ synthjs.ui.graphics.ControlButton.prototype.enterDocument = function(){
  * @return {number} radisu[]
  */
 synthjs.ui.graphics.ControlButton.prototype._getRadius = function(value){
-	return (value-0.5)*270;
+	return (value-this._mid)/this._range*270;
 }
 
 /**
@@ -104,10 +107,10 @@ synthjs.ui.graphics.ControlButton.prototype._onMouseDown = function(e){
 
 synthjs.ui.graphics.ControlButton.prototype._onMouseMove = function(e){
 	var offsetY = e.clientY;
-	var currentValue = this._param.get("value"); 
+	var currentValue = this._param.get("internalValue"); 
 	var valuePerPx = e.ctrlKey ? 0.0003 : 0.003;
 	
-	this._param.set("value", currentValue+(this._beforeOffsetY - offsetY)*valuePerPx);
+	this._param.set("value", currentValue+(this._beforeOffsetY - offsetY)*valuePerPx*this._range);
 	this._beforeOffsetY = offsetY;
 	e.stopPropagation();
 }

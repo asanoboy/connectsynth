@@ -8,8 +8,8 @@
 @hd-color: #2B2D38;
 @ft-color: #2B2D38;
 @container-width: 1000px;
-@link-color: #CC9977;
-@link-color-hover: orange;
+@link-color: #534BDE;//CC9977;
+@link-color-hover: #48DEE0;//orange;
 @menu-font-color: #EEEEEE;
 @container-width: 1000px;
 @container-inner-padding: 20px;
@@ -126,7 +126,7 @@ div.section {
 }
 
 #footer {
-    padding: 10px 5px 30px 5px;
+    padding: 10px 0px 30px 0px;
     background-color: @ft-color;
     clear: both;
     color: @menu-font-color;
@@ -166,8 +166,12 @@ div.section {
     border: @plugin-block-border-width solid #D7D7D7;
 }
 
-#content div.plugin-block:nth-child(even){
+#content div.plugin-block:nth-child(odd){
     margin-right: @plugin-block-margin;
+}
+
+#content div.plugin-list {
+    position: relative;
 }
 
 @plugin-header-height: 30px;
@@ -196,8 +200,20 @@ div.section {
 #content div.plugin-created p {
     font-size: 0.8em;
     line-height: @plugin-header-height;
-    
-    
+}
+
+#content .socialbutton {
+    clear: both;
+    height: 30px;
+}
+
+#content .socialbutton ul {
+    list-style-type: none;
+}
+
+#content .socialbutton li {
+    display: inline-block;
+    height: 30px;
 }
 
 #content div.plugin-info {

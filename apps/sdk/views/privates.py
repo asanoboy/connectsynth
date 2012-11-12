@@ -63,7 +63,8 @@ def sdk_extend_instrument_handler(request, code, plugin):
                                                          'user': request.user,
                                                          'is_public': False
                                                          })
-    
+    dest_plugin.parent = plugin
+    dest_plugin.save()
     
     updated_flags = { file.path: False for file in File.objects.filter(plugin=dest_plugin).all()}
         

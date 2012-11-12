@@ -25,7 +25,7 @@ goog.require("synthjs.audiocore.Note");
 goog.require("synthjs.audiocore.Player");
 goog.require("synthjs.audiocore.WavePlugin");
 goog.require("synthjs.audiocore.DynamicGenerator");
-
+goog.require("synthjs.audiocore.MidiInterface");
 
 /**
  * @constructor
@@ -66,28 +66,38 @@ synthjs.application.module.Oscillator.prototype.init = function(){
 	this._audioplayer.addGenerator(this._generator);
 	this._audioplayer.play();
 
+	var midiInterface = synthjs.audiocore.MidiInterface.getInstance(); 
 		
 	this._keyboard = new synthjs.ui.Keyboard( 
 		synthjs.audiocore.Note.create('c', -4),
 		synthjs.audiocore.Note.create('c', 4),
 		synthjs.ui.VerticalKeyboardRenderer.getInstance());
 	
-	this.getHandler().listen( 
+	this.getHandler()
+		.listen( 
 			this._keyboard, 
 			synthjs.ui.KeyboardEventType.ON, 
-			this._onHandler, false, this)
+			this._onHandler)
 		.listen( 
 			this._keyboard, 
 			synthjs.ui.KeyboardEventType.OFF, 
-			this._offHandler, false, this)
+			this._offHandler)
+		.listen( 
+			midiInterface, 
+			synthjs.audiocore.MidiInterface.EventType.ON, 
+			this._onHandler)
+		.listen( 
+			midiInterface, 
+			synthjs.audiocore.MidiInterface.EventType.OFF, 
+			this._offHandler)
 		.listen( 
 			this._wavePlugin, 
 			synthjs.audiocore.WavePluginEventType.ERROR, 
-			this._errorHandler, false, this)
+			this._errorHandler)
 		.listen(
 			this._wavePlugin,
 			synthjs.audiocore.WavePluginEventType.INIT,
-			this._initHandler, false, this)
+			this._initHandler)
 		;
 }
 
@@ -101,11 +111,13 @@ synthjs.application.module.Oscillator.prototype.disposeInternal = function(){
 }
 
 synthjs.application.module.Oscillator.prototype._onHandler = function(e){
-	this._generator.addNoteDeferred(e.note).callback();
+	this._keyboard.markKey(e.target.note.getMidiNum());
+	this._generator.addNoteDeferred(e.target.note).callback();
 };
 
 synthjs.application.module.Oscillator.prototype._offHandler = function(e){
-	this._generator.removeNoteDeferred(e.note).callback();
+	this._keyboard.demarkKey(e.target.note.getMidiNum());
+	this._generator.removeNoteDeferred(e.target.note).callback();
 };
 
 synthjs.application.module.Oscillator.prototype._errorHandler = function(e){
@@ -151,9 +163,20 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 			
 			switch(control['type']){
 				case 'control':
+					if( goog.isArray( control['range'] ) && control['range'].length==2 && 
+							goog.isNumber(control['range'][0]) && goog.isNumber(control['range'][1]) &&
+							control['range'][0] < control['range'][1]  ){
+						var min = control['range'][0], max = control['range'][1];
+					}
+					else{
+						var min = 0, max = 1;
+					}
+					var step = parseFloat(control['step']) || 0.001; 
+					
 					var control = new synthjs.model.PluginControlParam(
 						control['name'], 
 						control['value'],
+						min,max,step,
 						control['width'],
 						control['height'],
 						control['offsetX'],

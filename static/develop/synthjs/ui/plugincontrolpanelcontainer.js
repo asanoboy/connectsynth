@@ -25,11 +25,9 @@ synthjs.ui.PluginControlPanelContainer.prototype.decorateInternal = function(ele
 	var dom = this.getDomHelper();
 	this._wrapper = dom.createDom("div");
 	this._header = dom.createDom("div", "plugincontrol-header");
-	this._presetSelector = dom.createDom("div");
+	this._presetSelector = dom.createDom("div", "plugincontrol-header-preset");
 	dom.appendChild( this._header, this._presetSelector );
-	goog.style.setStyle(this._presetSelector, {
-		'float': 'right'
-	});	 
+	goog.style.setFloat(this._presetSelector, 'right');	 
 	goog.style.setStyle(this._header, {
 		width: this._controlPanel.getBackgroundWidth() + "px",
 		position: 'absolute',
@@ -90,13 +88,16 @@ synthjs.ui.PluginControlPanelContainer.prototype.resize = function(){
 	
 	var size = goog.style.getContentBoxSize( this.getElement() );
 	var dom = this.getDomHelper();
-	
+	var left = (size.width - this._controlPanel.getBackgroundWidth())/2;
+	if( left<0 ){
+		left = 0;	
+	}
 	goog.style.setStyle(this._panel, {
-		left: (size.width - this._controlPanel.getBackgroundWidth())/2+"px"
+		left: left+"px"
 	});
 	
 	goog.style.setStyle(this._header, {
-		left: (size.width - this._controlPanel.getBackgroundWidth())/2+"px"
+		left: left+"px"
 	});
 }
 

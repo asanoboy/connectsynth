@@ -159,7 +159,7 @@ synthjs.audiocore.Player.prototype._getBufferDeferred = function(len){
 	});
 	
 	var dWait = new goog.async.Deferred();
-	var d = new goog.async.Deferred().addCallback(function(){
+	return new goog.async.Deferred().addCallback(function(){
 		var dGens = new goog.async.DeferredList(dList)
 			.addCallback(function(buffersList){
 				var leftBufferTotal = new Float32Array(len),
@@ -173,8 +173,9 @@ synthjs.audiocore.Player.prototype._getBufferDeferred = function(len){
 					})
 				}
 				buffersList = void 0;
-				return {leftBuffer: leftBufferTotal, rightBuffer: rightBufferTotal};	
-			}).chainDeferred(dWait);
+				//return {leftBuffer: leftBufferTotal, rightBuffer: rightBufferTotal};	
+				dWait.callback({leftBuffer: leftBufferTotal, rightBuffer: rightBufferTotal});
+			})//.chainDeferred(dWait);
 		goog.array.forEach( dList, function(d){
 			d.callback();
 		});
@@ -182,7 +183,7 @@ synthjs.audiocore.Player.prototype._getBufferDeferred = function(len){
 	}).awaitDeferred(dWait);
 	
 	
-	return d;
+	//return d;
 	
 	// var d = new goog.async.DeferredList(dList)
 	// .addCallback(function(buffersList){
@@ -306,9 +307,9 @@ synthjs.audiocore.Player.prototype._playByAudioDataApi = function(){
 			.addCallback(function(buffers){
 				written = setBuffer(buffers.leftBuffer, buffers.rightBuffer);
 				
-				if( written < readLength ){
-					tail = soundData.subarray(written);
-				}
+				// if( written < readLength ){
+					// tail = soundData.subarray(written);
+				// }
 				currentWritePosition += written;
 			});
 			

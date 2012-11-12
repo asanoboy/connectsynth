@@ -6,7 +6,7 @@ goog.require("synthjs.model.Collection");
 goog.require("synthjs.model.FileSystem");
 goog.require("synthjs.model.TextFile");
 
-goog.require("synthjs.ui.AjaxLoader");
+
 
 /**
  * @constructor
@@ -37,8 +37,8 @@ synthjs.application.SDKOscillatorBase = function(id, params){
 	this._infoapiUri = new goog.Uri(infoapi);
 	
 
-	var ajaxLoader = new synthjs.ui.AjaxLoader();
-	ajaxLoader.setVisible(true);
+	// var ajaxLoader = new synthjs.ui.AjaxLoader();
+	// ajaxLoader.setVisible(true);
 	
 	var self = this;
 	//new synthjs.utility.AjaxDeferred(this._infoapiUri.toString(), {
@@ -53,7 +53,7 @@ synthjs.application.SDKOscillatorBase = function(id, params){
 			
 			d.addCallback(function(){
 				//this.init();
-				ajaxLoader.dispose();
+				// ajaxLoader.dispose();
 			}, this).callback();
 		}
 	}, this).callback();

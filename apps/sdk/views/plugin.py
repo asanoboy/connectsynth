@@ -4,6 +4,8 @@ from django.utils import simplejson
 from decorators import reject_invalid_code, reject_invalid_or_unowned_code
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse 
+
 from helpers import get_failure_response, get_success_response, get_unique_preset_code, is_writable
 from sdk.models import Plugin, File
 from forms import FilesForm, PluginDescriptionForm
@@ -123,7 +125,25 @@ def sdk_plugin_information_api_handler(request, code, plugin):
     # assume that twitter user exists.
     twitter_user = TwitterUser.objects.get(user=plugin.user)
     
-    return HttpResponse(simplejson.dumps({"status":"ok",
-                                          "description": plugin.description,
-                                          "screen_name": twitter_user.screen_name,
-                                          "usertype": 'twitter'}))
+    result = {"status":"ok",
+              "description": plugin.description,
+              "screen_name": twitter_user.screen_name,
+              "usertype": 'twitter'}
+    
+    if plugin.parent and plugin.parent.is_public and plugin.parent.is_enabled :
+        result['parent'] = {'name': plugin.parent.name,
+                            'url': reverse('sdk_instrument_player', args=[plugin.parent.code])}    
+    
+    
+    return HttpResponse(simplejson.dumps(result))
+
+@csrf_exempt
+@reject_invalid_or_unowned_code
+def sdk_plugin_delete_handler(request, code, plugin):
+    if request.method == "DELETE":
+        plugin.is_enabled = False
+        plugin.save()
+        return HttpResponse(simplejson.dumps({"status": "ok"}))
+    
+    return get_failure_response()
+    

@@ -4,6 +4,7 @@ goog.require("synthjs.application.SDKOscillatorBase");
 goog.require("synthjs.ui.DirectoryControl");
 goog.require("synthjs.utility.AjaxDeferred");
 goog.require("synthjs.ui.Dialog");
+goog.require("synthjs.utility.TwitterUri");
 goog.require("goog.string");
 /**
  * @constructor
@@ -31,15 +32,14 @@ synthjs.application.PublicOscillator.prototype._getDirectoryControl = function()
  */
 synthjs.application.PublicOscillator.prototype._getMenuComponent = function(){
 	var arr = [
-				{label:this._oscillatorName, sublist: [
-					{label:'Launch', callback: goog.bind(this.launchOscillator, this)},
+				{label:"Instrument: "+this._oscillatorName, sublist: [
 					{label:'Copy To Workspace', callback: goog.bind(this.onExtendOscillator, this)},
 					{label:'About', callback: goog.bind(this.onShowInformation, this)}
 				]}
 			];
 	if( this._isOwner ){
 		arr.push(
-			{label:"Admin", sublist: [
+			{label:"AdminOnly", sublist: [
 				{label:'Edit Description', callback: goog.bind(this.onEditDescription, this)},
 				{label:'Delete', callback: goog.bind(this.onDeletePlugin, this)}
 			]}
@@ -47,7 +47,7 @@ synthjs.application.PublicOscillator.prototype._getMenuComponent = function(){
 	}
 	else {
 		arr.push(
-			{label:"Admin", sublist: [
+			{label:"AdminOnly", sublist: [
 				{label:'Edit Description'},
 				{label:'Delete'}
 			]}
@@ -141,6 +141,7 @@ synthjs.application.PublicOscillator.prototype.onDeletePlugin = function(){
 synthjs.application.PublicOscillator.prototype.deletePlugin = function(){
 	new synthjs.utility.AjaxDeferred(this.getApi().deletePlugin().toString(), {
 		responseType: goog.net.XhrIo.ResponseType.TEXT,
+		method: 'delete',
 		success: function(r){
 			// TODO: Error handling
 			var rt = r.getResponseJson();
@@ -220,7 +221,7 @@ synthjs.application.PublicOscillator.prototype.postExtendOscillator = function()
 					goog.ui.Dialog.EventType.SELECT,
 					function(e){
 						if( e.key == goog.ui.Dialog.DefaultButtonKeys.OK ){
-							document.location = rt['next']+"?re="+escape(document.location); 
+							document.location = rt['next']+"?next="+escape(document.location+""); 
 						}
 						this.getHandler().unlisten(dialog);
 					}
@@ -238,9 +239,22 @@ synthjs.application.PublicOscillator.prototype.onShowInformation = function(){
 		success: function(r){
 			// TODO: Error handling
 			var rt = r.getResponseJson();
-			synthjs.ui.Dialog.alertOK("Information", 
-				"<pre>"+goog.string.htmlEscape(rt['description'])+"</pre><br/><br/>"+
-				"<div><p>created by "+rt['screen_name']+"</p></div>");
+			
+			var desc = goog.string.htmlEscape(rt['description']);
+			
+			desc = desc.split("\n").join("<br/>");
+			var contentHtml = "<p>"+desc+"</p><br/><br/>";
+			//contentHtml += "<div style='float:right;'>";
+			contentHtml += "<div>";
+			
+			if( rt['parent'] && rt['parent']['name'] && rt['parent']['url'] ){
+				contentHtml += "<p style='text-align: right;'>extended from <a href='"+rt['parent']['url']+"' target='_blank'>"+goog.string.htmlEscape(rt['parent']['name'])+"</a></p>";
+			}
+			
+			contentHtml += "<p style='text-align: right;'>created by <a href='"+synthjs.utility.TwitterUri.createByScreenName(rt['screen_name'])+"' target='_blank'>"+rt['screen_name']+"</a></p>"
+			contentHtml += "</div>";
+			
+			synthjs.ui.Dialog.alertOK("Information", contentHtml);
 		}
 	}).callback();
 }

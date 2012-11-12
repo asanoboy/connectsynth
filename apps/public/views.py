@@ -13,7 +13,7 @@ class InstrumentListView(ListView):
                                          )
     """
     def get_queryset(self):
-        plugins = Plugin.objects.filter(is_public=True)
+        plugins = Plugin.objects.filter(is_public=True, is_enabled=True).order_by('-createdat')
         return plugins
     
     

@@ -220,7 +220,6 @@ synthjs.application.OscillatorPlayer.prototype._onOscillatorError = function(e){
 	var dialog = new goog.ui.Dialog(null, false);
 	dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
 	dialog.setTitle("Alert");
-	console.log(e);
 	dialog.setContent(e.target.error.message + " on " + e.target.error.filename);
 	this.getHandler()
 		.listen(

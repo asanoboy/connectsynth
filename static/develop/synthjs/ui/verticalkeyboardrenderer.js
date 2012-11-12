@@ -37,7 +37,7 @@ synthjs.ui.VerticalKeyboardRenderer.prototype.decorate = function(element,
 	
 	while( currentNote.freq >= lowestNote.freq  ){
 		$key = $('div');
-		domHelper.setProperties($key, {"data-note": currentNote.getString()});
+		domHelper.setProperties($key, {"data-note": currentNote.getMidiNum()});
 		if( currentNote.isWhite ){
 			if( currentNote.freq==highestNote.freq && 'cdfga'.indexOf(currentNote.note, 0)!==-1 ){
 				whiteWidth = eachWidth-borderWidth;

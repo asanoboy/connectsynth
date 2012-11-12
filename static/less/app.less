@@ -72,7 +72,7 @@ body {
 
 .windowsection-label-common-active() {
     background-color: @windowsection-active-color;
-    height: @windowsection-outer-border-width + @windowsection-header-width;
+    //height: @windowsection-outer-border-width + @windowsection-header-width;
 }
 
 /*
@@ -93,13 +93,14 @@ body {
 }
 
 .windowsection-header-label-inner-wrapper.active {
-    _height: @windowsection-outer-border-width + @windowsection-header-width;
+    //_height: @windowsection-outer-border-width + @windowsection-header-width;
 }
 
 .windowsection-header-label.left {
     .windowsection-label-common();
     width: 8px;
-    border-width: @windowsection-outer-border-width 0 0 @windowsection-outer-border-width;
+    _border-width: @windowsection-outer-border-width 0 0 @windowsection-outer-border-width;
+    border-width: 0 0 0 @windowsection-outer-border-width;
 }
 .windowsection-header-label.left.active {
     .windowsection-label-common-active()
@@ -108,7 +109,8 @@ body {
 .windowsection-header-label.center {
     .windowsection-label-common();
     vertical-align: top;
-    border-width: @windowsection-outer-border-width 0 0 0;
+    _border-width: @windowsection-outer-border-width 0 0 0;
+    border-width: 0 0 0 0;
     
     span {
         line-height: @windowsection-header-width;
@@ -122,7 +124,8 @@ body {
 .windowsection-header-label.right {
     .windowsection-label-common();
     width: 8px;
-    border-width: @windowsection-outer-border-width @windowsection-outer-border-width 0 0;
+    _border-width: @windowsection-outer-border-width @windowsection-outer-border-width 0 0;
+    border-width: 0 @windowsection-outer-border-width 0 0;
 }
 .windowsection-header-label.right.active {
     .windowsection-label-common-active()
@@ -130,10 +133,12 @@ body {
 .windowsection-header-label-closebutton {
     display: inline-block;
     overflow: hidden;
-    text-indent: -20px;
+    text-indent: -120px;
     margin-left: 2px;
     width: 20px;
     height: 20px;
+    vertical-align: middle;
+    text-align: center;
     background: url('../img/closebutton.png') no-repeat 0px 0px;
 }
 .windowsection-header-label-closebutton:hover {
@@ -227,6 +232,7 @@ body {
 #application .window-oscillator-oscillator {
     float: right;
     height: 100%;
+    overflow: auto;
 }
 
 // preset add button

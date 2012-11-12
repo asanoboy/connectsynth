@@ -40,7 +40,7 @@ synthjs.application.SDKOscillator.prototype._getMenuComponent = function(){
 	return synthjs.ui.MenuBar.createFromSetting(
 		[
 			{label:"Workspace", sublist: [
-				{label:'Launch', callback: goog.bind(this.onDebugRun, this)},
+				{label:'Post & Launch', callback: goog.bind(this.onDebugRun, this)},
 				{label:'Publish', callback: goog.bind(this.onPublish, this)}
 			]}
 		]
@@ -83,8 +83,8 @@ synthjs.application.SDKOscillator.prototype._showPublishPrompt = function(){
 			return;
 		}
 		
-		var ajaxLoader = new synthjs.ui.AjaxLoader();
-		ajaxLoader.setVisible(true);
+		// var ajaxLoader = new synthjs.ui.AjaxLoader();
+		// ajaxLoader.setVisible(true);
 		//new synthjs.utility.AjaxDeferred(this._publishUri.toString(), {
 		new synthjs.utility.AjaxDeferred(this.getApi().publishPlugin().toString(), {
 			data: {'name': name, "description": description},
@@ -110,12 +110,12 @@ synthjs.application.SDKOscillator.prototype._showPublishPrompt = function(){
 				}
 				else{
 					alert("Error Occurred!");
-					ajaxLoader.dispose();
+					//ajaxLoader.dispose();
 				}
 			},
 			error: function(e){
 				alert("Error Ocurred!");
-				ajaxLoader.dispose();
+				//ajaxLoader.dispose();
 			}
 		}).callback();
 		return false;
@@ -236,12 +236,12 @@ synthjs.application.SDKOscillator.prototype.onPostAll = function(){
  *  @override
  */
 synthjs.application.SDKOscillator.prototype.onDebugRun = function(){
-	var ajaxLoader = new synthjs.ui.AjaxLoader();
-	ajaxLoader.setVisible(true);
+	// var ajaxLoader = new synthjs.ui.AjaxLoader();
+	// ajaxLoader.setVisible(true);
 	this.closeOscillator();
 	this.postAllDeferred()
 		.addCallback(goog.bind(this.launchOscillator, this))
-		.addCallback(function(){ajaxLoader.dispose();})
+		// .addCallback(function(){ajaxLoader.dispose();})
 		.callback();
 
 }

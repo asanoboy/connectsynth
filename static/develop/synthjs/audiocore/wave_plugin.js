@@ -99,7 +99,7 @@ synthjs.audiocore.WavePlugin.prototype.initDeferred = function(opt_params){
 synthjs.audiocore.WavePlugin.prototype.addEventDeferred = function(event){
 	//var workerD = new synthjs.utility.WorkerDeferred(this._worker, 
 	var workerD = this._workerCreator.create(
-		{action:'addEvent', event:event});
+		{action:'midi', event:event});
 		
 	if( this._initialized ){
 		return workerD;
@@ -116,7 +116,7 @@ synthjs.audiocore.WavePlugin.prototype.addEventDeferred = function(event){
 synthjs.audiocore.WavePlugin.prototype.getBufferDeferred = function(len){
 	
 	var workerD = this._workerCreator.create( 
-		{action:'getBuffer', length:len},
+		{action:'getbuffer', length:len},
 		{error: function(){
 			console.log("GET BUFFER ERROR");
 			return {leftBuffer: new Float32Array(len), rightBuffer: new Float32Array(len)};
@@ -146,7 +146,7 @@ synthjs.audiocore.WavePlugin.prototype.getBufferDeferred = function(len){
  */
 synthjs.audiocore.WavePlugin.prototype.setParamDeferred = function(name, value){
 	return this._workerCreator.create(
-		{action:'setParam', name: name, value: value},
+		{action:'set', name: name, value: value},
 		{error: function(){
 			goog.asserts.assert("Can't set param to plugin");
 		}}
@@ -165,16 +165,34 @@ synthjs.audiocore.WaveEvent = function(type, opt_params){
 	this['type'] = type;
 	
 	var eventType = synthjs.audiocore.WaveEventType;
-	if( type==eventType.NOTEON || type==eventType.NOTEOFF ){
-		
-		if( opt_params.note.constructor != synthjs.audiocore.Note || opt_params.velocity )
-		
-		this['note'] = {
-			"freq" : opt_params.note.freq
-		};
-			
-		this['velocity'] = opt_params.velocity;
+	
+	switch(type){
+		case eventType.NOTEON:
+			goog.asserts.assertInstanceof(opt_params.note, synthjs.audiocore.Note, "invalid");
+			goog.asserts.assertNumber(opt_params.velocity, "invalid");
+			this['note'] = opt_params.note.getMidiNum();
+			this['velocity'] = opt_params.velocity;
+			break;
+		case eventType.NOTEOFF:
+			goog.asserts.assertInstanceof(opt_params.note, synthjs.audiocore.Note, "invalid");
+			this['note'] = opt_params.note.getMidiNum();
+			break;
+		case eventType.NOTEALLOFF:
+			break;
+		default:
+			goog.asserts.fail('fail');
 	}
+	
+	// if( type==eventType.NOTEON || type==eventType.NOTEOFF ){
+// 		
+		// if( opt_params.note.constructor != synthjs.audiocore.Note || opt_params.velocity )
+// 		
+		// this['note'] = {
+			// "freq" : opt_params.note.freq
+		// };
+// 			
+		// this['velocity'] = opt_params.velocity;
+	// }
 	// else if( type==eventType.NOTEALLOFF ){
 // 		
 	// }

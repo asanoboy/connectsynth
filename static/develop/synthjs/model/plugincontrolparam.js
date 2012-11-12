@@ -5,12 +5,19 @@ goog.require("synthjs.model.Base");
 /**
  * @constructor
  * @extends{synthjs.model.Base}
+ * @param {string} name
+ * @param {number} value
  */
 synthjs.model.PluginControlParam = function(
-		name, value, width, height, offsetX, offsetY, imagepath){
+		name, value, min, max, step, width, height, offsetX, offsetY, imagepath){
+	
 	goog.base(this, {
 		"name": name,
 		"value": value,
+		"internalValue": value,
+		"min": min,
+		"max": max,
+		"step": step,
 		"width": width,
 		"height": height,
 		"offsetX": offsetX,
@@ -27,8 +34,11 @@ goog.inherits(synthjs.model.PluginControlParam, synthjs.model.Base);
  */
 synthjs.model.PluginControlParam.prototype.set = function(name, value){
 	if( name=='value' ){
-		value = Math.max(0, value);
-		value = Math.min(1, value);
+		value = Math.max(this.get("min"), value);
+		value = Math.min(this.get("max"), value);
+		
+		this.set("internalValue", value);
+		value = parseInt(value/this.get("step"))*this.get("step");
 	}
 	goog.base(this, 'set', name, value);
 }

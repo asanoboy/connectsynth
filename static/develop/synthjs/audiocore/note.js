@@ -79,8 +79,29 @@ synthjs.audiocore.Note.createByString = function(str, opt_base){
 	return n.note ? n : false;
 };
 
+/**
+ * @param {number} num integer
+ */
+synthjs.audiocore.Note.createByMidiFormat = function(num){
+	var noteNum = num % 12,
+		octaveNum = parseInt(num/12) - 5;
+	var note = new synthjs.audiocore.Note(synthjs.audiocore.Note.notes[noteNum], octaveNum);
+	return note;
+};
+
 synthjs.audiocore.Note.prototype.getString= function(){
 	return this.level+"|"+this.note;
+}
+
+synthjs.audiocore.Note.prototype.getMidiNum= function(){
+	var index = goog.array.findIndex( 
+		synthjs.audiocore.Note.notes, 
+		function(s){
+			return s==this.note;
+		}, this);
+	
+	goog.asserts.assert(goog.isNumber(index), "Invalid note strings");
+	return (this.level+5)*12 + index;
 }
 
 /** @const */
