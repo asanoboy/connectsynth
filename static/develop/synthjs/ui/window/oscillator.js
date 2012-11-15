@@ -30,10 +30,14 @@ synthjs.ui.window.Oscillator.prototype.equals = function(window){
 }
 
 synthjs.ui.window.Oscillator.prototype.disposeInternal = function(){
+	goog.base(this, 'disposeInternal');
 	this._keyboard.dispose();
 	this._keyboard = null;
-	this._controlPanel.dispose();
-	this._controlPanel = null;
+	if( this._controlPanel ){
+		this._controlPanel.dispose();
+		this._controlPanel = null;
+	}
+	
 };
 
 synthjs.ui.window.Oscillator.prototype.decorateInternal = function(element){

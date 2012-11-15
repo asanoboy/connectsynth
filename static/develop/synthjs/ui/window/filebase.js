@@ -45,7 +45,6 @@ synthjs.ui.window.FileBase.prototype.enterDocument = function(){
  * @protected
  */
 synthjs.ui.window.FileBase.prototype._onFileChange = function(e){
-	console.log(e.target);
 	switch( e.target.attr ){
 		case "filename":
 			this._dispatchChangeLabel(e.target.after);

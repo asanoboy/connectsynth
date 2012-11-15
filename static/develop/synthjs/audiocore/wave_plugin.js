@@ -65,6 +65,8 @@ synthjs.audiocore.WavePlugin.prototype.disposeInternal = function(){
 	
 	this._worker.removeEventListener('error', this._errorHandler);
 	this._eventHandler.dispose();
+	
+	this._workerCreator.dispose();
 }
 
 synthjs.audiocore.WavePlugin.prototype.getUrl = function(){

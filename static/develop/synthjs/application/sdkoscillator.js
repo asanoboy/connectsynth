@@ -246,6 +246,10 @@ synthjs.application.SDKOscillator.prototype.onDebugRun = function(){
 
 }
 
+synthjs.application.SDKOscillator.prototype.launchOscillator = function(){
+	goog.base(this, 'launchOscillator');
+}
+
 /**
  * @override
  */

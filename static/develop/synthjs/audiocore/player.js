@@ -2,8 +2,8 @@ goog.provide("synthjs.audiocore.Player");
 
 goog.require("synthjs.audiocore.Generator");
 goog.require('goog.object');
-goog.require('goog.pubsub.PubSub');
-goog.require('goog.debug.Logger');
+//goog.require('goog.pubsub.PubSub');
+//goog.require('goog.debug.Logger');
 
 /** @const */
 var SAMPLE_RATE = 48000;
@@ -14,7 +14,7 @@ synthjs.audiocore.Player = function(){
 	this._sampleRate = SAMPLE_RATE;
 	
 	/** @private */
-	this._pubsub = new goog.pubsub.PubSub();
+	//this._pubsub = new goog.pubsub.PubSub();
 	
 	/** @private */
 	this._keysPubsub = [];
@@ -31,36 +31,37 @@ synthjs.audiocore.Player = function(){
 	} 
 	
 	/** @private */
-	this._generatorList = {};
+	this._generatorList = [];
 	
 	/** @private */
 	this._generatorCurrentIndex = 0;
 	
 	/** @private */
 	this._status = 'stop';
+	
+	this._stopTimer = null;
 };
 
 goog.addSingletonGetter(synthjs.audiocore.Player);
 
-synthjs.audiocore.Player.logger = goog.debug.Logger.getLogger('synthjs.audiocore.Player');
-synthjs.audiocore.Player.logger.setLevel(goog.debug.Logger.Level.ALL);
+// synthjs.audiocore.Player.logger = goog.debug.Logger.getLogger('synthjs.audiocore.Player');
+// synthjs.audiocore.Player.logger.setLevel(goog.debug.Logger.Level.ALL);
 
 /**
  * @param {string}
  * @param {function()}
  */
-synthjs.audiocore.Player.prototype.on = function(topic, callback){
-	this._keysPubsub.push(this._pubsub.subscribe(topic, callback));
-	
-};
+// synthjs.audiocore.Player.prototype.on = function(topic, callback){
+	// this._keysPubsub.push(this._pubsub.subscribe(topic, callback));
+// };
 
 /** 
  * @private
  * @param {string}
  */
-synthjs.audiocore.Player.prototype._eventDispatch = function(topic){
-	this._pubsub.publish(topic);
-};
+// synthjs.audiocore.Player.prototype._eventDispatch = function(topic){
+	// //this._pubsub.publish(topic);
+// };
 
 
 /**
@@ -68,10 +69,10 @@ synthjs.audiocore.Player.prototype._eventDispatch = function(topic){
  * @param {synthjs.audiocore.Generator}
  */
 synthjs.audiocore.Player.prototype.addGenerator = function(gen){
-	
 	gen.setSampleRate(this._sampleRate);
 	var index = this._generatorCurrentIndex++;
-	this._generatorList[index] = gen;
+	this._generatorList.push(gen);
+	
 	return index;
 }
 
@@ -79,23 +80,33 @@ synthjs.audiocore.Player.prototype.addGenerator = function(gen){
  * @public
  * @param {number}
  */
-synthjs.audiocore.Player.prototype.removeGeneratorAt = function(index){
-	delete this._generatorList[index];
-}
+// synthjs.audiocore.Player.prototype.removeGeneratorAt = function(index){
+	// delete this._generatorList[index];
+// }
 
 synthjs.audiocore.Player.prototype.removeGenerator = function(generator){
-	console.trace();
-	goog.object.forEach(this._generatorList, function(val, key){
-		if( generator == val ){
-			delete this._generatorList[key];
-		}
+	this._generatorList = goog.array.filter(this._generatorList, function(gen){
+		return gen!=generator;
 	}, this);
+	
+	// goog.object.forEach(this._generatorList, function(val, key){
+		// if( generator == val ){
+			// delete this._generatorList[key];
+		// }
+	// }, this);
 }
 
 /**
  * @param {synthjs.audiocore.Generator}
  */
 synthjs.audiocore.Player.prototype.play = function(){
+	
+	if( this._stopTimer ){
+		clearTimeout(this._stopTimer);
+		this._stopTimer = null;
+	}
+	
+	
 	if( this._status == 'play' ){
 		//this._WebAudioApiNode['disconnect']();
 		this.stop();
@@ -116,20 +127,23 @@ synthjs.audiocore.Player.prototype.play = function(){
 	
 }
 
-synthjs.audiocore.Player.prototype.clearEventHandler = function(){
-	this._pubsub.dispose();
-	this._pubsub = new goog.pubsub.PubSub();
-}
+// synthjs.audiocore.Player.prototype.clearEventHandler = function(){
+	// //this._pubsub.dispose();
+	// //this._pubsub = new goog.pubsub.PubSub();
+// }
 
 synthjs.audiocore.Player.prototype.stop = function(){
+	if( this._stopTimer ){
+		this._stopTimer = null;
+	}
 	
 	if( this._hasAudioDataApi ){
-		this._pubsub.publish('finish');
+		//this._pubsub.publish('finish');
 		this._status = 'stop';
 		return this._stopByAudioDataApi();
 	}
 	else if( this._hasWebAudioApi ){
-		this._pubsub.publish('finish');
+		//this._pubsub.publish('finish');
 		this._status = 'stop';
 		return this._stopByWebAudioApi();
 	}
@@ -140,8 +154,7 @@ synthjs.audiocore.Player.prototype.stop = function(){
 
 synthjs.audiocore.Player.prototype.eof = function(){
 	var eof = true;
-	
-	goog.object.forEach(this._generatorList, function(gen){
+	goog.array.forEach(this._generatorList, function(gen){
 		eof = eof && gen.eof();
 	});
 
@@ -152,7 +165,7 @@ synthjs.audiocore.Player.prototype._getBufferDeferred = function(len){
 	
 	var dList = [];
 	
-	goog.object.forEach(this._generatorList, function(gen){
+	goog.array.forEach(this._generatorList, function(gen){
 		if( !gen.eof() ){
 			dList.push(gen.getBufferDeferred(len));
 		}
@@ -160,7 +173,7 @@ synthjs.audiocore.Player.prototype._getBufferDeferred = function(len){
 	
 	var dWait = new goog.async.Deferred();
 	return new goog.async.Deferred().addCallback(function(){
-		var dGens = new goog.async.DeferredList(dList)
+		new goog.async.DeferredList(dList)
 			.addCallback(function(buffersList){
 				var leftBufferTotal = new Float32Array(len),
 					rightBufferTotal = new Float32Array(len);
@@ -173,35 +186,15 @@ synthjs.audiocore.Player.prototype._getBufferDeferred = function(len){
 					})
 				}
 				buffersList = void 0;
-				//return {leftBuffer: leftBufferTotal, rightBuffer: rightBufferTotal};	
+					
 				dWait.callback({leftBuffer: leftBufferTotal, rightBuffer: rightBufferTotal});
-			})//.chainDeferred(dWait);
+			});
 		goog.array.forEach( dList, function(d){
 			d.callback();
 		});
 				
 	}).awaitDeferred(dWait);
 	
-	
-	//return d;
-	
-	// var d = new goog.async.DeferredList(dList)
-	// .addCallback(function(buffersList){
-		// var leftBufferTotal = new Float32Array(len),
-			// rightBufferTotal = new Float32Array(len);
-		// if( buffersList ){
-			// goog.array.forEach(buffersList, function(buffers){
-				// for(var i=0; i<len; i++){
-					// leftBufferTotal[i] += buffers[1].leftBuffer[i];
-					// rightBufferTotal[i] += buffers[1].rightBuffer[i];
-				// }
-			// })
-		// }
-// 		
-		// return {leftBuffer: leftBufferTotal, rightBuffer: rightBufferTotal};	
-	// })
-// 	
-	// return d;	
 };
 
 
@@ -211,16 +204,14 @@ synthjs.audiocore.Player.prototype._getBufferDeferred = function(len){
  * @param {synthjs.audiocore.Generator}
  */
 synthjs.audiocore.Player.prototype._playByWebAudioApi = function(){
-	var streamlength=2048, player=this;
+	var streamlength=2048;
 	
 	if( !this._WebAudioApiContext ){
 		this._WebAudioApiContext = new webkitAudioContext();
 		this._WebAudioApiNode = this._WebAudioApiContext['createJavaScriptNode'](streamlength, 1, 2);// 2: channel
 	}
 	
-	
-	this._WebAudioApiNode['onaudioprocess'] = function(e){
-		
+	this._WebAudioApiNode['onaudioprocess'] = goog.bind(function(e){
 		var setBuffer = function(leftBuffer, rightsBuffer){
 			while(i<streamlength){
 				data0[i] = leftBuffer[i];
@@ -232,13 +223,19 @@ synthjs.audiocore.Player.prototype._playByWebAudioApi = function(){
 		var data0 = e['outputBuffer']['getChannelData'](0), 
 			data1 = e['outputBuffer']['getChannelData'](1), i=0, arr;
 		
-		if( player.eof() ) {
-			setTimeout(function(){player.stop();}, 100); // bufferにたまったAudioBufferをすべて吐き出すまで待つ。100msにしてあるの適当
+		if( this.eof() ) {
+			if( !this._stopTimer ){
+				this._stopTimer = setTimeout(goog.bind(function(){
+					this._stopTimer = null;
+					this.stop();
+				}, this), 100); // bufferにたまったAudioBufferをすべて吐き出すまで待つ。100msにしてあるの適当
+			}
+			
 			arr = new Float32Array(streamlength);
 			setBuffer(arr, arr);
 		}
 		else {
-			var d = player._getBufferDeferred(streamlength)
+			var d = this._getBufferDeferred(streamlength)
 			.addCallback(function(buffers){
 				var d1 = new Date();
 				setBuffer(buffers.leftBuffer, buffers.rightBuffer);
@@ -250,9 +247,8 @@ synthjs.audiocore.Player.prototype._playByWebAudioApi = function(){
 			d.callback();
 		}
 			
-	}
+	}, this);
 	this._WebAudioApiNode['connect'](this._WebAudioApiContext['destination']);
-	
 	return true;	
 }
 

@@ -177,6 +177,7 @@ synthjs.application.OscillatorPlayer.prototype.closeOscillator = function(){
 		var window = this._oscillatorModule.getWindow();
 		if( window ){
 			this._windowHolder.removeWindow( this._oscillatorModule.getWindow() );
+			window.dispose();
 		}
 		this._oscillatorModule.dispose();
 		delete this._oscillatorModule; 

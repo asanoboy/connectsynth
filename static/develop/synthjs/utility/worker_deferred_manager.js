@@ -13,68 +13,18 @@ synthjs.utility.WorkerDeferredManager = function(worker){
 	
 	this._worker = worker;
 	
-	// this.onPostMessage = goog.bind(function(e){
-// 		
-		// if( e['data']['callback'] ){
-			// if( this._waitDeferredList[e['data']['callback']] ){
-				// if( Math.random()<0.01 ){
-					// console.log("start");
-					// goog.object.forEach(this._waitDeferredList, function(val, key){
-						// console.log(key);
-					// });
-					// //console.log(this._waitDeferredList);
-				// }
-// 				
-				// this._waitDeferredList[e['data']['callback']].callback(e['data']);
-				// delete this._waitDeferredList[e['data']['callback']];
-			// }
-			// else{
-				// throw new Error("invalid callback name");
-			// }
-// 			
-			// if( this._errorHandlerList[e['data']['callback']] ){
-				// delete this._errorHandlerList[e['data']['callback']];
-			// }
-		// }
-		// else{
-			// console.log(e['data']);
-		// }
-	// }, this);
-	
-	// this.onError = goog.bind(function(e){
-		// if( e.data['callback'] ){
-			// if( this._waitDeferredList[e['data']['callback']] ){
-				// this._waitDeferredList[e['data']['callback']].callback(e['data']);
-				// delete this._waitDeferredList[e['data']['callback']];
-			// }
-			// else{
-				// throw new Error("invalid callback name");
-			// }
-		// }
-	// }, this);
-// 	
-	
 	this._waitDeferredList = {};
 	this._errorHandlerList = {};
-	this._worker.addEventListener("message", goog.bind(this.onPostMessage, this));
+	this._onPostMessageBinded = goog.bind(this.onPostMessage, this)
+	this._worker.addEventListener("message", this._onPostMessageBinded);
 	
 	
 };
 
-/**
- * callback from worker.
- */
-// synthjs.utility.WorkerDeferredManager.prototype.onError = function(e){
-	// if( e.data['callback'] ){
-		// if( this._waitDeferredList[e['data']['callback']] ){
-			// this._waitDeferredList[e['data']['callback']].callback(e['data']);
-			// delete this._waitDeferredList[e['data']['callback']];
-		// }
-		// else{
-			// throw new Error("invalid callback name");
-		// }
-	// }
-// }
+synthjs.utility.WorkerDeferredManager.prototype.dispose = function(){
+
+	this._worker.removeEventListener("message", this._onPostMessageBinded);
+}
 
 /**
  * callback from worker.
@@ -127,11 +77,3 @@ synthjs.utility.WorkerDeferredManager.prototype.getPostMessageFunc = function(ca
 		this.postMessage({'callback':callbackname})
 	}, this);
 }
-
-// Move to synthjs.utility.UUID.
-//synthjs.utility.WorkerDeferredManager.prototype._createUniqueId = function(){
-//	return (((1+Math.random())*0x10000)|0).toString(16).substring(1) + '_' +
-//		(((1+Math.random())*0x10000)|0).toString(16).substring(1) + '_' + 
-//		(((1+Math.random())*0x10000)|0).toString(16).substring(1) + '_' +
-//		(((1+Math.random())*0x10000)|0).toString(16).substring(1);
-//}

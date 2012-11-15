@@ -6,6 +6,8 @@
 <script src="../../deps.js"></script>
 <script>
 	goog.require("goog.testing.jsunit");
+	goog.require("goog.testing.AsyncTestCase");
+	
 	goog.require("synthjs.audiocore.Player");
 	goog.require("synthjs.audiocore.WavePlugin");
 	goog.require("synthjs.audiocore.DynamicGenerator");
@@ -13,6 +15,7 @@
 </head>
 <body>
 <script>
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
 
 function setUp() {
 
@@ -30,14 +33,26 @@ function testNote() {
 	
 	gen.setSampleRate(48000);
 	player.addGenerator(gen);
-	//gen.addNoteDeferred(note).addCallback(function(){
+	gen.addNoteDeferred(note).addCallback(function(){
 		player.play();
-	// })
-	// .callback();
+	})
+	.callback();
 	
-	//setTimeout(function(){player.stop();}, 1000);
-	
+	setTimeout(function(){
+		player.removeGenerator(gen);
+		player.stop();
+		asyncTestCase.continueTesting();
+	}, 200);
+		
+	asyncTestCase.waitForAsync();
 }
+
+function testNoteSecond(){
+	testNote();
+}
+
+
+//TODO: test that stop player if generators included by player.
 
 
 </script>

@@ -108,6 +108,9 @@ synthjs.application.module.Oscillator.prototype.getWindow = function(){
 synthjs.application.module.Oscillator.prototype.disposeInternal = function(){
 	goog.ui.Component.superClass_.disposeInternal.call(this);
 	
+	
+	this._audioplayer.removeGenerator(this._generator);
+	this._wavePlugin.dispose();	
 }
 
 synthjs.application.module.Oscillator.prototype._onHandler = function(e){
@@ -266,6 +269,11 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 		this._oscillatorWindow = new synthjs.ui.window.Oscillator( this._keyboard );
 	}
 	
+	this.getHandler().listen(
+		this._oscillatorWindow,
+		synthjs.ui.window.EventType.CLOSE,
+		this.dispose);
+	
 	this._updatePresets();
 		
 	this.dispatchEvent(new goog.events.Event(synthjs.application.module.OscillatorEventType.INIT) );
@@ -291,10 +299,13 @@ synthjs.application.module.Oscillator.prototype._updatePresets = function(opt_pr
 					}
 				}, this);
 				
-				this._controlPanelContainer.updatePresets(
-					this._presetCollection,
-					opt_presetCode
-				);
+				if( this._controlPanelContainer ){
+					this._controlPanelContainer.updatePresets(
+						this._presetCollection,
+						opt_presetCode
+					);
+				}
+				
 			}
 		}
 	}, this).callback();

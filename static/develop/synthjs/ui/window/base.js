@@ -34,9 +34,15 @@ synthjs.ui.window.Base.prototype.isDeletable = function(){
 	return this._isDeletable;
 }
 
+synthjs.ui.window.Base.prototype.disposeInternal = function(){
+	this.dispatchEvent(new goog.events.Event(synthjs.ui.window.EventType.CLOSE));
+	goog.base(this, 'disposeInternal');
+}
+
 
 synthjs.ui.window.EventType = {
-	CHANGE_LABEL: 'change_label'
+	CHANGE_LABEL: 'change_label',
+	CLOSE: 'window-close'
 };
 
 synthjs.ui.window.Base.prototype.resize = function(){
