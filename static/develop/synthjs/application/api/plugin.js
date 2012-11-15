@@ -8,7 +8,7 @@ goog.require("goog.Uri");
  */
 synthjs.application.api.Plugin = function(pluginCode){
 	this._pluginCode = pluginCode;
-	this._baseUri = new goog.Uri("/sdk/");
+	this._baseUri = new goog.Uri("/app/");
 };
 
 synthjs.application.api.Plugin.prototype.copyPlugin = function(){

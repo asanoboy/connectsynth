@@ -3,28 +3,21 @@
 /*
  * LESS variable
  */
-@bg-color: #001133;
 @content-color: #F8F8F8;
-@hd-color: #2B2D38;
-@ft-color: #2B2D38;
+@menu-color: #333333;
 @container-width: 1000px;
-@link-color: #534BDE;//CC9977;
-@link-color-hover: #48DEE0;//orange;
+@link-color: #0C2F30;//CC9977;
+@link-color-hover: #1F7A7D;//orange;
 @menu-font-color: #EEEEEE;
 @container-width: 1000px;
 @container-inner-padding: 20px;
 @hd-height: 42px;
 
-/*
-.box-shadow(@style, @c) when (iscolor(@c)) {
-    box-shadow:         @style @c;
-    -webkit-box-shadow: @style @c;
-    -moz-box-shadow:    @style @c;
-}
-.box-shadow(@style, @alpha: 50%) when (isnumber(@alpha)) {
-    .box-shadow(@style, rgba(0, 0, 0, @alpha));
-}
-*/
+@bg-color: #21294D;
+@first-accent-color: #FA6132;
+@second-accent-color: #F29746;
+
+
 .gradation(@from, @to) {
     background-image: linear-gradient(@from, @to);
     background-image: -moz-linear-gradient(top, @from, @to);
@@ -39,7 +32,11 @@
 
 * {
     margin: 0;
-    padding: 0;
+    padding: 0;    
+}
+
+h1,h2,h3,h4,p,td,tr,th,li,a{
+    color: #333333;
     text-decoration: none;
 }
 
@@ -52,15 +49,21 @@ body {
 /*
  * text
  */
-#content h1,#content h2,#content p,#content a,#content span,#content pre {
-    font-family: Helvetica Neue,Helvetica,"Hiragino Kaku Gothic Pro","Lucida Grande",Verdana,Arial,Meiryo,"メイリオ",sans-serif;
+body, pre {
+    _font-family: Helvetica Neue,Helvetica,"Hiragino Kaku Gothic Pro","Lucida Grande",Verdana,Arial,Meiryo,"メイリオ",sans-serif;
+    font-family: 'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ','Mayryo','ＭＳ Ｐゴシック','MS PGothic',sans-serif;
+}
+
+#content code {
+    padding: 1.4em;
+    font-family: monospace;
 }
 
 a {
-    color: @link-color;
+    color: darken(@first-accent-color, 20%);
 }
 a:hover {
-    color: @link-color-hover;
+    color: @first-accent-color;
 }
 
 /*
@@ -86,9 +89,9 @@ div.section {
 #header {
     z-index: 5;
     position: fixed;
-    background-color: @hd-color;
+    background-color: @menu-color;
     height: @hd-height;
-    .box-shadow(0px 0px 10px rgba(0,0,0,.40));
+    .box-shadow(0px 0px 5px rgba(0,0,0,.40));
     /*.box-shadow(0 0 10px, 60%);*/
     #logo {
         float: left;
@@ -120,15 +123,19 @@ div.section {
     
     div.sectioncontainer {
         background-color: @content-color;
-        .box-shadow(inset 0px 0px 10px rgba(0,0,0,.15));
+        
         
     }
 }
 
 #footer {
     padding: 10px 0px 30px 0px;
-    background-color: @ft-color;
+    background-color: @menu-color;
     clear: both;
+    _color: @menu-font-color;
+}
+
+#footer *{
     color: @menu-font-color;
 }
 
@@ -145,7 +152,7 @@ div.section {
 
 #content .section-title {
     font-weight: 0.8em;
-    border-bottom: 2px solid #D62A13;
+    border-bottom: 1px solid @first-accent-color;
 }
 
 
@@ -231,20 +238,25 @@ div.section {
 }
 
 @open-instrument-border-width: 1px;
+
 #content a.open-instrument {
+    color: lighten(@second-accent-color, 50%);
     display: inline-block;
     text-align: center;
     line-height: 98px;
+    text-shadow: -1px -1px 0px darken(@second-accent-color, 30%);
     font-size: 1.5em;
+    .box-shadow(inset 0px 1px 1px 0px lighten(@second-accent-color, 50%));
     width: @open-instrument-container-width - @open-instrument-border-width * 2;
     height: @open-instrument-container-height - @open-instrument-border-width * 2; 
     background-color: white;
     .border-radius(5px);
-    border: @open-instrument-border-width solid red;
+    #gradient > .vertical(@second-accent-color, darken(@second-accent-color, 10%));
+    border: @open-instrument-border-width solid darken(@second-accent-color, 30%);
 }
 
 #content a.open-instrument:hover {
-    border: @open-instrument-border-width solid blue;
+    #gradient > .vertical(darken(@second-accent-color, 5%), darken(@second-accent-color, 15%));
 }
 
 #content div.inner-header {
@@ -271,4 +283,68 @@ div.section {
 #content div.develop-info {
     padding-bottom: @container-inner-padding;
     
+}
+
+
+@document-line-margin-height: 0.8em;
+@document-line-margin-bottom: 0.5em;
+
+
+#content .document {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#content .document .section {
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+#content .document p {
+    line-height: 30px;
+    margin: @document-line-margin-height 0 @document-line-margin-bottom 0px;
+}
+
+#content .document pre {
+    margin: @document-line-margin-height 0 @document-line-margin-bottom 0px;
+}
+#content .document h3 {
+    border-left: solid 4px @first-accent-color;
+    text-indent: 0.4em;
+    margin: @document-line-margin-height 0 @document-line-margin-bottom 0px;
+}
+#content .document h4 {
+    margin: @document-line-margin-height 0 @document-line-margin-bottom 0px;
+}
+#content .document ul {
+    margin: @document-line-margin-height 0 @document-line-margin-bottom 50px;
+}
+#content .document li {
+    line-height: 150%;
+}
+#content .document table {
+    margin: @document-line-margin-height 0 @document-line-margin-bottom 0px;
+    border: 1px #D3D3D3 solid;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+#content .document table th {
+    padding: 15px;
+    border: #D3D3D3 solid;
+    border-width: 0 0 1px 1px;
+    background: #EEE;
+    font-weight: bold;
+    line-height: 150%;
+    text-align: center;
+}
+#content .document table tr td:first-child {
+    text-align: center;
+}
+#content .document table td {
+    padding: 15px;
+    border: 1px #E3E3E3 solid;
+    border-width: 0 0 1px 1px;
+    line-height: 150%;
+    _text-align: center;
 }

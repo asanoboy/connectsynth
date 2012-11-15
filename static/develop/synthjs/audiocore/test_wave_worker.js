@@ -7,10 +7,10 @@ function onGetWave(e){
 		case 'init':
 			wave.setSampleRate(e.data.initParams.sampleRate);
 			break;
-		case 'addEvent':
+		case 'midi':
 			wave.addEvent(e.data.event);
 			break;
-		case 'getBuffer':
+		case 'getbuffer':
 			var buffer = wave.getBuffer(e.data.length);
 			rt.leftBuffer = buffer;
 			rt.rightBuffer = new Float32Array(buffer);
@@ -48,7 +48,7 @@ Wave.prototype.addEvent = function(event){
 	switch( event.type ){
 		case 'noteon':
 			this._singingNotes.push({
-				radianPerSample: event.note.freq / this._sampleRate * 2 * Math.PI,
+				radianPerSample: 440 * Math.pow(2, event.note/12-5) / this._sampleRate * 2 * Math.PI,
 				note: event.note.note,
 				offsetRadian: 0
 			});

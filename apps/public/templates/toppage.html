@@ -2,13 +2,15 @@
 
 {% block cssfile %}
 {{ block.super }}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/highlight/tomorrow-night.css"></link>
+
 {% endblock %}
 
 {% block content %}
 <div class="inner-section inner-header">
 	<div class="about-this-container">
-		<h1 class="title">ConnectSynth</h1>
-		<p class="description">ConnectSynth is experimental plugin hosting system using Web Audio API. You can post a plugin in Javascript and publish.</p>
+		<h1 class="title">Synthcript</h1>
+		<p class="description">Web楽器プラグインの実験サイトです。プラグインの作成、テスト、公開をすることが出来ます。また公開されたWeb楽器をあなたのWorkspaceにコピーして改変し、公開することも可能です。</p>
 	</div>
 	<div class="open-instrument-container">
 		<a class="open-instrument" href="{% url sdk_instrument_workspace %}">Open Workspace</a>	
@@ -16,7 +18,7 @@
 </div>
 <div class="inner-section plugin-area">
 	<div class="section-title">
-		<h2>Public Plugins</h2>
+		<h2>公開されたWeb楽器</h2>
 	</div>
 	<div class="plugin-list">
 	{% for plugin in object_list %}
@@ -41,7 +43,118 @@
 </div>
 <div class="inner-section develop-info">
 	<div class="section-title">
-		<h2>Developer's Document</h2>
+		<h2>プラグイン仕様</h2>
+	</div>
+	<div class="document">
+		<div class="section">
+			<h3>概要</h3>
+			<p>プラグインはmain.jsをWebWorkerとして起動します。以下はシンプルな例です。</p>
+			<ul>
+				<li>main.js</li>
+			</ul>
+			<pre><code class="javascript">
+addEventListener('message', onRequest, false);
+
+function onRequest(e) {
+	var response = {};
+
+	switch(e.data.action) {
+		case 'init':
+
+	}
+	response.callback = e.data.callback;
+
+	postMessage(response);
+}			
+			</code></pre>
+			<p>
+				以下では上記サンプルのe.dataを<strong>Request</strong>、responseを<strong>Response</strong>と呼ぶことにします。
+				<strong>Request.action</strong>には以下のタイプがあります。
+			</p>
+			<ul>
+				<li>init</li>
+				<li>set</li>
+				<li>midi</li>
+				<li>getbuffer</li>
+			</ul>
+			<p>
+				また各<strong>Request</strong>毎に<strong>Response</strong>をホストに送信しなければなりません。
+				<strong>Response.callback</strong>には<strong>Request.callback</strong>を設定します。
+			</p>
+			<table>
+				<tbody><tr>
+					<th>action</th>
+					<th><strong>Request</strong>の要素</th>
+					<th><strong>Response</strong>の要素</th>
+				</tr>
+				<tr>
+					<td>init</td>
+					<td>callback {string} コールバック関数名<br>sampleRate {number} サンプリングレート</td>
+					<td>callback {string} コールバック関数名<br>controller {object} GUIコントローラー情報</td>
+				</tr>
+				<tr>
+					<td>set</td>
+					<td>callback {string} コールバック関数名<br>name {string} 変更されたコントローラーの名前<br>value {string|number} 変更されたコントローラーの値</td>
+					<td>callback {string} コールバック関数名</td>
+				</tr>
+				<tr>
+					<td>midi</td>
+					<td>callback {string} コールバック関数名<br>event {object} MIDIイベント</td>
+					<td>callback {string} コールバック関数名</td>
+				</tr>
+				<tr>
+					<td>getbuffer</td>
+					<td>callback {string} コールバック関数名<br>length {integer} 要求するbufferのサンプル数</td>
+					<td>callback {string} コールバック関数名<br>leftBuffer {Float32Array} 左波形データ<br>rightBuffer {Float32Array} 右波形データ</td>
+				</tr>
+				</tbody>
+			</table>
+			<h4>initリクエスト</h4>
+			
+			
+			<h4>setリクエスト</h4>
+			<p>GUIコントローラの値が変更された際に送信されるリクエストです。</p>
+			
+			<h4>midiリクエスト</h4>
+			<p>midiイベントを受信します。</p>
+			
+			<h4>getbufferリクエスト</h4>
+			<p>サンプリングデータの要求リクエストです。Float32Array型データを含むレスポンスを返します。</p>
+		</div>
+		
+		<div class="section">
+			<h3>initリクエスト</h3>
+			<p>initリクエストに対する <strong>Response.controller</strong>がGUI設定を行います。</p>
+			<h4>Response.controller.background {Object}</h4>
+			<p>背景画像の設定を行う。</p>
+			<ul>
+				<li>Response.controller.background.image {string} 背景画像の相対URL</li>
+				<li>Response.controller.background.height {integer} 背景画像の縦pixel</li>
+				<li>Response.controller.background.width {integer} 背景画像の横pixel</li>
+			</ul>
+			<h4>Response.controller.controls {Array}</h4>
+			<p>各コントロールの情報を配列で設定します。以下は各コントロール共通の要素です。</p>
+			<ul>
+				<li>type {string} タイプ</li>
+				<li>name {string} 名前</li>
+				<li>image {string} 画像URL</li>
+				<li>value {string} 初期値</li>
+				<li>height {integer} 縦pixel</li>
+				<li>width {integer} 横pixel</li>
+				<li>offsetX {integer} 背景左上端から見た右方向へのオフセット</li>
+				<li>offsetY {integer} 背景左上端から見た下方向へのオフセット</li>
+			</ul>
+		</div>
+		
+		<div class="section">
+			<h3>MIDIイベント</h3>
+			
+		</div>
+		
+		<div class="section">
+			<h3>MIDIイベント</h3>
+			
+		</div>
 	</div>
 	
 </div>
@@ -56,10 +169,10 @@
 
 {% block scriptfile %}
 {{ block.super }}
+<script type="text/javascript" src="{{ STATIC_URL }}js//highlight.pack.js"></script>
 <script type="text/javascript">
 (function(){
 	$(function(){
-		
 		{# arrange plugin-block like pinterest style #}
 		if( $("div.plugin-block").length>2 ) {
 			
@@ -93,6 +206,7 @@
 			$("div.plugin-list").height(Math.max(leftBottom, rightBottom));
 		}
 		
+		hljs.initHighlighting();
 		
 	});
 })();

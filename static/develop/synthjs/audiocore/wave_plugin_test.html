@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>synthjs Unit Tests</title>
+<title>synthjs Unit Tests wave_plugin</title>
 <script src="../../closure/goog/base.js"></script>
 <script src="../../deps.js"></script>
 <script>
@@ -76,6 +76,14 @@ function testWavePlugin1() {
 	d.callback();
 	
 	asyncTestCase.waitForAsync();
+}
+
+function testContinuous() {
+	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), len = 21;
+	
+	setInterval(function(){
+		wave.getBufferDeferred(2048).callback();
+	}, 20);
 }
 
 </script>

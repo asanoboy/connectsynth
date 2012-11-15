@@ -17,7 +17,7 @@ urlpatterns = patterns('',
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
     url(r'^admin/', include(admin.site.urls)),
     
-    url(r'^sdk/', include('sdk.urls')),
+    url(r'^app/', include('sdk.urls')),
     #url(r'^plugin/', include('plugin.urls')),
     url(r'^auth/', include('autho.urls')),
     #url(r'^account/', include('account.urls')),
