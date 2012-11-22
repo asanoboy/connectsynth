@@ -13,6 +13,10 @@
 		<div id="logo">
 			<a href="{% url toppage %}">Synthcript</a>
 		</div>
+		<div id="menu-left">
+			<a href="{% url toppage %}#instruments">公開された楽器</a>
+			<a href="{% url toppage %}#document">プラグイン仕様</a>
+		</div>
 		<div id="menu">
 		{% if is_logged_in  %}
 			<span>@{{ screen_name }}</span>			

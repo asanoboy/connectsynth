@@ -14,7 +14,7 @@ goog.addDependency('../../synthjs/audiocore/filter_plugin.js', ['synthjs.audioco
 goog.addDependency('../../synthjs/audiocore/generator.js', ['synthjs.audiocore.Generator'], ['synthjs.audiocore.Filter', 'synthjs.audiocore.FilterPlugin']);
 goog.addDependency('../../synthjs/audiocore/midiinterface.js', ['synthjs.audiocore.MidiInterface', 'synthjs.audiocore.MidiInterface.EventType'], ['goog.events.EventTarget']);
 goog.addDependency('../../synthjs/audiocore/note.js', ['synthjs.audiocore.Note'], ['goog.array']);
-goog.addDependency('../../synthjs/audiocore/player.js', ['synthjs.audiocore.Player'], ['goog.debug.Logger', 'goog.object', 'goog.pubsub.PubSub', 'synthjs.audiocore.Generator']);
+goog.addDependency('../../synthjs/audiocore/player.js', ['synthjs.audiocore.Player'], ['goog.object', 'synthjs.audiocore.Generator']);
 goog.addDependency('../../synthjs/audiocore/wave.js', ['synthjs.audiocore.Wave'], ['goog.async.Deferred', 'goog.async.DeferredList']);
 goog.addDependency('../../synthjs/audiocore/wave_plugin.js', ['synthjs.audiocore.WaveEvent', 'synthjs.audiocore.WavePlugin', 'synthjs.audiocore.WavePluginEventType'], ['synthjs.utility.EventTarget', 'synthjs.utility.WorkerDeferredManager']);
 goog.addDependency('../../synthjs/bridge/codemirror.js', ['synthjs.CodeMirror'], []);
@@ -43,7 +43,7 @@ goog.addDependency('../../synthjs/ui/ajaxloader.js', ['synthjs.ui.AjaxLoader'], 
 goog.addDependency('../../synthjs/ui/dialog.js', ['synthjs.ui.Dialog'], ['goog.ui.Dialog']);
 goog.addDependency('../../synthjs/ui/directorycontrol.js', ['synthjs.ui.DirectoryControl', 'synthjs.ui.DirectoryControl.EventType'], ['goog.asserts', 'goog.events.FileDropHandler', 'goog.events.FileDropHandler.EventType', 'goog.fs.FileReader', 'goog.fs.FileReader.EventType', 'goog.object', 'goog.ui.Component.EventType', 'goog.ui.MenuItem', 'goog.ui.PopupMenu', 'goog.ui.tree.TreeControl', 'synthjs.model.FileBase', 'synthjs.model.ImageFile', 'synthjs.ui.DirectoryNodeType']);
 goog.addDependency('../../synthjs/ui/directorynode.js', ['synthjs.ui.DirectoryNode', 'synthjs.ui.DirectoryNode.EventType', 'synthjs.ui.DirectoryNodeType'], ['goog.events.BrowserEvent.MouseButton', 'goog.events.EventHandler', 'goog.events.EventType', 'goog.events.KeyHandler', 'goog.string', 'goog.ui.Component.EventType', 'goog.ui.Menu.EventType', 'goog.ui.MenuItem', 'goog.ui.PopupMenu', 'goog.ui.Prompt', 'goog.ui.tree.TreeNode', 'synthjs.model.EventType']);
-goog.addDependency('../../synthjs/ui/graphics/controlbutton.js', ['synthjs.ui.graphics.ControlButton'], ['goog.graphics.ext', 'synthjs.ui.graphics.GraphicsComponent']);
+goog.addDependency('../../synthjs/ui/graphics/controlbutton.js', ['synthjs.ui.graphics.ControlButton'], ['goog.graphics.ext', 'goog.string.format', 'synthjs.ui.graphics.GraphicsComponent']);
 goog.addDependency('../../synthjs/ui/graphics/graphicscomponent.js', ['synthjs.ui.graphics.GraphicsComponent'], ['synthjs.utility.EventTarget']);
 goog.addDependency('../../synthjs/ui/graphics/radiobutton.js', ['synthjs.ui.graphics.RadioButton'], ['goog.graphics.ext', 'synthjs.ui.graphics.GraphicsComponent']);
 goog.addDependency('../../synthjs/ui/graphics/togglebutton.js', ['synthjs.ui.graphics.ToggleButton'], ['goog.graphics.ext', 'synthjs.ui.graphics.GraphicsComponent']);

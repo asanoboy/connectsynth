@@ -18,7 +18,7 @@
 </div>
 <div class="inner-section plugin-area">
 	<div class="section-title">
-		<h2>公開されたWeb楽器</h2>
+		<h2 id="instruments">公開された楽器</h2>
 	</div>
 	<div class="plugin-list">
 	{% for plugin in object_list %}
@@ -43,117 +43,348 @@
 </div>
 <div class="inner-section develop-info">
 	<div class="section-title">
-		<h2>プラグイン仕様</h2>
+		<h2 id="document">プラグイン仕様</h2>
 	</div>
 	<div class="document">
 		<div class="section">
 			<h3>概要</h3>
-			<p>プラグインはmain.jsをWebWorkerとして起動します。以下はシンプルな例です。</p>
+			<p>プラグインはホストがmain.jsをWebWorkerとして起動します。以下はシンプルな例です。</p>
 			<ul>
 				<li>main.js</li>
 			</ul>
 			<pre><code class="javascript">
-addEventListener('message', onRequest, false);
+addEventListener('message', onGetWave, false);
 
-function onRequest(e) {
-	var response = {};
+var sampleRate, currentRadian = 0, freqPerSample = false;
 
-	switch(e.data.action) {
+function onGetWave(e) {
+	var request = e.data, response = {
+		callback : request.callback
+	};
+	
+	switch(request.action) {
 		case 'init':
-
+			sampleRate = request.samplerate;
+			break;
+		case 'midi':
+			switch(request.type) {
+				case "noteon":
+					var freq = 440 * Math.pow(2, (request.note / 12) - 5) * 2 * Math.PI;
+					freqPerSample = freq / sampleRate;
+					break;
+				case "noteoff":
+				case "notealloff":
+				default:
+					freqPerSample = false;
+					break;
+			}
+			break;
+		case 'getbuffer':
+			var buffer = new Float32Array(request.length);
+			if(freqPerSample !== false) {
+				for(var i = 0; i < request.length; i++) {
+					currentRadian += freqPerSample;
+					buffer[i] = Math.sin(currentRadian);
+				}
+			}
+			response.leftbuffer = buffer;
+			response.rightbuffer = buffer;
+			break;
+		default:
+			return;
 	}
-	response.callback = e.data.callback;
 
 	postMessage(response);
-}			
+};
 			</code></pre>
 			<p>
-				以下では上記サンプルのe.dataを<strong>Request</strong>、responseを<strong>Response</strong>と呼ぶことにします。
-				<strong>Request.action</strong>には以下のタイプがあります。
+				以下では上記サンプルのe.dataを<strong>リクエスト</strong>、responseを<strong>レスポンス</strong>と呼ぶことにします。
+				各リクエスト毎にレスポンスをホストに送信しなければなりません。
 			</p>
-			<ul>
-				<li>init</li>
-				<li>set</li>
-				<li>midi</li>
-				<li>getbuffer</li>
-			</ul>
 			<p>
-				また各<strong>Request</strong>毎に<strong>Response</strong>をホストに送信しなければなりません。
-				<strong>Response.callback</strong>には<strong>Request.callback</strong>を設定します。
+				すべてのリクエストは以下の属性を共通で持ちます。
 			</p>
 			<table>
 				<tbody><tr>
-					<th>action</th>
-					<th><strong>Request</strong>の要素</th>
-					<th><strong>Response</strong>の要素</th>
+					<th>リクエスト属性</th>
+					<th>説明</th>
 				</tr>
 				<tr>
-					<td>init</td>
-					<td>callback {string} コールバック関数名<br>sampleRate {number} サンプリングレート</td>
-					<td>callback {string} コールバック関数名<br>controller {object} GUIコントローラー情報</td>
+					<td>@param {string} action</td>
+					<td>リクエストの種類を表します。"init"、"set"、"midi"、"getbuffer"の4種類があります。</td>
 				</tr>
 				<tr>
-					<td>set</td>
-					<td>callback {string} コールバック関数名<br>name {string} 変更されたコントローラーの名前<br>value {string|number} 変更されたコントローラーの値</td>
-					<td>callback {string} コールバック関数名</td>
-				</tr>
-				<tr>
-					<td>midi</td>
-					<td>callback {string} コールバック関数名<br>event {object} MIDIイベント</td>
-					<td>callback {string} コールバック関数名</td>
-				</tr>
-				<tr>
-					<td>getbuffer</td>
-					<td>callback {string} コールバック関数名<br>length {integer} 要求するbufferのサンプル数</td>
-					<td>callback {string} コールバック関数名<br>leftBuffer {Float32Array} 左波形データ<br>rightBuffer {Float32Array} 右波形データ</td>
+					<td>@param {string} callback</td>
+					<td>ホスト側でコールバックで呼ばれる関数の名前です。レスポンスに属性として付加します。</td>
 				</tr>
 				</tbody>
 			</table>
+		</div>
+		
+		<div class="section">	
+			<h3>リクエストとレスポンス</h3>
+			<p>ここではタイプに応じたリクエスト、レスポンスの説明をします。</p>
 			<h4>initリクエスト</h4>
-			
+			<p>
+				プラグインをホストが起動して最初に呼ばれます。
+			</p>
+			<table>
+				<tbody>
+				<tr>
+					<th>リクエスト属性</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>@param {number} samplerate</td>
+					<td>サンプリング周波数[Hz]</td>
+				</tr>
+				</tbody>
+			</table>
+			<table>
+				<tbody>
+				<tr>
+					<th>レスポンス属性</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>@param {Object} controller</td>
+					<td>パラメータとGUIコントローラを設定します。</td>
+				</tr>
+				</tbody>
+			</table>
 			
 			<h4>setリクエスト</h4>
-			<p>GUIコントローラの値が変更された際に送信されるリクエストです。</p>
-			
+			<p>
+				プラグイン側で設定したパラメータにGUIコントローラなどから変更が加えられたときに呼ばれます。パラメータの設定方法については後述のGUIコントローラの説明で行います。
+			</p>
+			<table>
+				<tbody>
+				<tr>
+					<th>リクエスト属性</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>@param {string} id</td>
+					<td>変更されたパラメータのid</td>
+				</tr>
+				<tr>
+					<td>@param {string|number} value</td>
+					<td>変更されたパラメータの値</td>
+				</tr>
+				</tbody>
+			</table>
+			<p>
+				ホスト側に送信するレスポンス属性はありません。
+			</p>
 			<h4>midiリクエスト</h4>
-			<p>midiイベントを受信します。</p>
+			<p>
+				midiイベントを受信します。
+			</p>
+			<table>
+				<tbody>
+				<tr>
+					<th>リクエスト属性</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>@param {string} type</td>
+					<td>MIDIイベントのタイプです。"noteon"、"noteoff"、"notealloff"の種類があります。</td>
+				</tr>
+				<tr>
+					<td>@param {number} note</td>
+					<td>"noteon"、"noteoff"の場合のMIDIノート番号です。</td>
+				</tr>
+				<tr>
+					<td>@param {number} verocity</td>
+					<td>"noteon"の場合のベロシティです。範囲は[0, 1]です。</td>
+				</tr>
+				</tbody>
+			</table>
+			<p>
+				ホスト側に送信するレスポンス属性はありません。
+			</p>
 			
 			<h4>getbufferリクエスト</h4>
-			<p>サンプリングデータの要求リクエストです。Float32Array型データを含むレスポンスを返します。</p>
+			<p>
+				波形バッファーを要求します。
+			</p>
+			<table>
+				<tbody>
+				<tr>
+					<th>リクエスト属性</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>@param {number} length</td>
+					<td>要求するバッファーのサイズ</td>
+				</tr>
+				</tbody>
+			</table>
+			<table>
+				<tbody>
+				<tr>
+					<th>レスポンス属性</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>@param {Float32Array} rightbuffer</td>
+					<td>右サンプルバッファーです。</td>
+				</tr>
+				<tr>
+					<td>@param {Float32Array} leftbuffer</td>
+					<td>左サンプルバッファーです。</td>
+				</tr>
+				</tbody>
+			</table>			
 		</div>
-		
+
 		<div class="section">
-			<h3>initリクエスト</h3>
-			<p>initリクエストに対する <strong>Response.controller</strong>がGUI設定を行います。</p>
-			<h4>Response.controller.background {Object}</h4>
-			<p>背景画像の設定を行う。</p>
-			<ul>
-				<li>Response.controller.background.image {string} 背景画像の相対URL</li>
-				<li>Response.controller.background.height {integer} 背景画像の縦pixel</li>
-				<li>Response.controller.background.width {integer} 背景画像の横pixel</li>
-			</ul>
-			<h4>Response.controller.controls {Array}</h4>
-			<p>各コントロールの情報を配列で設定します。以下は各コントロール共通の要素です。</p>
-			<ul>
-				<li>type {string} タイプ</li>
-				<li>name {string} 名前</li>
-				<li>image {string} 画像URL</li>
-				<li>value {string} 初期値</li>
-				<li>height {integer} 縦pixel</li>
-				<li>width {integer} 横pixel</li>
-				<li>offsetX {integer} 背景左上端から見た右方向へのオフセット</li>
-				<li>offsetY {integer} 背景左上端から見た下方向へのオフセット</li>
-			</ul>
-		</div>
-		
-		<div class="section">
-			<h3>MIDIイベント</h3>
+			<h3>GUIコントローラの設定</h3>
+			<p>initリクエストに対するレスポンスのcontroller属性がGUI設定を行います。</p>
 			
+			<h4>controller.background</h4>
+			<p>背景画像の設定を行います。</p>
+			<table>
+				<tbody>
+				<tr>
+					<th>controller属性</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>@param {string} image</td>
+					<td>背景画像の相対URLです</td>
+				</tr>
+				<tr>
+					<td>@param {string} height</td>
+					<td>背景画像の縦pixelです</td>
+				</tr>
+				<tr>
+					<td>@param {string} width</td>
+					<td>背景画像の幅pixelです</td>
+				</tr>
+				</tbody>
+			</table>				
+			
+			<h4>controller.controls</h4>
+			<p>各GUIコントロールの情報を配列で設定します。コントロールには"control"、"toggle"、"radio"の種類があり、各要素共通の属性は以下となります。</p>
+			<table>
+				<tbody>
+				<tr>
+					<th>control共通属性</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>@param {string} type</td>
+					<td>コントロールのタイプを表します。"control"、"toggle"、"radio"のうちどれかを指定します。</td>
+				</tr>
+				<tr>
+					<td>@param {string} id</td>
+					<td>コントロールのidを指定します。setリクエストのid属性に対応します。</td>
+				</tr>
+				<tr>
+					<td>@param {string|number} value</td>
+					<td>パラメータの初期値です。</td>
+				</tr>
+				<tr>
+					<td>@param {number} height</td>
+					<td>コントロール画像の縦pixelです。</td>
+				</tr>
+				<tr>
+					<td>@param {number} width</td>
+					<td>コントロール画像の幅pixelです。</td>
+				</tr>
+				</tbody>
+			</table>		
+		
+			<h4>controlコントロール</h4>
+			<p>回転つまみです。つまみは真上を中心として270°回転します。</p>
+			<table>
+				<tbody>
+				<tr>
+					<th>control属性</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>@param {string} image</td>
+					<td>コントロール画像の相対URLです。</td>
+				</tr>
+				<tr>
+					<td>@param {number} offsetx</td>
+					<td>コントロール画像の背景画像左上を原点としたときの右方向オフセットpixelです。</td>
+				</tr>
+				<tr>
+					<td>@param {number} offsety</td>
+					<td>コントロール画像の背景画像左上を原点としたときの下方向オフセットpixelです。</td>
+				</tr>
+				<tr>
+					<td>@param {number} min</td>
+					<td>最小値です。</td>
+				</tr>
+				<tr>
+					<td>@param {number} max</td>
+					<td>最大値です。</td>
+				</tr>
+				<tr>
+					<td>@param {number} step</td>
+					<td>ステップ値です。</td>
+				</tr>
+				</tbody>
+			</table>
+			
+			<h4>toggleコントロール</h4>
+			<p>トグルボタンです。</p>
+			<table>
+				<tbody>
+				<tr>
+					<th>control属性</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>@param {string} imageon</td>
+					<td>オンのときの画像相対URLです。</td>
+				</tr>
+				<tr>
+					<td>@param {string} imageoff</td>
+					<td>オフのときの画像の相対URLです。</td>
+				</tr>
+				<tr>
+					<td>@param {number} offsetx</td>
+					<td>コントロール画像の背景画像左上を原点としたときの右方向オフセットpixelです。</td>
+				</tr>
+				<tr>
+					<td>@param {number} offsety</td>
+					<td>コントロール画像の背景画像左上を原点としたときの下方向オフセットpixelです。</td>
+				</tr>
+				</tbody>
+			</table>
+			
+			<h4>radioコントロール</h4>		
+			<p>ラジオボタンです。</p>
+			<table>
+				<tbody>
+				<tr>
+					<th>control属性</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>@param {string} imageon</td>
+					<td>オンのときの画像相対URLです。</td>
+				</tr>
+				<tr>
+					<td>@param {string} imageoff</td>
+					<td>オフのときの画像の相対URLです。</td>
+				</tr>
+				<tr>
+					<td>@param {Array} offsets</td>
+					<td>@param {number} offsetx、@param {number} offsetyを要素としたオブジェクトの配列です。</td>
+				</tr>
+				</tbody>
+			</table>
 		</div>
 		
 		<div class="section">
-			<h3>MIDIイベント</h3>
-			
+			<h3>デバッグ方法</h3>
+			<p>WebWorker内ではconsole.logなどのデバッグ用のAPIが提供されていません。プラグイン内でのオブジェクトの中身を確認したい場合は、callback要素を持たないオブジェクトをpostMessage()してください。そうすればホスト側のJavascriptコンソールで確認することが出来ます。</p>
 		</div>
 	</div>
 	

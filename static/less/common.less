@@ -104,6 +104,18 @@ div.section {
             font-size: 1.4em;
         }
     }
+    #menu-left {
+        margin: 0 20px;
+        float: left;
+        a, span {
+            margin: 0 10px;
+            display: inline-block;
+            _padding: 0 10px;
+            line-height: @hd-height;
+            color: @menu-font-color;
+            
+        }
+    }
     #menu {
         float: right;
         a, span {
@@ -311,10 +323,10 @@ div.section {
 #content .document h3 {
     border-left: solid 4px @first-accent-color;
     text-indent: 0.4em;
-    margin: @document-line-margin-height 0 @document-line-margin-bottom 0px;
+    margin: 1.5*@document-line-margin-height 0 @document-line-margin-bottom 0px;
 }
 #content .document h4 {
-    margin: @document-line-margin-height 0 @document-line-margin-bottom 0px;
+    margin: 1.5*@document-line-margin-height 0 @document-line-margin-bottom 0px;
 }
 #content .document ul {
     margin: @document-line-margin-height 0 @document-line-margin-bottom 50px;
@@ -330,21 +342,23 @@ div.section {
 }
 
 #content .document table th {
-    padding: 15px;
+    padding: 8px;
     border: #D3D3D3 solid;
     border-width: 0 0 1px 1px;
     background: #EEE;
     font-weight: bold;
     line-height: 150%;
+    font-size: 0.9em;
     text-align: center;
 }
 #content .document table tr td:first-child {
-    text-align: center;
+    _text-align: center;
 }
 #content .document table td {
-    padding: 15px;
+    padding: 10px;
     border: 1px #E3E3E3 solid;
     border-width: 0 0 1px 1px;
     line-height: 150%;
+    font-size: 0.9em;
     _text-align: center;
 }

@@ -159,63 +159,78 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 		
 		var isValid = true;
 		goog.array.forEach(controller['controls'], function(control){
-			if( !goog.isString( control['name'] ) || !goog.isNumber( control['value'] ) ){
+			//if( !goog.isString( control['name'] ) || !goog.isNumber( control['value'] ) ){
+			if( !goog.isString( control['id'] ) || !goog.isNumber( control['value'] ) ){
 				isValid = false;
 				return;
 			}
 			
 			switch(control['type']){
 				case 'control':
-					if( goog.isArray( control['range'] ) && control['range'].length==2 && 
-							goog.isNumber(control['range'][0]) && goog.isNumber(control['range'][1]) &&
-							control['range'][0] < control['range'][1]  ){
-						var min = control['range'][0], max = control['range'][1];
+					if( goog.isNumber(control['min']) && goog.isNumber(control['max']) &&
+							control['min'] < control['max'] ){
+						var min = parseFloat(control['min']), max = parseFloat(control['max']);
 					}
 					else{
 						var min = 0, max = 1;
 					}
 					var step = parseFloat(control['step']) || 0.001; 
+					var labelEnabled = goog.isDef(control['labelenabled']) ? control['labelenabled'] : false;
+					var labelPosition = false;//goog.isDef(control['labelposition']) ? control['labelposition'] : false;
+					var labelOffsetX = 0;//goog.isDef(control['labeloffsetx']) ? control['labeloffsetx'] : 0;
+					var labelOffsetY = 0;//goog.isDef(control['labeloffsety']) ? control['labeloffsety'] : 0;
+					var labelPrefix = goog.isDef(control['labelprefix']) ? control['labelprefix'] :	false;
+					var labelPostfix = goog.isDef(control['labelpostfix']) ? control['labelpostfix'] : false;
 					
-					var control = new synthjs.model.PluginControlParam(
-						control['name'], 
+					 
+					var controlParam = new synthjs.model.PluginControlParam(
+						control['id'], 
 						control['value'],
 						min,max,step,
 						control['width'],
 						control['height'],
-						control['offsetX'],
-						control['offsetY'],
-						this._bootstrapUri.resolve(new goog.Uri(control['image'])).toString()
+						control['offsetx'],
+						control['offsety'],
+						this._bootstrapUri.resolve(new goog.Uri(control['image'])).toString(),
+						labelEnabled, labelPosition, labelPrefix, labelPostfix, labelOffsetX, labelOffsetY
 					); 
 					break;
 				case 'toggle':
-					var control = new synthjs.model.PluginToggleParam(
-						control['name'], 
+					var controlParam = new synthjs.model.PluginToggleParam(
+						control['id'], 
 						control['value'],
 						control['width'],
 						control['height'],
-						control['offsetX'],
-						control['offsetY'],
-						this._bootstrapUri.resolve(new goog.Uri(control['imageOn'])).toString(),
-						this._bootstrapUri.resolve(new goog.Uri(control['imageOff'])).toString()
+						control['offsetx'],
+						control['offsety'],
+						this._bootstrapUri.resolve(new goog.Uri(control['imageon'])).toString(),
+						this._bootstrapUri.resolve(new goog.Uri(control['imageoff'])).toString()
 					);
 					break;
 				case 'radio':
-					var control = new synthjs.model.PluginRadioParam(
-						control['name'], 
+					var offsets = [];
+					goog.array.forEach(control['offsets'], function(offset){
+						offsets.push({
+							offsetX: offset['offsetx'],
+							offsetY: offset['offsety']
+						})
+					}) 
+					var controlParam = new synthjs.model.PluginRadioParam(
+						control['id'], 
 						control['value'],
 						control['width'],
 						control['height'],
-						control['offsets'],
-						this._bootstrapUri.resolve(new goog.Uri(control['imageOn'])).toString(),
-						this._bootstrapUri.resolve(new goog.Uri(control['imageOff'])).toString()
+						offsets,
+						this._bootstrapUri.resolve(new goog.Uri(control['imageon'])).toString(),
+						this._bootstrapUri.resolve(new goog.Uri(control['imageoff'])).toString()
 					);
 					break;
 				default:
 					throw new Error("invalid param");
 			}
 			
-			this._paramCollection.add(control);
-
+			this._paramCollection.add(controlParam);
+			this._wavePlugin.setParamDeferred(control['id'], control['value']).callback();
 		}, this);
 		
 		if( isValid ){

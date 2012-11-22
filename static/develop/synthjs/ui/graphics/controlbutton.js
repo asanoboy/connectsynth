@@ -2,6 +2,7 @@ goog.provide("synthjs.ui.graphics.ControlButton");
 
 goog.require("synthjs.ui.graphics.GraphicsComponent");
 goog.require("goog.graphics.ext");
+goog.require("goog.string.format");
 
 /**
  * This class is component of rotating control.
@@ -31,7 +32,10 @@ synthjs.ui.graphics.ControlButton.prototype.decorateInternal = function(gr){
 		offsetX = this._param.get("offsetX"),
 		offsetY = this._param.get("offsetY"),
 		imagepath = this._param.get("imagepath"),
-		value = this._param.get("value");
+		value = this._param.get("value"),
+		step = this._param.get("step"),
+		labelEnabled = this._param.get("labelEnabled");	
+	
 	
 	this._centerX = offsetX;
 	this._centerY = offsetY;
@@ -41,6 +45,25 @@ synthjs.ui.graphics.ControlButton.prototype.decorateInternal = function(gr){
 	
 	// Put the center of the image on coordinate of (offsetX, offsetY)
 	var image = gr.drawImage(offsetX-width/2, offsetY-height/2, width, height, imagepath);
+
+	if( labelEnabled ){
+		
+		var labelPosition = this._param.get("labelPosition");
+		this._labelPrefix = this._param.get("labelPrefix");
+		this._labelPostfix = this._param.get("labelPostfix");
+		
+		var tmp = step;
+		this._dispDigit = 0;
+		while( true ){
+			tmp *= 10;
+			if( this._dispDigit>=4 || tmp%10 == 0 ){
+				break;
+			}		
+			this._dispDigit++;
+		}
+		this._textElement = this.getGraphics().drawText('', offsetX, offsetY-height, 0, 0, 'center', null,
+	          new goog.graphics.Font(15, 'Times'), null, new goog.graphics.SolidFill('#000'));
+	}
 	
 	this._controlImage = image;
 	this._group = group;
@@ -81,6 +104,19 @@ synthjs.ui.graphics.ControlButton.prototype._getRadius = function(value){
 synthjs.ui.graphics.ControlButton.prototype._setValue = function(value){
 	var radius = this._getRadius(value);
 	this._controlImage.setTransformation(0,0,radius,this._centerX, this._centerY,0);
+	if( this._textElement ){
+		var label = "";
+		if( this._labelPrefix ){
+			label += this._labelPrefix;
+		}
+		label += goog.string.format("%."+this._dispDigit+"f", value);
+		
+		if( this._labelPostfix ){
+			label += this._labelPostfix;
+		}
+		
+		this._textElement.setText(label);
+	}
 }
 
 /**
@@ -108,7 +144,7 @@ synthjs.ui.graphics.ControlButton.prototype._onMouseDown = function(e){
 synthjs.ui.graphics.ControlButton.prototype._onMouseMove = function(e){
 	var offsetY = e.clientY;
 	var currentValue = this._param.get("internalValue"); 
-	var valuePerPx = e.ctrlKey ? 0.0003 : 0.003;
+	var valuePerPx = e.ctrlKey ? 0.0003 : 0.005;
 	
 	this._param.set("value", currentValue+(this._beforeOffsetY - offsetY)*valuePerPx*this._range);
 	this._beforeOffsetY = offsetY;

@@ -34,8 +34,8 @@ synthjs.ui.graphics.RadioButton.prototype.decorateInternal = function(gr){
 	this._imagepathOff = imagepathOff;
 	this._offsetList = goog.array.map(offsetList, function(offset){
 		return {
-			offsetX: offset['offsetX']-width/2,
-			offsetY: offset['offsetY']-height/2};
+			offsetX: offset.offsetX-width/2,
+			offsetY: offset.offsetY-height/2};
 	});
 	
 	this._width = width;

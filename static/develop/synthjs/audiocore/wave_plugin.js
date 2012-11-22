@@ -85,7 +85,8 @@ synthjs.audiocore.WavePlugin.prototype.initDeferred = function(opt_params){
 	var self = this;
 	//return new synthjs.utility.WorkerDeferred(this._worker, 
 	return this._workerCreator.create(
-		{'action':'init', "initParams": {"sampleRate": this._sampleRate}})
+		//{'action':'init', "initParams": {"sampleRate": this._sampleRate}})
+		{'action':'init', "samplerate": this._sampleRate})
 		.addCallback(function(e){
 			self.dispatchEvent(new goog.events.Event(
 				synthjs.audiocore.WavePluginEventType.INIT, 
@@ -99,9 +100,12 @@ synthjs.audiocore.WavePlugin.prototype.initDeferred = function(opt_params){
  * @param {synthjs.audiocore.WaveEvent} event
  */
 synthjs.audiocore.WavePlugin.prototype.addEventDeferred = function(event){
-	//var workerD = new synthjs.utility.WorkerDeferred(this._worker, 
+	//var workerD = new synthjs.utility.WorkerDeferred(this._worker,
+	var request = event.createPostObject();
+	request['action'] = 'midi';  
+	
 	var workerD = this._workerCreator.create(
-		{action:'midi', event:event});
+		request);
 		
 	if( this._initialized ){
 		return workerD;
@@ -136,8 +140,8 @@ synthjs.audiocore.WavePlugin.prototype.getBufferDeferred = function(len){
 	
 	return d.addCallback(function(e){
 		return {
-			leftBuffer: e['leftBuffer'],
-			rightBuffer: e['rightBuffer']
+			leftBuffer: e['leftbuffer'],
+			rightBuffer: e['rightbuffer']
 		};
 	});
 }
@@ -148,7 +152,7 @@ synthjs.audiocore.WavePlugin.prototype.getBufferDeferred = function(len){
  */
 synthjs.audiocore.WavePlugin.prototype.setParamDeferred = function(name, value){
 	return this._workerCreator.create(
-		{action:'set', name: name, value: value},
+		{action:'set', "id": name, "value": value},
 		{error: function(){
 			goog.asserts.assert("Can't set param to plugin");
 		}}
@@ -164,7 +168,8 @@ synthjs.audiocore.WaveEvent = function(type, opt_params){
 	/**
 	 * @private
 	 */
-	this['type'] = type;
+	//this['type'] = type;
+	this.type = type;
 	
 	var eventType = synthjs.audiocore.WaveEventType;
 	
@@ -172,34 +177,42 @@ synthjs.audiocore.WaveEvent = function(type, opt_params){
 		case eventType.NOTEON:
 			goog.asserts.assertInstanceof(opt_params.note, synthjs.audiocore.Note, "invalid");
 			goog.asserts.assertNumber(opt_params.velocity, "invalid");
-			this['note'] = opt_params.note.getMidiNum();
-			this['velocity'] = opt_params.velocity;
+			this.note = opt_params.note;
+			this.velocity = opt_params.velocity;
 			break;
 		case eventType.NOTEOFF:
 			goog.asserts.assertInstanceof(opt_params.note, synthjs.audiocore.Note, "invalid");
-			this['note'] = opt_params.note.getMidiNum();
+			this.note = opt_params.note;
 			break;
 		case eventType.NOTEALLOFF:
 			break;
 		default:
 			goog.asserts.fail('fail');
 	}
-	
-	// if( type==eventType.NOTEON || type==eventType.NOTEOFF ){
-// 		
-		// if( opt_params.note.constructor != synthjs.audiocore.Note || opt_params.velocity )
-// 		
-		// this['note'] = {
-			// "freq" : opt_params.note.freq
-		// };
-// 			
-		// this['velocity'] = opt_params.velocity;
-	// }
-	// else if( type==eventType.NOTEALLOFF ){
-// 		
-	// }
 }
 
+synthjs.audiocore.WaveEvent.prototype.createPostObject = function(){
+	var rt = {};
+	rt['type'] = this.type;
+	var eventType = synthjs.audiocore.WaveEventType;	
+	switch(this.type){
+		case eventType.NOTEON:
+			goog.asserts.assertInstanceof(this.note, synthjs.audiocore.Note, "invalid");
+			goog.asserts.assertNumber(this.velocity, "invalid");
+			rt['note'] = this.note.getMidiNum();
+			rt['velocity'] = this.velocity;
+			break;
+		case eventType.NOTEOFF:
+			goog.asserts.assertInstanceof(this.note, synthjs.audiocore.Note, "invalid");
+			rt['note'] = this.note.getMidiNum();
+			break;
+		case eventType.NOTEALLOFF:
+			break;
+		default:
+			goog.asserts.fail('fail');
+	}
+	return rt;
+}
 
 /**
  * This EventType is for plugin.

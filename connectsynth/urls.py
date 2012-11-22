@@ -1,11 +1,18 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
-
+import views
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = []
+
+if not settings.DEBUG:
+    urlpatterns += patterns('',
+        url(r'^static/develop', views.raise_error404),
+    )
+
+urlpatterns += patterns('',
     # Examples:
     # url(r'^connectsynth/', include('connectsynth.foo.urls')),
 

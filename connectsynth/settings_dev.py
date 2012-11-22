@@ -1,6 +1,6 @@
 from settings_base import *
 
-DEBUG = True
+DEBUG = False#True
 TEMPLATE_DEBUG = DEBUG
 
 # override

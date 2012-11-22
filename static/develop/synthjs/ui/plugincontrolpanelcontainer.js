@@ -51,8 +51,8 @@ synthjs.ui.PluginControlPanelContainer.prototype.decorateInternal = function(ele
 	}
 	
 	this._panel = dom.createDom("div");
-	dom.appendChild(this._wrapper, this._header);
 	dom.appendChild(this._wrapper, this._panel);
+	dom.appendChild(this._wrapper, this._header);
 	
 	this._controlPanel.decorate(this._panel);
 	dom.appendChild(element, this._wrapper);

@@ -49,18 +49,19 @@ synthjs.ui.Keyboard.prototype.enterDocument = function(){
 	
 	//console.log(this._keyHash);
 	
-	this._eventHandler.listen(this.getElement(), [
-		goog.events.EventType.MOUSEDOWN,
-		goog.events.EventType.MOUSEMOVE
-	], this.onActivateKey, false, this);
+	//this._eventHandler.listen(this.getElement(), [
+	this.getHandler().listen(this.getElement(), [
+			goog.events.EventType.MOUSEDOWN,
+			goog.events.EventType.MOUSEMOVE
+		], this.onActivateKey)
 	
-	this._eventHandler.listen(this.getElement(), [
-		goog.events.EventType.MOUSEUP
-	], this.onDeactivateKey, false, this);
+		.listen(this.getElement(), [
+			goog.events.EventType.MOUSEUP
+		], this.onDeactivateKey)
 	
-	this._eventHandler.listen(this.getElement(), [
-		goog.events.EventType.MOUSEOUT
-	], this.onMouseout, false, this);
+		.listen(this.getElement(), [
+			goog.events.EventType.MOUSEOUT
+		], this.onMouseout);
 	
 }
 
@@ -149,9 +150,9 @@ synthjs.ui.Keyboard.prototype.demarkKey = function(noteNum){
 
 synthjs.ui.Keyboard.prototype._dispatchNoteEvent = function(noteString, eventType){
 	
-	if( this._singingNoteString && eventType==synthjs.ui.KeyboardEventType.ON ){
-		this._dispatchNoteEvent(this._singingNoteString, synthjs.ui.KeyboardEventType.OFF);
-	}
+	// if( this._singingNoteString && eventType==synthjs.ui.KeyboardEventType.ON ){
+		// this._dispatchNoteEvent(this._singingNoteString, synthjs.ui.KeyboardEventType.OFF);
+	// }
 	
 	var event = new goog.events.Event(eventType, {note: synthjs.audiocore.Note.createByMidiFormat(noteString)});
 	//event.note = synthjs.audiocore.Note.createByString(noteString);

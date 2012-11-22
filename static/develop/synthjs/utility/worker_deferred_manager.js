@@ -30,7 +30,7 @@ synthjs.utility.WorkerDeferredManager.prototype.dispose = function(){
  * callback from worker.
  */
 synthjs.utility.WorkerDeferredManager.prototype.onPostMessage = function(e){
-	if( e['data']['callback'] ){
+	if( goog.isDef(e['data']['callback']) ){
 		if( this._waitDeferredList[e['data']['callback']] ){
 			
 			this._waitDeferredList[e['data']['callback']].callback(e['data']);

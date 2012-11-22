@@ -1,5 +1,5 @@
-from django.http import HttpResponse
-import os
+from django.http import Http404
 
-def home(request):
-  return HttpResponse(os.path.dirname(__file__)) 
+def raise_error404(request):
+    print 'hoge'
+    raise Http404  

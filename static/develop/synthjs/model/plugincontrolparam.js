@@ -9,7 +9,19 @@ goog.require("synthjs.model.Base");
  * @param {number} value
  */
 synthjs.model.PluginControlParam = function(
-		name, value, min, max, step, width, height, offsetX, offsetY, imagepath){
+		name, value, min, max, step, width, height, offsetX, offsetY, imagepath, 
+		labelEnabled, labelPosition, labelPrefix, labelPostfix, labelOffsetX, labelOffsetY){
+	
+	switch(labelPosition){
+		case "top": case "right": case "bottom": case "left":
+			labelPosition = labelPosition;
+			break;
+		default:
+			labelPosition = "top";
+			break;
+	}
+	goog.isNumber(labelOffsetX) || (labelOffsetX=0);
+	goog.isNumber(labelOffsetY) || (labelOffsetY=0);
 	
 	goog.base(this, {
 		"name": name,
@@ -22,7 +34,13 @@ synthjs.model.PluginControlParam = function(
 		"height": height,
 		"offsetX": offsetX,
 		"offsetY": offsetY,
-		"imagepath": imagepath
+		"imagepath": imagepath,
+		"labelEnabled": labelEnabled,
+		"labelPosition": labelPosition,
+		"labelPrefix": labelPrefix,
+		"labelPostfix": labelPostfix,
+		"labelOffsetX": labelOffsetX,
+		"labelOffsetY": labelOffsetY
 	});
 }
 

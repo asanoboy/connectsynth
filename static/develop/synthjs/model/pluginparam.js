@@ -23,7 +23,6 @@ synthjs.model.PluginParam = function(
 goog.inherits(synthjs.model.PluginParam, synthjs.model.Base);
 
 /**
- * This method limits value from 0 to 1 when name is 'value'.
  * @override
  */
 synthjs.model.PluginParam.prototype.set = function(name, value){

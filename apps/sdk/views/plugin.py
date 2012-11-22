@@ -80,6 +80,7 @@ def sdk_plugin_filelist_api_handler(request, code, plugin):
 
 @reject_invalid_code
 def sdk_plugin_get_api_handler(request, code, path, plugin):
+    
     if not plugin.is_public and request.user!=plugin.user:
         return get_failure_response()
     
@@ -87,8 +88,8 @@ def sdk_plugin_get_api_handler(request, code, path, plugin):
         file = File.objects.get(plugin=plugin, path__exact=path, is_enabled=True)
     except ObjectDoesNotExist:
         return get_failure_response()
-        
-    return HttpResponse(file.content.read(), content_type=mimetypes.guess_type(path))
+    
+    return HttpResponse(file.content.read(), content_type=mimetypes.guess_type(path)[0])
 
 
 @csrf_exempt
