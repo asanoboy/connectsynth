@@ -34,8 +34,10 @@ synthjs.ui.graphics.ToggleButton.prototype.decorateInternal = function(gr){
 	
 	this._imagepathOn = imagepathOn;
 	this._imagepathOff = imagepathOff;
-	this._offsetX = offsetX-width/2;
-	this._offsetY = offsetY-height/2;
+	// this._offsetX = offsetX-width/2;
+	// this._offsetY = offsetY-height/2;
+	this._offsetX = offsetX;
+	this._offsetY = offsetY;
 	this._width = width;
 	this._height = height;
 	

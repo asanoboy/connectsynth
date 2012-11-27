@@ -50,6 +50,9 @@ function onGetWave(e) {
 						break;
 				}
 			}
+			else if( id=='vol' ){
+				wave.setVolume(value);
+			}
 			
 			break;
 		case 'midi':

@@ -48,23 +48,34 @@ synthjs.utility.AjaxDeferred = function(url, settings, opt_context){
 	} 
 	
 	this._xhr = new XhrIo();
+	
+	this._eventHandler.listen( 
+		this._xhr, 
+		[
+			goog.net.EventType.ERROR,
+			goog.net.EventType.SUCCESS
+		], 
+		synthjs.utility.AjaxDeferred.defaultPostsend);
+	
 	var dWait = new synthjs.utility.Deferred();
 	if( settings.success ){
 		if( opt_context ){
 			settings.success = goog.bind(settings.success, opt_context);
 		}
 		this._eventHandler.listen( this._xhr, goog.net.EventType.SUCCESS, function(e){
+			console.log("success");
 			settings.success(e.target);
 			dWait.callback();
 		});
 	}
 	
-	if( settings.error ){
-		settings.error = goog.bind(settings.error, opt_context);
-		this._eventHandler.listen( this._xhr, goog.net.EventType.ERROR, function(e){
-			dWait.callback(settings.error(e.target));
-		});
+	if( !settings.error ){
+		settings.error = goog.nullFunction;
 	}
+	settings.error = goog.bind(settings.error, opt_context);
+	this._eventHandler.listen( this._xhr, goog.net.EventType.ERROR, function(e){
+		dWait.callback(settings.error(e.target));
+	});
 	
 	if( settings.responseType ){
 		this._xhr.setResponseType(settings.responseType);
@@ -83,7 +94,15 @@ goog.inherits(synthjs.utility.AjaxDeferred, synthjs.utility.Deferred);
  */
 synthjs.utility.AjaxDeferred.prototype.callback = function(r){
 	synthjs.utility.AjaxDeferred.defaultPresend();
-	this.addCallback(synthjs.utility.AjaxDeferred.defaultPostsend);
+	// this._eventHandler.listen( 
+		// this._xhr, 
+		// [
+			// goog.net.EventType.ERROR,
+			// goog.net.EventType.SUCCESS
+		// ], 
+		// synthjs.utility.AjaxDeferred.defaultPostsend);
+	
+	//this.addCallback(synthjs.utility.AjaxDeferred.defaultPostsend);
 	goog.base(this, 'callback', r);
 }
 

@@ -13,57 +13,57 @@ function onGetWave(e) {
 			
 			response.controller = {
 				background: {
-					image: 'background.png',
-					height: 400,
-					width: 500
+					image: 'img/background.png',
+					height: 248,
+					width: 360
 				},
 				controls: [
 					{
 						type: "control",
 						id: "volume",
 						value: volume,
-						height: 50,
-						width: 50,
-						image: 'volume.png',
-						min: 0, max: 1, step: 0.001, offsetx: 100, offsety:100
+						height: 120,
+						width: 120,
+						image: 'img/volume.png',
+						min: 0, max: 1, step: 0.001, offsetx: 56, offsety:95
 					},
 					{
 						type: "radio",
 						id: "oscillator",
-						height: 50,
-						width: 50,
+						height: 24,
+						width: 24,
 						value: 0,
-						imageon: "oscillator.png",
-						imageoff: "oscillator.png",
+						imageon: "img/on.png",
+						imageoff: "img/off.png",
 						offsets: [
 							{
-								offsetx: 100,
-								offsety: 200,
+								offsetx: 56,
+								offsety: 48,
+							},
+							{
+								offsetx: 128,
+								offsety: 48,
 							},
 							{
 								offsetx: 200,
-								offsety: 200,
+								offsety: 48,
 							},
 							{
-								offsetx: 300,
-								offsety: 200,
-							},
-							{
-								offsetx: 400,
-								offsety: 200,
+								offsetx: 272,
+								offsety: 48,
 							}
 						]
 					},
 					{
 						type: "toggle",
 						id: "glide",
-						height: 50, 
-						width: 50, 
+						height: 24, 
+						width: 24, 
 						value: glide,
-						imageon: "glide.png",
-						imageoff: "glide.png",
-						offsetx: 200,
-						offsety: 300 
+						imageon: "img/on.png",
+						imageoff: "img/off.png",
+						offsetx: 240,
+						offsety: 144 
 						
 					}
 				]

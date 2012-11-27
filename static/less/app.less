@@ -1,10 +1,10 @@
 @import "mixins.less";
+@import "vars.less";
 
 #application * {
     cursor: default;
 }
 
-@app-bg-color: #001133;
 
 @appmenu-height: 26px;
 @appmenu-padding: 10px;
@@ -28,7 +28,7 @@
 #application {
     height: auto;
     position: relative;
-    _background-color: @app-bg-color;
+    _background-color: @bg-color;
 }
 
 
@@ -41,7 +41,7 @@
 
 body {
     overflow: hidden;
-    background-color: @app-bg-color;
+    background-color: @bg-color;
     width: 100%;
     height: 100%;
 }
@@ -58,7 +58,7 @@ body {
 @windowsection-outer-border-width: 1px;
 @windowsection-border-width: 2px;
 @windowsection-normal-color: #EEEEEE;
-@windowsection-active-color: #E1EBF5;//#DDDDEE;
+@windowsection-active-color: lighten(@second-accent-color, 30%);//#E1EBF5;//#DDDDEE;
 @windowsection-header-width: 24px;
 
 .windowsection-label-common() {

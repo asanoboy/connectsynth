@@ -353,10 +353,12 @@ synthjs.application.module.Oscillator.prototype.onPresetAdd = function(e){
 	}, this);
 	
 	var value = goog.json.serialize(param);
-	
 	var prompt = new goog.ui.Prompt("Add Preset", 
 		"Input preset name:", 
 		goog.bind(function(name){
+			if( name == null ){
+				return;
+			}
 			new synthjs.utility.AjaxDeferred(this._presetPostUri.toString(), {
 				method: "POST",
 				data: {"name": name, "value": value},
@@ -366,8 +368,11 @@ synthjs.application.module.Oscillator.prototype.onPresetAdd = function(e){
 						goog.asserts.assert(rs['code'], "Invalid response from post preset api.");
 						this._updatePresets(rs['code']);
 					}
+					else if( rs['status'] == 'invalid' ){
+						alert("invalid value.");
+					}
 					else {
-						alert("server error.")
+						alert("server error");
 					}
 				}
 			}, this).callback();

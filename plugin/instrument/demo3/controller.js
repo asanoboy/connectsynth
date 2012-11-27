@@ -7,8 +7,9 @@ var operatorMargin = (width - (operatorWidth * operatorNumber) ) / 5, innerMargi
 controls = controls.concat((function() {
 	var i, j, min, max, stap, value, offsetX, offsetY, id, labelEnabled, arr = [], adsr = ['a', 'd', 's', 'r'];
 	for( i = 0; i < 4; i++) {
-		offsetX = i * (operatorWidth + operatorMargin) + operatorMargin;
-		offsetY = operatorMargin;
+		
+		offsetX = i%2==0 ? 0 : 296;
+		offsetY = i<2 ? 0 : 200;
 
 		// Octave and Factor
 		for( j = 0; j < 2; j++) {
@@ -23,19 +24,19 @@ controls = controls.concat((function() {
 				id += "_fac";
 				min=0; max=1; step=0.01;
 				value = 0.5;
-				labelEnabled = false;
+				labelEnabled = true;
 			}
 			
 			arr.push({
 				type : "control",
 				id : id,
-				image : controlImage,
+				image : "img/labelcontrol.png",
 				min: min, max: max, step: step,
 				value : value,
-				offsetx : offsetX + (j + 1) * operatorWidth / 3,
-				offsety : offsetY + operatorHeight / 3,
-				width : controlSize,
-				height : controlSize,
+				offsetx : offsetX + 152 + j * 72,
+				offsety : offsetY + 64,
+				width : 56,
+				height : 56,
 				labelenabled: labelEnabled
 			});
 		}
@@ -61,13 +62,13 @@ controls = controls.concat((function() {
 			
 			arr.push({
 				id : id,
-				offsetx : offsetX + innerMargin / 2 + controlSize / 2 + j * (innerMargin + controlSize),
-				offsety : offsetY + 2 * operatorHeight / 3,
+				offsetx : offsetX + j * 64 + 48,
+				offsety : offsetY + 144,
 				type : "control",
 				min: min, max: max, step: step, value : value,
-				image : controlImage,
-				width : controlSize,
-				height : controlSize,
+				image : "img/labelcontrol.png",
+				width : 56,
+				height : 56,
 				labelenabled: true,
 				labelpostfix: labelPostfix
 			});
@@ -88,13 +89,13 @@ controls = controls.concat((function() {
 			min=0, max=1, step=0.01, value= (j==4 && i==0) ? 1 : 0;
 			arr.push({
 				id : id,
-				offsetx : offsetX + innerMargin / 2 + controlSize / 2 + j * (innerMargin + controlSize),
-				offsety : offsetY + (innerMargin + controlSize) / 2 + i * (innerMargin + controlSize),
+				offsetx : 704 + j * 48,
+				offsety : 208 + i * 48,
 				type : "control",
 				min: min, max: max, step: step, value : value,
-				image : controlImage,
-				width : controlSize,
-				height : controlSize
+				image : "img/needlecontrol.png",
+				width : 40,
+				height : 40
 			});
 		}
 	}
@@ -106,22 +107,22 @@ controls = controls.concat((function() {
 controls = controls.concat((function() {
 	return [{
 		id : "vol",
-		offsetx : operatorMargin + (operatorWidth) / 2,
-		offsety : (height + operatorMargin + operatorHeight) / 2,
+		offsetx : 755,
+		offsety : 51,
 		type : "control",
 		value : 0.5,
 		min: 0, max: 1, step: 0.01,
-		image : controlImage,
-		width : controlSize,
-		height : controlSize
+		image : "img/volume.png",
+		width : 90,
+		height : 90
 	}];
 })());
 
 var controller = {
 	background : {
 		image : "img/background.png",
-		height : height,
-		width : width
+		height : 448,
+		width : 1000
 	},
 	controls : controls
 }

@@ -37,14 +37,15 @@ synthjs.ui.graphics.ControlButton.prototype.decorateInternal = function(gr){
 		labelEnabled = this._param.get("labelEnabled");	
 	
 	
-	this._centerX = offsetX;
-	this._centerY = offsetY;
+	this._centerX = offsetX+width/2;
+	this._centerY = offsetY+height/2;
 	
 	var group = gr.createGroup();
 	group.setSize(width+'px', height+'px');
 	
 	// Put the center of the image on coordinate of (offsetX, offsetY)
-	var image = gr.drawImage(offsetX-width/2, offsetY-height/2, width, height, imagepath);
+	//var image = gr.drawImage(offsetX-width/2, offsetY-height/2, width, height, imagepath);
+	var image = gr.drawImage(offsetX, offsetY, width, height, imagepath);
 
 	if( labelEnabled ){
 		
@@ -61,8 +62,12 @@ synthjs.ui.graphics.ControlButton.prototype.decorateInternal = function(gr){
 			}		
 			this._dispDigit++;
 		}
-		this._textElement = this.getGraphics().drawText('', offsetX, offsetY-height, 0, 0, 'center', null,
-	          new goog.graphics.Font(15, 'Times'), null, new goog.graphics.SolidFill('#000'));
+		
+		fontsize = 14;
+		
+		this._textElement = this.getGraphics().drawText('', offsetX+width/2, offsetY+height/2-fontsize/2, 0, 0, 'center', null,
+	          new goog.graphics.Font(fontsize, 'Times'), null, new goog.graphics.SolidFill('#000'));
+	    
 	}
 	
 	this._controlImage = image;
@@ -86,7 +91,16 @@ synthjs.ui.graphics.ControlButton.prototype.enterDocument = function(){
 			this._param,
 			synthjs.model.EventType.CHANGE,
 			this._onModelChange
-		)
+		);
+	
+	if( this._textElement ){
+		this.getHandler()
+			.listen(
+				this._textElement,
+				goog.events.EventType.MOUSEDOWN,
+				this._onMouseDown);
+	}
+		
 }
 
 /**

@@ -13,7 +13,9 @@ Preset restful api
 @login_required
 @reject_invalid_or_unowned_code
 def sdk_preset_post_handler(request, code, plugin):
+    
     if plugin.is_public or request.user!=plugin.user:
+        print 'presetpost'
         return get_failure_response()
     
     if request.method == "POST" :
@@ -28,6 +30,8 @@ def sdk_preset_post_handler(request, code, plugin):
                                   is_enabled=True)
             #preset.save()
             return HttpResponse( simplejson.dumps({"status":"ok", "code":preset_code}) )
+        else:
+            return HttpResponse( simplejson.dumps({"status":"invalid"}) )
         
     return get_failure_response()
 
