@@ -28,7 +28,7 @@ synthjs.ui.VerticalKeyboardRenderer.prototype.decorate = function(element,
 		$blackKeyboard = $("div"),
 		currentNote = highestNote,
 		totalWhiteWidth = borderWidth,
-		whiteWidth, $key;
+		whiteWidth, $key, $label;
 	
 	addClass($wrapper, 'keyboard-wrapper');
 	addStyle($wrapper, 'position', 'relative');
@@ -36,7 +36,18 @@ synthjs.ui.VerticalKeyboardRenderer.prototype.decorate = function(element,
 	addClass($blackKeyboard, 'black-keyboard');
 	
 	while( currentNote.freq >= lowestNote.freq  ){
-		$key = $('div');
+		
+			
+		    
+		if( currentNote.getMidiNum()%12 == 0 ){
+			$key = $('div', '', 'C'+(currentNote.getMidiNum()/12-1));
+			goog.style.setStyle($key, 'text-align', 'right');
+			goog.style.setStyle($key, "font-size", eachWidth+'px');
+		}
+		else {
+			$key = $('div');
+		}
+	    
 		domHelper.setProperties($key, {"data-note": currentNote.getMidiNum()});
 		if( currentNote.isWhite ){
 			if( currentNote.freq==highestNote.freq && 'cdfga'.indexOf(currentNote.note, 0)!==-1 ){
@@ -55,10 +66,9 @@ synthjs.ui.VerticalKeyboardRenderer.prototype.decorate = function(element,
 				whiteWidth = 1.5*eachWidth-borderWidth;
 				addClass($key, "short");
 			}
-			
-		    
 			$whiteKeyboard.appendChild($key);
 			totalWhiteWidth += whiteWidth+borderWidth;
+			
 		}
 		else {
 		    

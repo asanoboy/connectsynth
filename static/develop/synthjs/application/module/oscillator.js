@@ -70,7 +70,7 @@ synthjs.application.module.Oscillator.prototype.init = function(){
 		
 	this._keyboard = new synthjs.ui.Keyboard( 
 		synthjs.audiocore.Note.create('c', -4),
-		synthjs.audiocore.Note.create('c', 4),
+		synthjs.audiocore.Note.create('c', 5),
 		synthjs.ui.VerticalKeyboardRenderer.getInstance());
 	
 	this.getHandler()

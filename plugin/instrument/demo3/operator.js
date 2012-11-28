@@ -1,5 +1,7 @@
 /** @constructor */
-var Operator = function(){
+var Operator = function(sampleRate){
+	
+	this._sampleRate = sampleRate;
 	
 	/**  
 	 * @type {integer} larger than 0
@@ -32,6 +34,7 @@ var Operator = function(){
 	 */
 	this._noteidToLastValues = {};
 	
+	this._noteidToLastFactor = {};
 	
 	this._noteidToFinished = {};
 }
@@ -50,6 +53,17 @@ Operator.prototype.setEnvelope = function(type, value){
 		case 's': this._sustain = value; break;
 		case 'r': this._release = value; break;
 	}
+	
+	if( this._release==0 ){
+		this._releasePerSample = 1;
+	}
+	else if( this._sustain==0 ){
+		this._releasePerSample = 1;
+	}
+	else {
+		this._releasePerSample = this._sustain / this._release / this._sampleRate;
+	}
+	
 }
 
 Operator.prototype.setOctave = function(octave){
@@ -74,19 +88,20 @@ Operator.prototype.getValue = function(id, radian, second, modList, modFactorLis
 	
 	// Envelope
 	if( isRemoved ){
-		var factor = this.getVolumeBeforeRemoved(secondRemovedAt) - secondFromRemoved * this._sustain / this._release;
+		//var factor = this.getVolumeBeforeRemoved(secondRemovedAt) - secondFromRemoved * this._sustain / this._release;
+		var factor = this._noteidToLastFactor[id] - this._releasePerSample; 
 		//if( secondFromRemoved < this._release ){
 		if( factor > 0 ){
-			value *= factor;
+			//value *= factor;
 		}
 		else { // TODO: dispatch Finish Event.
 			//wave.deleteNote(id);
 			this._noteidToFinished[id] = true;
-			value = 0;
+			factor = 0;
 		}
 	}
 	else{
-		value *= this.getVolumeBeforeRemoved(second);
+		var factor = this.getVolumeBeforeRemoved(second); 
 		// if( second < this._attack ){
 			// value *= second * this._attackInverse;
 		// }
@@ -97,8 +112,10 @@ Operator.prototype.getValue = function(id, radian, second, modList, modFactorLis
 			// value *= this._sustain;
 		// }
 	}
+	value *= factor;
 	
 	this._noteidToLastValues[id] = value;
+	this._noteidToLastFactor[id] = factor; 
 	return this._noteidToLastValues[id];
 }
 

@@ -5,7 +5,7 @@ var operatorMargin = (width - (operatorWidth * operatorNumber) ) / 5, innerMargi
 
 // Set operator control.
 controls = controls.concat((function() {
-	var i, j, min, max, stap, value, offsetX, offsetY, id, labelEnabled, arr = [], adsr = ['a', 'd', 's', 'r'];
+	var i, j, min, max, stap, value, offsetX, offsetY, id, labelEnabled, prefix, arr = [], adsr = ['a', 'd', 's', 'r'];
 	for( i = 0; i < 4; i++) {
 		
 		offsetX = i%2==0 ? 0 : 296;
@@ -16,15 +16,19 @@ controls = controls.concat((function() {
 			id = "ope" + i;
 			if( j==0 ){ // Octave
 				id += "_oct";
-				min=0; max=8; step=1;
+				min=0; max=12; step=1;
 				value = i==0 ? 1 : 1;
 				labelEnabled = true;
+				prefix = "x";
+				postfix = "";
 			}
 			else { // Factor
 				id += "_fac";
-				min=0; max=1; step=0.01;
-				value = 0.5;
+				min=0; max=100; step=1;
+				value = 50;
 				labelEnabled = true;
+				prefix = "";
+				postfix = "%";
 			}
 			
 			arr.push({
@@ -37,7 +41,9 @@ controls = controls.concat((function() {
 				offsety : offsetY + 64,
 				width : 56,
 				height : 56,
-				labelenabled: labelEnabled
+				labelenabled: labelEnabled,
+				labelpostfix: postfix,
+				labelprefix: prefix
 			});
 		}
 
@@ -54,9 +60,9 @@ controls = controls.concat((function() {
 					var labelPostfix = "sec";
 					break;
 				case 's':
-					min=0; max=1; step=0.01; 
-					value = 1;//i==0 ? 1: 0;
-					var labelPostfix = "";
+					min=0; max=100; step=1; 
+					value = 100;//i==0 ? 1: 0;
+					var labelPostfix = "%";
 					break;
 			}
 			
@@ -86,7 +92,13 @@ controls = controls.concat((function() {
 	for( i = 0; i < 4; i++) {
 		for( j = 0; j < 5; j++) {
 			id = "car" + i + "_" + suffixList[j];
-			min=0, max=1, step=0.01, value= (j==4 && i==0) ? 1 : 0;
+			min=0, step=0.01, value= (j==4 && i==0) ? 1 : 0;
+			if( j<4 ){
+				max = 3;
+			}
+			else {
+				max = 1;
+			}
 			arr.push({
 				id : id,
 				offsetx : 704 + j * 48,

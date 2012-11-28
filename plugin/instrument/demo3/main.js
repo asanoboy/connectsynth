@@ -26,15 +26,17 @@ function onGetWave(e) {
 				switch(suffix){
 					case 'a':
 					case 'd':
-					case 's':
 					case 'r':
 						wave.setOperatorEnvelope(opeIndex, suffix, value);
+						break;
+					case 's':
+						wave.setOperatorEnvelope(opeIndex, suffix, value/100);
 						break;
 					case 'oct':
 						wave.setOperatorOctave(opeIndex, value);
 						break;
 					case 'fac':
-						wave.setOperatorFactor(opeIndex, value);
+						wave.setOperatorFactor(opeIndex, value/100);
 				}
 			}
 			else if( (mat=id.match(/^car([\d]+)_(mod([\d]+)|out)$/)) ){

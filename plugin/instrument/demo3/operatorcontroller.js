@@ -38,7 +38,7 @@ var OperatorController = function(){
 	
 	this._operatorList = [];
 	for(var i=0; i<this._operatorNum; i++){
-		this._operatorList.push(new Operator());
+		this._operatorList.push(new Operator(this._sampleRate));
 	}
 	
 	
