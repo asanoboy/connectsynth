@@ -3,6 +3,7 @@ from common.models import Plugin
 from django.contrib.auth.models import User
 import os.path
 
+
 def get_plugin_upload_path(self, filename):
     return os.path.join("plugin", "repository", self.plugin.code, filename)
 

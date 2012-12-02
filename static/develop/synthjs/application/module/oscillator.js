@@ -272,17 +272,13 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 		
 	}
 
-	if( this._controlPanelContainer ){
-		this._oscillatorWindow = new synthjs.ui.window.Oscillator( 
-			this._keyboard, 
-			this._controlPanelContainer, {
-				isDeletable: this._isEditable
-			}
-		);
-	}
-	else {
-		this._oscillatorWindow = new synthjs.ui.window.Oscillator( this._keyboard );
-	}
+	this._oscillatorWindow = new synthjs.ui.window.Oscillator( 
+		this._keyboard, 
+		this._controlPanelContainer || null , 
+		{
+			isDeletable: this._isEditable
+		}
+	);
 	
 	this.getHandler().listen(
 		this._oscillatorWindow,

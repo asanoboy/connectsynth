@@ -16,6 +16,6 @@ DATABASES = {
 }
 
 # If use mod_wsgi, enable STATIC_ROOT
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 INTERNAL_IPS = ('192.168.1.42','127.0.0.1')

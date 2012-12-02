@@ -185,3 +185,12 @@ TEMPLATE_CONTEXT_PROCESSORS += (
 #COMPRESS_OUTPUT_DIR = 'cache'
 STATICFILES_DIRS += (os.path.join(BASE_DIR, 'static'),)
 
+if os.environ.has_key('TWITTER_CONSUMER_KEY') and os.environ.has_key('TWITTER_CONSUMER_SECRET'):
+    TWITTER_CONSUMER_KEY = os.environ['TWITTER_CONSUMER_KEY']
+    TWITTER_CONSUMER_SECRET = os.environ['TWITTER_CONSUMER_SECRET']
+else :
+    raise Exception
+
+SESSION_COOKIE_SECURE = True
+
+MEDIA_ROOT = '/var/connectsynth/repository'

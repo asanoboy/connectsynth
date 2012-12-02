@@ -4,3 +4,7 @@ venv
 *.pydevproject
 sqlite.db
 /.settings
+.env
+stunnel
+newreq.pem
+stunnel.log

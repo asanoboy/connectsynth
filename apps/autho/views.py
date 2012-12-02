@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django.core.exceptions import ObjectDoesNotExist
 
-
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
@@ -17,8 +17,8 @@ from helpers import twitter_login
 
 import tweepy
 
-CONSUMER_KEY = '5DBgP377M26MzoNGfUoFdQ'
-CONSUMER_SECRET = 'bfy4NqUFE0MIuZWyB8bOljOTwOITjl9lguWhY5GHk'
+CONSUMER_KEY = settings.TWITTER_CONSUMER_KEY
+CONSUMER_SECRET = settings.TWITTER_CONSUMER_SECRET
 
 """
 Show login form page.
