@@ -167,8 +167,7 @@ def autho_twitter_callback_handler(request):
     #return HttpResponse( reduce(lambda a, b: a+"<br/>"+b, dir(me)) )
     
     if twitter_login(request, me):#me.id, me.screen_name):
-        #return HttpResponseRedirect( request.session.get('next') or reverse("toppage") )
-        return HttpResponseRedirect( reverse("toppage") )
+        return HttpResponseRedirect( request.session.get('next') or reverse("toppage") )
     else:
         return HttpResponse( "invalid access" )
 
