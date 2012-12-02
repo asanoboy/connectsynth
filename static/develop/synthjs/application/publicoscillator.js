@@ -68,7 +68,6 @@ synthjs.application.PublicOscillator.prototype.onEditDescription = function(){
 		success: function(r){
 			var rt = r.getResponseJson();
 			if( rt['status']=='ok' ){
-				rt['description']
 				var dialog = new synthjs.ui.Dialog(null, false);
 				dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
 				dialog.setTitle("Edit Description");
