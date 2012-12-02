@@ -122,7 +122,7 @@ def autho_twitter_auth_handler(request):
         request.session['next'] = url
     
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET, "%s://%s%s" % (
-                            "https" if request.is_secure() else "http", 
+                            "https", 
                             request.META['HTTP_HOST'], 
                             reverse("autho_twitter_callback")) )
     
