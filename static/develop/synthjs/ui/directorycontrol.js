@@ -208,7 +208,14 @@ synthjs.ui.DirectoryControl.prototype._addFileListToSystem = function(files, opt
 		var handler = new goog.events.EventHandler(this);
 		var filename = file.name;
 		
-		if( file.type.match('text.*') || file.type.match('application/x-javascript') ){
+		if( file.type.match('image.*') ){
+			this._fileSystem.add(
+				new synthjs.model.ImageFile(filename, file),
+				parent
+			);
+		}
+		//if( file.type.match('text.*') || file.type.match('application/x-javascript') ){
+		else {
 			handler.listen(reader,
 				goog.fs.FileReader.EventType.LOAD,
 				function(e){
@@ -219,15 +226,9 @@ synthjs.ui.DirectoryControl.prototype._addFileListToSystem = function(files, opt
 				});
 			reader.readAsText(file);
 		}
-		else if( file.type.match('image.*') ){
-			this._fileSystem.add(
-				new synthjs.model.ImageFile(filename, file),
-				parent
-			);
-		}
-		else {
-			throw new Error("invalid file type '"+file.type+"'");
-		}
+		// else {
+			// throw new Error("invalid file type '"+file.type+"'");
+		// }
 
 	}, this);
 }

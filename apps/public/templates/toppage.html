@@ -10,15 +10,15 @@
 <div class="inner-section inner-header">
 	<div class="about-this-container">
 		<div class="title-container">
-			<h1 class="title">SynthcriptHost</h1>
+			<h1 class="title">ConnectSynth</h1>
 			<div class="socialbuttons">
 					<div id="twitter" class="socialbutton"></div>
 					<div id="facebook_like" class="socialbutton"></div>
-					<div id="hatena" class="socialbutton"></div>
 					<div id="google_plusone" class="socialbutton"></div>
+					<div id="hatena" class="socialbutton"></div>
 			</div>
 		</div>
-		<p class="description">SynthcriptはWeb楽器プラグインのホストシステムです。楽器の作成、テスト、公開をすることが出来ます。また公開されたWeb楽器をあなたのWorkspaceにコピーして改変し、公開することも可能です。</p>
+		<p class="description">WebAudioWorker(WAW)プラグインの実験サイトです。誰でもWAW楽器の作成、テスト、公開が出来ます。また公開された楽器をコピー、改変し、公開することも可能です。</p>
 	</div>
 	<div class="open-instrument-container">
 		<a class="open-instrument" href="{% url sdk_instrument_workspace %}">Open Workspace</a>	
@@ -51,12 +51,12 @@
 </div>
 <div class="inner-section develop-info">
 	<div class="section-title">
-		<h2 id="document">プラグイン仕様</h2>
+		<h2 id="document">WAWプラグイン仕様</h2>
 	</div>
 	<div class="document">
 		<div class="section">
 			<h3>概要</h3>
-			<p>Synthcriptはmain.jsをWebWorkerとして起動します。以下はシンプルな例です。</p>
+			<p>WAWはJavascriptで書かれた音源のプラグインシステムです。対応ブラウザはWebAudioAPI/AudioDataAPIに対応しているブラウザ(Chrome、Safari、Firefoxなど)です。プラグインとホストはそれぞれ別のプロセス上で動作し、ホストがmain.jsをWebWorkerとして呼び出すことでプラグインは起動します。以下はシンプルな例です。</p>
 			<ul>
 				<li>main.js</li>
 			</ul>
@@ -479,15 +479,15 @@ function onGetWave(e) {
 			$('#google_plusone').socialbutton('google_plusone', {
 				lang: 'ja',
 				size: 'medium'
-			});
+			}).width(65);
 			$('#hatena').socialbutton('hatena');
 			$('#twitter').socialbutton('twitter', {
 				button: 'horizontal',
-		        text: 'Javascriptで作るWeb楽器プラグイン - Synthcript '
-			});
+		        text: 'Javascriptで作るWeb楽器プラグイン - ConnectSynth '
+			}).width(90);
 			$('#facebook_like').socialbutton('facebook_like', {
 				button: 'button_count'
-			});
+			}).width(105);
 		})();
 	});
 })();

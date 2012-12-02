@@ -1,10 +1,8 @@
 from settings_base import *
+import os
 
-AWS_ACCESS_KEY_ID = 'AKIAJQNZW6EMCL3EYFSQ'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'asanoboyredmine'
-
-
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-
-#STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+if os.environ.has_key('AWS_ACCESS_KEY_ID') and os.environ.has_key('AWS_SECRET_ACCESS_KEY') and os.environ.has_key('AWS_STORAGE_BUCKET_NAME'):
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
