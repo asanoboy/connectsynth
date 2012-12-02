@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 def twitter_login(request, me):#twitterid, screen_name):
     
     password = hashlib.md5(str(me.id)).hexdigest()
+    password = password[0:20] # The admin.User.password is limited under 30 chars.
     
     try:
         twitter_user = TwitterUser.objects.get(twitterid=me.id)
