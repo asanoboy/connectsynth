@@ -19,7 +19,7 @@ function onGetWave(e) {
 				},
 				controls: [
 					{
-						type: "control",
+						type: "knob",
 						id: "volume",
 						value: volume,
 						height: 120,

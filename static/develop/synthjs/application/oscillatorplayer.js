@@ -45,7 +45,7 @@ synthjs.application.OscillatorPlayer = function(id, params){
 	this._apiPlugin = new synthjs.application.api.Plugin(params['code']);
 	this._bootstrapJs = params['bootstrapJs'];
 	this._extendUri = new goog.Uri(params['extendapi']);
-	
+	this._onReady = goog.isFunction(params['onReady']) ? params['onReady'] : goog.nullFunction; 
 	goog.base(this, id);
 	//this._audioplayer =  synthjs.audiocore.Player.getInstance();
 	
@@ -61,7 +61,8 @@ synthjs.application.OscillatorPlayer.prototype.getApi = function(){
  * @protected
  */
 synthjs.application.OscillatorPlayer.prototype._init = function(){
-	this.launchOscillator();
+	//this.launchOscillator();
+	this._onReady();
 }
 
 

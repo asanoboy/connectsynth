@@ -44,8 +44,26 @@
 			"api": "{% url sdk_plugin_get_api plugin.code, '' %}",
 			"extendapi": "{% url sdk_extend_instrument plugin.code %}",
 			"infoapi": "{% url sdk_plugin_filelist_api plugin.code %}",
-			"presetlistapi": "{% url sdk_preset_list plugin.code %}"
-			
+			"presetlistapi": "{% url sdk_preset_list plugin.code %}",
+			"onReady": function(){
+				$("div.goog-menubar").prepend(
+					$('<div class="socialbuttons"><div id="twitter" class="socialbutton"></div><div id="facebook_like" class="socialbutton"></div><div id="hatena" class="socialbutton"></div><div id="google_plusone" class="socialbutton"></div></div>')
+				);
+				(function(){
+					$('#google_plusone').socialbutton('google_plusone', {
+						lang: 'ja',
+						size: 'medium'
+					});
+					$('#hatena').socialbutton('hatena');
+					$('#twitter').socialbutton('twitter', {
+						button: 'horizontal',
+				        text: '{{ plugin.name }} - Synthcript | '
+					});
+					$('#facebook_like').socialbutton('facebook_like', {
+						button: 'button_count'
+					});
+				})();
+			}
 		});
 </script>
 {% endblock %}

@@ -222,20 +222,6 @@ div.section {
     line-height: @plugin-header-height;
 }
 
-#content .socialbutton {
-    clear: both;
-    height: 30px;
-}
-
-#content .socialbutton ul {
-    list-style-type: none;
-}
-
-#content .socialbutton li {
-    display: inline-block;
-    height: 30px;
-}
-
 #content div.plugin-info {
     padding: @container-inner-padding;
 }
@@ -282,9 +268,30 @@ div.section {
     
 }
 
-#content .title {
-    line-height: 50px;
+#content .about-this-container{
+    .title {
+        line-height: 50px;
+        float:left;
+    }
+    .title-container {
+        .clearfix;
+    }
+    .socialbuttons {
+        padding-top: 15px;
+        float:right;
+    }
 }
+
+#application .socialbuttons {
+    padding-top: 7px;
+    float:right;
+}
+
+.socialbutton {
+    float: left;
+    margin-left: 15px;
+}
+
 
 #content .description {
     position: relative;

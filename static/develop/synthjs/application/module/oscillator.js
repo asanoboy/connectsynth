@@ -166,7 +166,7 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 			}
 			
 			switch(control['type']){
-				case 'control':
+				case 'knob':
 					if( goog.isNumber(control['min']) && goog.isNumber(control['max']) &&
 							control['min'] < control['max'] ){
 						var min = parseFloat(control['min']), max = parseFloat(control['max']);
@@ -175,12 +175,12 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 						var min = 0, max = 1;
 					}
 					var step = parseFloat(control['step']) || 0.001; 
-					var labelEnabled = goog.isDef(control['labelenabled']) ? control['labelenabled'] : false;
+					var labelEnabled = goog.isDef(control['label']) ? !!control['label'] : false;
 					var labelPosition = false;//goog.isDef(control['labelposition']) ? control['labelposition'] : false;
-					var labelOffsetX = 0;//goog.isDef(control['labeloffsetx']) ? control['labeloffsetx'] : 0;
-					var labelOffsetY = 0;//goog.isDef(control['labeloffsety']) ? control['labeloffsety'] : 0;
-					var labelPrefix = goog.isDef(control['labelprefix']) ? control['labelprefix'] :	false;
-					var labelPostfix = goog.isDef(control['labelpostfix']) ? control['labelpostfix'] : false;
+					var labelOffsetX = goog.isDef(control['labeloffsetx'])&&goog.isNumber(control['labeloffsetx']) ? control['labeloffsetx'] : 0;
+					var labelOffsetY = goog.isDef(control['labeloffsety'])&&goog.isNumber(control['labeloffsety']) ? control['labeloffsety'] : 0;
+					var labelPrefix = goog.isDef(control['labelprefix'])&&goog.isString(control['labelprefix']) ? control['labelprefix'] :	false;
+					var labelPostfix = goog.isDef(control['labelpostfix'])&&goog.isString(control['labelpostfix']) ? control['labelpostfix'] : false;
 					
 					 
 					var controlParam = new synthjs.model.PluginControlParam(

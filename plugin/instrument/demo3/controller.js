@@ -1,7 +1,5 @@
-var controls = [];
-var width = 800, operatorNumber = 4, operatorWidth = 180, operatorHeight = 150, controlSize = 32, controlImage = "img/ic_up_circle.png";
+var controls = [], operatorNumber = 4;
 
-var operatorMargin = (width - (operatorWidth * operatorNumber) ) / 5, innerMargin = (operatorWidth - (controlSize * 4) ) / 5, height = operatorMargin * 3 + operatorHeight + controlSize * 4 + innerMargin * 5, algorithmPanelHeight = controlSize * 4 + innerMargin * 5, algorithmPanelWidth = controlSize * 5 + innerMargin * 6;
 
 // Set operator control.
 controls = controls.concat((function() {
@@ -32,7 +30,7 @@ controls = controls.concat((function() {
 			}
 			
 			arr.push({
-				type : "control",
+				type : "knob",
 				id : id,
 				image : "img/labelcontrol.png",
 				min: min, max: max, step: step,
@@ -41,7 +39,7 @@ controls = controls.concat((function() {
 				offsety : offsetY + 64,
 				width : 56,
 				height : 56,
-				labelenabled: labelEnabled,
+				label: labelEnabled,
 				labelpostfix: postfix,
 				labelprefix: prefix
 			});
@@ -70,12 +68,12 @@ controls = controls.concat((function() {
 				id : id,
 				offsetx : offsetX + j * 64 + 48,
 				offsety : offsetY + 144,
-				type : "control",
+				type : "knob",
 				min: min, max: max, step: step, value : value,
 				image : "img/labelcontrol.png",
 				width : 56,
 				height : 56,
-				labelenabled: true,
+				label: true,
 				labelpostfix: labelPostfix
 			});
 		}
@@ -87,7 +85,7 @@ controls = controls.concat((function() {
 
 // Set algorithm panel.
 controls = controls.concat((function() {
-	var offsetX = width - algorithmPanelWidth - operatorMargin, offsetY = 2 * operatorMargin + operatorHeight, arr = [], i, j, id, suffixList = ["mod0", "mod1", "mod2", "mod3", 'out'];
+	var arr = [], i, j, id, suffixList = ["mod0", "mod1", "mod2", "mod3", 'out'];
 
 	for( i = 0; i < 4; i++) {
 		for( j = 0; j < 5; j++) {
@@ -103,7 +101,7 @@ controls = controls.concat((function() {
 				id : id,
 				offsetx : 704 + j * 48,
 				offsety : 208 + i * 48,
-				type : "control",
+				type : "knob",
 				min: min, max: max, step: step, value : value,
 				image : "img/needlecontrol.png",
 				width : 40,
@@ -121,7 +119,7 @@ controls = controls.concat((function() {
 		id : "vol",
 		offsetx : 755,
 		offsety : 51,
-		type : "control",
+		type : "knob",
 		value : 0.5,
 		min: 0, max: 1, step: 0.01,
 		image : "img/volume.png",

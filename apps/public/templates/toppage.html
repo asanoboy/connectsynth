@@ -9,8 +9,16 @@
 {% block content %}
 <div class="inner-section inner-header">
 	<div class="about-this-container">
-		<h1 class="title">Synthcript</h1>
-		<p class="description">Web楽器プラグインの実験サイトです。プラグインの作成、テスト、公開をすることが出来ます。また公開されたWeb楽器をあなたのWorkspaceにコピーして改変し、公開することも可能です。</p>
+		<div class="title-container">
+			<h1 class="title">SynthcriptHost</h1>
+			<div class="socialbuttons">
+					<div id="twitter" class="socialbutton"></div>
+					<div id="facebook_like" class="socialbutton"></div>
+					<div id="hatena" class="socialbutton"></div>
+					<div id="google_plusone" class="socialbutton"></div>
+			</div>
+		</div>
+		<p class="description">SynthcriptはWeb楽器プラグインのホストシステムです。楽器の作成、テスト、公開をすることが出来ます。また公開されたWeb楽器をあなたのWorkspaceにコピーして改変し、公開することも可能です。</p>
 	</div>
 	<div class="open-instrument-container">
 		<a class="open-instrument" href="{% url sdk_instrument_workspace %}">Open Workspace</a>	
@@ -48,7 +56,7 @@
 	<div class="document">
 		<div class="section">
 			<h3>概要</h3>
-			<p>プラグインはホストがmain.jsをWebWorkerとして起動します。以下はシンプルな例です。</p>
+			<p>Synthcriptはmain.jsをWebWorkerとして起動します。以下はシンプルな例です。</p>
 			<ul>
 				<li>main.js</li>
 			</ul>
@@ -266,7 +274,7 @@ function onGetWave(e) {
 			</table>				
 			
 			<h4>controller.controls</h4>
-			<p>各GUIコントロールの情報を配列で設定します。コントロールには"control"、"toggle"、"radio"の種類があり、各要素共通の属性は以下となります。</p>
+			<p>各GUIコントロールの情報を配列で設定します。コントロールには"knob"、"toggle"、"radio"の種類があり、各要素共通の属性は以下となります。</p>
 			<table>
 				<tbody>
 				<tr>
@@ -275,7 +283,7 @@ function onGetWave(e) {
 				</tr>
 				<tr>
 					<td>@param {string} type</td>
-					<td>コントロールのタイプを表します。"control"、"toggle"、"radio"のうちどれかを指定します。</td>
+					<td>コントロールのタイプを表します。"knob"、"toggle"、"radio"のうちどれかを指定します。</td>
 				</tr>
 				<tr>
 					<td>@param {string} id</td>
@@ -296,8 +304,8 @@ function onGetWave(e) {
 				</tbody>
 			</table>		
 		
-			<h4>controlコントロール</h4>
-			<p>回転つまみです。つまみは真上を中心として270°回転します。</p>
+			<h4>knobコントロール</h4>
+			<p>回転ノブです。ノブは真上を中心として270°回転します。</p>
 			<table>
 				<tbody>
 				<tr>
@@ -318,21 +326,49 @@ function onGetWave(e) {
 				</tr>
 				<tr>
 					<td>@param {number} min</td>
-					<td>最小値です。</td>
+					<td>[optional]<br/>
+						最小値です。デフォルトは0です。</td>
 				</tr>
 				<tr>
 					<td>@param {number} max</td>
-					<td>最大値です。</td>
+					<td>[optional]<br/>
+						最大値です。デフォルトは1です。</td>
 				</tr>
 				<tr>
 					<td>@param {number} step</td>
-					<td>ステップ値です。</td>
+					<td>[optional]<br/>
+						ステップ値です。デフォルトは0.001です。</td>
+				</tr>
+				<tr>
+					<td>@param {boolean} label</td>
+					<td>[optional]<br/>
+						数値のラベルを表示するフラグです。デフォルトはfalseです。</td>
+				</tr>
+				<tr>
+					<td>@param {number} labeloffsetx</td>
+					<td>[optional]<br/>
+						label==trueのときに任意で右方向へのオフセット値を設定できます。<br/>
+						デフォルトは0でコントロールの回転中心を中心とした位置に配置されます。</td>
+				</tr>
+				<tr>
+					<td>@param {number} labeloffsety</td>
+					<td>[optional]<br/>
+						label==trueのときに任意で下方向へのオフセット値を設定できます。<br/>
+						デフォルトは0でコントロールの回転中心を中心とした位置に配置されます。</td>
+				</tr>
+				<tr>
+					<td>@param {string} labelprefix</td>
+					<td>[optional]<br/>label==trueのときに任意でラベルの接頭文字を設定できます。</td>
+				</tr>
+				<tr>
+					<td>@param {string} labelpostfix</td>
+					<td>[optional]<br/>label==trueのときに任意でラベルの接尾文字を設定できます。</td>
 				</tr>
 				</tbody>
 			</table>
 			
 			<h4>toggleコントロール</h4>
-			<p>トグルボタンです。</p>
+			<p>トグルボタンです。setリクエストのvalue属性にはbooleanが設定されます。</p>
 			<table>
 				<tbody>
 				<tr>
@@ -359,7 +395,7 @@ function onGetWave(e) {
 			</table>
 			
 			<h4>radioコントロール</h4>		
-			<p>ラジオボタンです。</p>
+			<p>ラジオボタンです。setリクエストのvalue属性には、下表のoffsets属性で設定したラジオボタン配列のインデックス値が設定されます。</p>
 			<table>
 				<tbody>
 				<tr>
@@ -439,6 +475,20 @@ function onGetWave(e) {
 		
 		hljs.initHighlighting();
 		
+		(function(){
+			$('#google_plusone').socialbutton('google_plusone', {
+				lang: 'ja',
+				size: 'medium'
+			});
+			$('#hatena').socialbutton('hatena');
+			$('#twitter').socialbutton('twitter', {
+				button: 'horizontal',
+		        text: 'Javascriptで作るWeb楽器プラグイン - Synthcript '
+			});
+			$('#facebook_like').socialbutton('facebook_like', {
+				button: 'button_count'
+			});
+		})();
 	});
 })();
 </script>

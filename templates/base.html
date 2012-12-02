@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="UTF-8">
+	<title>{{ title|default:"Connectsynth" }}</title>
+	<meta name="description" content="{{ description|default:"JavascriptでWeb楽器プラグインが作れるホスティングサイト" }}" />
+	<meta name="keywords" content="Audio,Synthesizer,WebWorker,Javascript,Plugin" />
 	<link rel="stylesheet/less" type="text/css" href="{{ STATIC_URL }}less/common.less">
 {% block cssfile %}{% endblock %}
 <script src="{{ STATIC_URL }}js/jquery-1.8.2.min.js" type="text/javascript"></script>

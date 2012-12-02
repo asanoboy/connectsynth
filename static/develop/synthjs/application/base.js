@@ -28,6 +28,7 @@ synthjs.application.Base = function(id){
 	
 	this._rootComponent.render(goog.dom.getElement(this._targetId));
 	this._attachEvents();
+	console.log(this._init);
 	this._init();
 }
 

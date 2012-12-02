@@ -247,9 +247,9 @@ synthjs.application.PublicOscillator.prototype.onShowInformation = function(){
 			//contentHtml += "<div style='float:right;'>";
 			contentHtml += "<div>";
 			
-			if( rt['parent'] && rt['parent']['name'] && rt['parent']['url'] ){
-				contentHtml += "<p style='text-align: right;'>extended from <a href='"+rt['parent']['url']+"' target='_blank'>"+goog.string.htmlEscape(rt['parent']['name'])+"</a></p>";
-			}
+			// if( rt['parent'] && rt['parent']['name'] && rt['parent']['url'] ){
+				// contentHtml += "<p style='text-align: right;'>extended from <a href='"+rt['parent']['url']+"' target='_blank'>"+goog.string.htmlEscape(rt['parent']['name'])+"</a></p>";
+			// }
 			
 			contentHtml += "<p style='text-align: right;'>created by <a href='"+synthjs.utility.TwitterUri.createByScreenName(rt['screen_name'])+"' target='_blank'>"+rt['screen_name']+"</a></p>"
 			contentHtml += "</div>";

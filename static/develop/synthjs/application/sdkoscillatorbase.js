@@ -65,7 +65,7 @@ goog.inherits(synthjs.application.SDKOscillatorBase, synthjs.application.Oscilla
  * @protected
  */
 synthjs.application.SDKOscillatorBase.prototype._init = function(){
-	//this.launchOscillator();
+	goog.base(this, "_init");
 }
 
 synthjs.application.SDKOscillatorBase.prototype._getDirectoryControl = goog.abstractMethod;
