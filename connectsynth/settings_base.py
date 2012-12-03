@@ -191,6 +191,14 @@ if os.environ.has_key('TWITTER_CONSUMER_KEY') and os.environ.has_key('TWITTER_CO
 else :
     raise Exception
 
-SESSION_COOKIE_SECURE = True
-
 MEDIA_ROOT = '/var/connectsynth/repository'
+
+if os.environ.has_key('HTTP_BASIC_AUTH_ID') and os.environ.has_key('HTTP_BASIC_AUTH_PW'):
+    STAGING_HTTP_BASIC_AUTH_ID = os.environ['HTTP_BASIC_AUTH_ID']
+    STAGING_HTTP_BASIC_AUTH_PW = os.environ['HTTP_BASIC_AUTH_PW']
+    MIDDLEWARE_CLASSES += (
+        "connectsynth.staging.AuthMiddleware",
+    )
+else :
+    STAGING_HTTP_BASIC_AUTH_ID = False
+    STAGING_HTTP_BASIC_AUTH_PW = False
