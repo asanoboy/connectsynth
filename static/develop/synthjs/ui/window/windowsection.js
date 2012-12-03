@@ -249,8 +249,9 @@ synthjs.ui.window.WindowSection.prototype.activate = function(opt_window){
 	}, this);
 	
 	this._currentZIndex++;
-	
-	window.resize();
+
+	//window.resize();
+	this.onResize();
 	this._pushLastActiveIndex(active.index);
 	this._activeWindowInfo  = active;
 }

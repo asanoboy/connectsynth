@@ -5,7 +5,6 @@ AWS_SECRET_ACCESS_KEY=*******************
 AWS_STORAGE_BUCKET_NAME=*******************
 TWITTER_CONSUMER_KEY=*******************
 TWITTER_CONSUMER_SECRET=*******************
-HTTPS=on
 
 
 === optional ENV_VALUE for staging
@@ -17,4 +16,3 @@ HTTP_BASIC_AUTH_PW=****
 
 DJANGO_SETTINGS_MODULE=settings_dev
 PYTHONPATH=/usr/local/connectsynth/connectsynth
-HTTPS=off
