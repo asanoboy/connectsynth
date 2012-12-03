@@ -11,3 +11,7 @@ if os.environ.has_key("DEBUG") and os.environ["DEBUG"]=="1":
     DEBUG = True
 
 SESSION_COOKIE_SECURE = True
+
+MIDDLEWARE_CLASSES += (
+    "connectsynth.utils.ForceSslMiddleware",
+)
