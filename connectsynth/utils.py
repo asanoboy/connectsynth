@@ -4,7 +4,7 @@ class ForceSslMiddleware(object):
     
     def process_request(self, request):
         print "secure" if request.is_secure() else "not secure"
-        print request.META['wsgi.url_scheme']
+        print request.META
         
         if request.META['wsgi.url_scheme']!='https':
             next = "https://%s%s" %(
