@@ -1,1 +1,2 @@
 function $(){};
+function _gaq(){};

@@ -89,7 +89,12 @@ def sdk_plugin_get_api_handler(request, code, path, plugin):
     except ObjectDoesNotExist:
         return get_failure_response()
     
-    return HttpResponse(file.content.read(), content_type=mimetypes.guess_type(path)[0])
+    response = HttpResponse(file.content.read(), content_type=mimetypes.guess_type(path)[0])
+    
+    if plugin.is_public:
+        response['Cache-Control'] = "max-age=86400"
+    
+    return response
 
 
 @csrf_exempt

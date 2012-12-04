@@ -41,7 +41,7 @@
 		    </div>
 			<div class="plugin-info">
 			    
-			    <pre>{{ plugin.description }}</pre>
+			    <p>{{ plugin.description|linebreaks }}</p>
 		    </div>
 		</div>
 	{% endfor %}
@@ -50,12 +50,14 @@
 </div>
 <div class="inner-section develop-info">
 	<div class="section-title">
-		<h2 id="document">WAWプラグイン仕様</h2>
+		<h2 id="document">プラグイン仕様</h2>
 	</div>
 	<div class="document">
 		<div class="section">
 			<h3>概要</h3>
-			<p>WAWはJavascriptで書かれた音源のプラグインシステムです。対応ブラウザはWebAudioAPI/AudioDataAPIに対応しているブラウザ(Chrome、Safari、Firefoxなど)です。プラグインとホストはそれぞれ別のプロセス上で動作し、ホストがmain.jsをWebWorkerとして呼び出すことでプラグインは起動します。以下はシンプルな例です。</p>
+			<p>WAWはJavascriptで書かれたWeb音源のプラグイン規格です。
+				WebAudioAPI/AudioDataAPIに対応しているブラウザ(Chrome、Safari、Firefoxなど)上での動作を想定しています。
+				プラグインとホストはそれぞれ別のプロセス上で動作し、ホストがmain.jsをWebWorkerとして呼び出すことでプラグインは起動します。以下はシンプルな例です。</p>
 			<ul>
 				<li>main.js</li>
 			</ul>
@@ -105,8 +107,8 @@ function onGetWave(e) {
 };
 			</code></pre>
 			<p>
-				以下では上記サンプルのe.dataを<strong>リクエスト</strong>、responseを<strong>レスポンス</strong>と呼ぶことにします。
-				各リクエスト毎にレスポンスをホストに送信しなければなりません。
+				以下では上記サンプルのrequestを<strong>リクエスト</strong>、responseを<strong>レスポンス</strong>と呼びます。
+				プラグインは各リクエスト毎にレスポンスをホストに送信しなければなりません。
 			</p>
 			<p>
 				すべてのリクエストは以下の属性を共通で持ちます。
@@ -117,11 +119,11 @@ function onGetWave(e) {
 					<th>説明</th>
 				</tr>
 				<tr>
-					<td>@param {string} action</td>
+					<td>{String} action</td>
 					<td>リクエストの種類を表します。"init"、"set"、"midi"、"getbuffer"の4種類があります。</td>
 				</tr>
 				<tr>
-					<td>@param {string} callback</td>
+					<td>{String} callback</td>
 					<td>ホスト側でコールバックで呼ばれる関数の名前です。レスポンスに属性として付加します。</td>
 				</tr>
 				</tbody>
@@ -131,7 +133,7 @@ function onGetWave(e) {
 		<div class="section">	
 			<h3>リクエストとレスポンス</h3>
 			<p>ここではタイプに応じたリクエスト、レスポンスの説明をします。</p>
-			<h4>initリクエスト</h4>
+			<h4 class="first">initリクエスト</h4>
 			<p>
 				プラグインをホストが起動して最初に呼ばれます。
 			</p>
@@ -142,7 +144,7 @@ function onGetWave(e) {
 					<th>説明</th>
 				</tr>
 				<tr>
-					<td>@param {number} samplerate</td>
+					<td>{Number} samplerate</td>
 					<td>サンプリング周波数[Hz]</td>
 				</tr>
 				</tbody>
@@ -154,7 +156,7 @@ function onGetWave(e) {
 					<th>説明</th>
 				</tr>
 				<tr>
-					<td>@param {Object} controller</td>
+					<td>{Object} controller</td>
 					<td>パラメータとGUIコントローラを設定します。</td>
 				</tr>
 				</tbody>
@@ -171,17 +173,17 @@ function onGetWave(e) {
 					<th>説明</th>
 				</tr>
 				<tr>
-					<td>@param {string} id</td>
+					<td>{String} id</td>
 					<td>変更されたパラメータのid</td>
 				</tr>
 				<tr>
-					<td>@param {string|number} value</td>
+					<td>{String|Number} value</td>
 					<td>変更されたパラメータの値</td>
 				</tr>
 				</tbody>
 			</table>
 			<p>
-				ホスト側に送信するレスポンス属性はありません。
+				レスポンスには特に追加する属性はありません。
 			</p>
 			<h4>midiリクエスト</h4>
 			<p>
@@ -194,26 +196,26 @@ function onGetWave(e) {
 					<th>説明</th>
 				</tr>
 				<tr>
-					<td>@param {string} type</td>
+					<td>{String} type</td>
 					<td>MIDIイベントのタイプです。"noteon"、"noteoff"、"notealloff"の種類があります。</td>
 				</tr>
 				<tr>
-					<td>@param {number} note</td>
+					<td>{Number} note</td>
 					<td>"noteon"、"noteoff"の場合のMIDIノート番号です。</td>
 				</tr>
 				<tr>
-					<td>@param {number} verocity</td>
+					<td>{Number} verocity</td>
 					<td>"noteon"の場合のベロシティです。範囲は[0, 1]です。</td>
 				</tr>
 				</tbody>
 			</table>
 			<p>
-				ホスト側に送信するレスポンス属性はありません。
+				レスポンスには特に追加する属性はありません。
 			</p>
 			
 			<h4>getbufferリクエスト</h4>
 			<p>
-				波形バッファーを要求します。
+				サンプリングデータを要求します。
 			</p>
 			<table>
 				<tbody>
@@ -222,8 +224,8 @@ function onGetWave(e) {
 					<th>説明</th>
 				</tr>
 				<tr>
-					<td>@param {number} length</td>
-					<td>要求するバッファーのサイズ</td>
+					<td>{Number} length</td>
+					<td>データバッファーのサイズ</td>
 				</tr>
 				</tbody>
 			</table>
@@ -234,11 +236,11 @@ function onGetWave(e) {
 					<th>説明</th>
 				</tr>
 				<tr>
-					<td>@param {Float32Array} rightbuffer</td>
+					<td>{Float32Array} rightbuffer</td>
 					<td>右サンプルバッファーです。</td>
 				</tr>
 				<tr>
-					<td>@param {Float32Array} leftbuffer</td>
+					<td>{Float32Array} leftbuffer</td>
 					<td>左サンプルバッファーです。</td>
 				</tr>
 				</tbody>
@@ -247,9 +249,9 @@ function onGetWave(e) {
 
 		<div class="section">
 			<h3>GUIコントローラの設定</h3>
-			<p>initリクエストに対するレスポンスのcontroller属性がGUI設定を行います。</p>
+			<p>initリクエストに対するレスポンスのcontroller属性がGUIを定義します。</p>
 			
-			<h4>controller.background</h4>
+			<h4 class="first">controller.background</h4>
 			<p>背景画像の設定を行います。</p>
 			<table>
 				<tbody>
@@ -258,22 +260,22 @@ function onGetWave(e) {
 					<th>説明</th>
 				</tr>
 				<tr>
-					<td>@param {string} image</td>
+					<td>{String} image</td>
 					<td>背景画像の相対URLです</td>
 				</tr>
 				<tr>
-					<td>@param {string} height</td>
+					<td>{String} height</td>
 					<td>背景画像の縦pixelです</td>
 				</tr>
 				<tr>
-					<td>@param {string} width</td>
+					<td>{String} width</td>
 					<td>背景画像の幅pixelです</td>
 				</tr>
 				</tbody>
 			</table>				
 			
 			<h4>controller.controls</h4>
-			<p>各GUIコントロールの情報を配列で設定します。コントロールには"knob"、"toggle"、"radio"の種類があり、各要素共通の属性は以下となります。</p>
+			<p>各GUIコントロールの情報を配列で設定します。コントロールには"knob"、"toggle"、"radio"の種類があります。</p>
 			<table>
 				<tbody>
 				<tr>
@@ -281,24 +283,24 @@ function onGetWave(e) {
 					<th>説明</th>
 				</tr>
 				<tr>
-					<td>@param {string} type</td>
-					<td>コントロールのタイプを表します。"knob"、"toggle"、"radio"のうちどれかを指定します。</td>
+					<td>{String} type</td>
+					<td>"knob"、"toggle"、"radio"のうちどれかのタイプを指定します。</td>
 				</tr>
 				<tr>
-					<td>@param {string} id</td>
-					<td>コントロールのidを指定します。setリクエストのid属性に対応します。</td>
+					<td>{String} id</td>
+					<td>idを指定します。setリクエストのid属性に対応します。</td>
 				</tr>
 				<tr>
-					<td>@param {string|number} value</td>
-					<td>パラメータの初期値です。</td>
+					<td>{String|Number} value</td>
+					<td>初期値です。</td>
 				</tr>
 				<tr>
-					<td>@param {number} height</td>
-					<td>コントロール画像の縦pixelです。</td>
+					<td>{Number} height</td>
+					<td>画像の縦pixelです。</td>
 				</tr>
 				<tr>
-					<td>@param {number} width</td>
-					<td>コントロール画像の幅pixelです。</td>
+					<td>{Number} width</td>
+					<td>画像の幅pixelです。</td>
 				</tr>
 				</tbody>
 			</table>		
@@ -312,55 +314,55 @@ function onGetWave(e) {
 					<th>説明</th>
 				</tr>
 				<tr>
-					<td>@param {string} image</td>
+					<td>{String} image</td>
 					<td>コントロール画像の相対URLです。</td>
 				</tr>
 				<tr>
-					<td>@param {number} offsetx</td>
+					<td>{Number} offsetx</td>
 					<td>コントロール画像の背景画像左上を原点としたときの右方向オフセットpixelです。</td>
 				</tr>
 				<tr>
-					<td>@param {number} offsety</td>
+					<td>{Number} offsety</td>
 					<td>コントロール画像の背景画像左上を原点としたときの下方向オフセットpixelです。</td>
 				</tr>
 				<tr>
-					<td>@param {number} min</td>
+					<td>{Number} min</td>
 					<td>[optional]<br/>
 						最小値です。デフォルトは0です。</td>
 				</tr>
 				<tr>
-					<td>@param {number} max</td>
+					<td>{Number} max</td>
 					<td>[optional]<br/>
 						最大値です。デフォルトは1です。</td>
 				</tr>
 				<tr>
-					<td>@param {number} step</td>
+					<td>{Number} step</td>
 					<td>[optional]<br/>
 						ステップ値です。デフォルトは0.001です。</td>
 				</tr>
 				<tr>
-					<td>@param {boolean} label</td>
+					<td>{boolean} label</td>
 					<td>[optional]<br/>
-						数値のラベルを表示するフラグです。デフォルトはfalseです。</td>
+						ラベルを表示するフラグです。デフォルトはfalseです。</td>
 				</tr>
 				<tr>
-					<td>@param {number} labeloffsetx</td>
+					<td>{Number} labeloffsetx</td>
 					<td>[optional]<br/>
 						label==trueのときに任意で右方向へのオフセット値を設定できます。<br/>
 						デフォルトは0でコントロールの回転中心を中心とした位置に配置されます。</td>
 				</tr>
 				<tr>
-					<td>@param {number} labeloffsety</td>
+					<td>{Number} labeloffsety</td>
 					<td>[optional]<br/>
 						label==trueのときに任意で下方向へのオフセット値を設定できます。<br/>
 						デフォルトは0でコントロールの回転中心を中心とした位置に配置されます。</td>
 				</tr>
 				<tr>
-					<td>@param {string} labelprefix</td>
+					<td>{String} labelprefix</td>
 					<td>[optional]<br/>label==trueのときに任意でラベルの接頭文字を設定できます。</td>
 				</tr>
 				<tr>
-					<td>@param {string} labelpostfix</td>
+					<td>{String} labelpostfix</td>
 					<td>[optional]<br/>label==trueのときに任意でラベルの接尾文字を設定できます。</td>
 				</tr>
 				</tbody>
@@ -375,19 +377,19 @@ function onGetWave(e) {
 					<th>説明</th>
 				</tr>
 				<tr>
-					<td>@param {string} imageon</td>
+					<td>{String} imageon</td>
 					<td>オンのときの画像相対URLです。</td>
 				</tr>
 				<tr>
-					<td>@param {string} imageoff</td>
+					<td>{String} imageoff</td>
 					<td>オフのときの画像の相対URLです。</td>
 				</tr>
 				<tr>
-					<td>@param {number} offsetx</td>
+					<td>{Number} offsetx</td>
 					<td>コントロール画像の背景画像左上を原点としたときの右方向オフセットpixelです。</td>
 				</tr>
 				<tr>
-					<td>@param {number} offsety</td>
+					<td>{Number} offsety</td>
 					<td>コントロール画像の背景画像左上を原点としたときの下方向オフセットpixelです。</td>
 				</tr>
 				</tbody>
@@ -402,16 +404,16 @@ function onGetWave(e) {
 					<th>説明</th>
 				</tr>
 				<tr>
-					<td>@param {string} imageon</td>
+					<td>{String} imageon</td>
 					<td>オンのときの画像相対URLです。</td>
 				</tr>
 				<tr>
-					<td>@param {string} imageoff</td>
+					<td>{String} imageoff</td>
 					<td>オフのときの画像の相対URLです。</td>
 				</tr>
 				<tr>
-					<td>@param {Array} offsets</td>
-					<td>@param {number} offsetx、@param {number} offsetyを要素としたオブジェクトの配列です。</td>
+					<td>{Array} offsets</td>
+					<td>{Number} offsetx、{Number} offsetyを要素としたオブジェクトの配列です。</td>
 				</tr>
 				</tbody>
 			</table>
@@ -428,7 +430,7 @@ function onGetWave(e) {
 
 {% block footer %}
 	<p>
-		created by asanoboy
+		© 2012. Yosuke Asano. | <a href="http://asaby.hatenablog.com/">blog</a>
 	</p>
 {% endblock %}
 
@@ -482,7 +484,7 @@ function onGetWave(e) {
 			$('#hatena').socialbutton('hatena');
 			$('#twitter').socialbutton('twitter', {
 				button: 'horizontal',
-		        text: 'Javascriptで作るWeb楽器プラグイン - ConnectSynth '
+		        text: 'ConnectSynth'
 			}).width(90);
 			$('#facebook_like').socialbutton('facebook_like', {
 				button: 'button_count'

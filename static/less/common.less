@@ -11,7 +11,7 @@
 // @link-color-hover: #1F7A7D;//orange;
 // @menu-font-color: #EEEEEE;
 // @container-width: 1000px;
-// @container-inner-padding: 20px;
+@container-inner-padding: 70px;
 // @hd-height: 42px;
 // 
 // @bg-color: #21294D;
@@ -41,9 +41,19 @@ h1,h2,h3,h4,p,td,tr,th,li,a{
     text-decoration: none;
 }
 
+h2 {
+    font-size: 1.25em; 
+}
+h3 {
+    font-size: 1.15em; 
+}
+p, li {
+    font-size: 0.90em;
+    line-height: 25px;
+}
 body {
     background-color: @bg-color;
-    font-family: Arial, sans-serif;
+    _font-family: Arial, sans-serif;
     font-size: 100%;
 }
 
@@ -149,13 +159,17 @@ div.section {
 }
 
 #footer *{
-    color: @menu-font-color;
+    color: darken(@menu-font-color, 10%);
+}
+
+#footer p {
+    text-align: center; 
 }
 
 // TODO: move the following to top.css
 
 #content div.inner-section {
-    padding-top: @container-inner-padding;
+    padding-top: 3em;//@container-inner-padding;
     clear: both;
 }
 
@@ -194,36 +208,44 @@ div.section {
     position: relative;
 }
 
-@plugin-header-height: 30px;
-
+@plugin-header-height: 50px;
+@plugin-inner-padding: 10px;
 #content div.plugin-header {
     background-color: #EEEEEE;
-    padding-top: @container-inner-padding;
-    padding-left: @container-inner-padding;
-    padding-right: @container-inner-padding;
-    padding-bottom: 3px;
+    _padding-top: @container-inner-padding;
+    padding-left: @plugin-inner-padding;//@plugin-header-height/2 - 5;//@container-inner-padding;
+    padding-right: @plugin-inner-padding;//@plugin-header-height/2 - 5;//@container-inner-padding;
+    _padding-bottom: 3px;
 }
 
 #content div.plugin-title {
-    height: @plugin-header-height;
+    _height: @plugin-header-height;
 }
 
 #content div.plugin-title h3 {
-    height: @plugin-header-height;
+    _font-size: 1em;
+    padding-top: @plugin-inner-padding;
+    padding-bottom: @plugin-inner-padding *0.6; 
+    _line-height: @plugin-header-height;
 }
 
 #content div.plugin-created {
     float: right;
-    height: @plugin-header-height;
+    
+    _height: @plugin-header-height;
 }
 
 #content div.plugin-created p {
-    font-size: 0.8em;
-    line-height: @plugin-header-height;
+    padding-top: @plugin-inner-padding;
+    padding-bottom: @plugin-inner-padding *0.6; 
+    font-size: 0.73em;
+    
+    
 }
 
 #content div.plugin-info {
-    padding: @container-inner-padding;
+    padding: @plugin-inner-padding *0.6 @plugin-inner-padding @plugin-inner-padding @plugin-inner-padding;
+    font-size: 0.9em;
 }
 
 #content div.about-this-container {
@@ -243,7 +265,7 @@ div.section {
     color: lighten(@second-accent-color, 50%);
     display: inline-block;
     text-align: center;
-    line-height: 98px;
+    line-height: 108px;
     text-shadow: -1px -1px 0px darken(@second-accent-color, 30%);
     font-size: 1.5em;
     .box-shadow(inset 0px 1px 1px 0px lighten(@second-accent-color, 50%));
@@ -296,8 +318,8 @@ div.section {
 
 #content .description {
     position: relative;
-    top: 10px;
-    line-height: 20px;
+    _top: 10px;
+    _line-height: 20px;
     vertical-align: text-bottom;
 }
 
@@ -307,7 +329,7 @@ div.section {
 }
 
 
-@document-line-margin-height: 0.8em;
+@document-line-margin-height: 0.5em;
 @document-line-margin-bottom: 0.5em;
 
 
@@ -320,9 +342,12 @@ div.section {
     margin-top: 20px;
     margin-bottom: 40px;
 }
+#content .document .section:last-child {
+    margin-bottom: 0px;
+}
 
 #content .document p {
-    line-height: 30px;
+    _line-height: 30px;
     margin: @document-line-margin-height 0 @document-line-margin-bottom 0px;
 }
 
@@ -332,27 +357,39 @@ div.section {
 #content .document h3 {
     border-left: solid 4px @first-accent-color;
     text-indent: 0.4em;
-    margin: 1.5*@document-line-margin-height 0 @document-line-margin-bottom 0px;
+    margin: 6*@document-line-margin-height 0 @document-line-margin-bottom 0px;
 }
-#content .document h4 {
-    margin: 1.5*@document-line-margin-height 0 @document-line-margin-bottom 0px;
+#content .document h3:first-child {
+    margin-top: 10px;
 }
+
+#content .document .section h4 {
+    margin: 5*@document-line-margin-height 0 @document-line-margin-bottom 0px;
+}
+#content .document .section h4.first {
+    margin-top: 10px;
+}
+
 #content .document ul {
-    margin: @document-line-margin-height 0 @document-line-margin-bottom 50px;
+    margin: @document-line-margin-height 0 @document-line-margin-bottom 40px;
 }
 #content .document li {
     line-height: 150%;
 }
 #content .document table {
-    margin: @document-line-margin-height 0 @document-line-margin-bottom 0px;
+    width: 100%;
+    _margin: @document-line-margin-height 0 @document-line-margin-bottom 0px;
+    margin-top: @document-line-margin-height;
+    margin-bottom: @document-line-margin-height * 2;
     border: 1px #D3D3D3 solid;
     border-collapse: collapse;
     border-spacing: 0;
 }
 
 #content .document table th {
-    padding: 8px;
-    border: #D3D3D3 solid;
+    padding: 4px;
+    border: #D7D7D7 solid;
+    _border: #C8C8C8 solid;
     border-width: 0 0 1px 1px;
     background: #EEE;
     font-weight: bold;
@@ -362,9 +399,10 @@ div.section {
 }
 #content .document table tr td:first-child {
     _text-align: center;
+    width: 25%;
 }
 #content .document table td {
-    padding: 10px;
+    padding: 6px;
     border: 1px #E3E3E3 solid;
     border-width: 0 0 1px 1px;
     line-height: 150%;
