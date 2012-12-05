@@ -20,6 +20,7 @@ def sdk_instrument_player_handler(request, code, plugin):
         return render_to_response('oscillatorplayer.html', {
             "plugin": plugin,
             "description": plugin.description,
+            "title": plugin.name + " - ConnectSynth",
             "writable": False,
             "is_owner": request.user==plugin.user 
         }, context_instance=RequestContext(request))
