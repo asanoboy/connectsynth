@@ -88,29 +88,17 @@ Operator.prototype.getValue = function(id, radian, second, modList, modFactorLis
 	
 	// Envelope
 	if( isRemoved ){
-		//var factor = this.getVolumeBeforeRemoved(secondRemovedAt) - secondFromRemoved * this._sustain / this._release;
 		var factor = this._noteidToLastFactor[id] - this._releasePerSample; 
-		//if( secondFromRemoved < this._release ){
 		if( factor > 0 ){
 			//value *= factor;
 		}
-		else { // TODO: dispatch Finish Event.
-			//wave.deleteNote(id);
+		else {
 			this._noteidToFinished[id] = true;
 			factor = 0;
 		}
 	}
 	else{
 		var factor = this.getVolumeBeforeRemoved(second); 
-		// if( second < this._attack ){
-			// value *= second * this._attackInverse;
-		// }
-		// else if( second < this._attack+this._decay ){
-			// value *= 1 - (second-this._attack) * this._decayInverse * (1 - this._sustain);
-		// }
-		// else {
-			// value *= this._sustain;
-		// }
 	}
 	value *= factor;
 	

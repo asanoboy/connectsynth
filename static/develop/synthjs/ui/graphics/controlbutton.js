@@ -52,6 +52,8 @@ synthjs.ui.graphics.ControlButton.prototype.decorateInternal = function(gr){
 		var labelPosition = this._param.get("labelPosition");
 		this._labelPrefix = this._param.get("labelPrefix");
 		this._labelPostfix = this._param.get("labelPostfix");
+		this._labelOffsetX = this._param.get("labelOffsetX");
+		this._labelOffsetY = this._param.get("labelOffsetY");
 		
 		var tmp = step;
 		this._dispDigit = 0;
@@ -65,7 +67,7 @@ synthjs.ui.graphics.ControlButton.prototype.decorateInternal = function(gr){
 		
 		fontsize = 14;
 		
-		this._textElement = this.getGraphics().drawText('', offsetX+width/2, offsetY+height/2-fontsize/2, 0, 0, 'center', null,
+		this._textElement = this.getGraphics().drawText('', offsetX+width/2+this._labelOffsetX, offsetY+height/2-fontsize/2+this._labelOffsetY, 0, 0, 'center', null,
 	          new goog.graphics.Font(fontsize, 'Times'), null, new goog.graphics.SolidFill('#000'));
 	    
 	}
