@@ -9,6 +9,9 @@ if os.environ.has_key('AWS_ACCESS_KEY_ID') and os.environ.has_key('AWS_SECRET_AC
 
 if os.environ.has_key("DEBUG") and os.environ["DEBUG"]=="1":
     DEBUG = True
+    TEMPLATE_DEBUG = DEBUG
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 SESSION_COOKIE_SECURE = True
 
