@@ -7,10 +7,10 @@ admin.autodiscover()
 
 urlpatterns = []
 
-if not settings.DEBUG:
-    urlpatterns += patterns('',
-        url(r'^static/develop', views.raise_error404),
-    )
+#if not settings.DEBUG:
+#    urlpatterns += patterns('',
+#        url(r'^static/develop', views.raise_error404),
+#    )
 
 urlpatterns += patterns('',
     # Examples:
