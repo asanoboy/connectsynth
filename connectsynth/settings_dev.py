@@ -19,3 +19,8 @@ DATABASES = {
 #STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 INTERNAL_IPS = ('192.168.1.42','127.0.0.1')
+
+if DEBUG:
+    STATIC_ROOT = ''
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')

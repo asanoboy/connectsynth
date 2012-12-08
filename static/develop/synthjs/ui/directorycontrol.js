@@ -392,6 +392,24 @@ synthjs.ui.DirectoryControl.prototype._addFileNode = function(parentNode, file){
 				
 			}
 		)
+		.listen(
+			childNode,
+			synthjs.ui.DirectoryNode.EventType.NEWFILE,
+			function(){
+				this._fileSystem.add(
+					new synthjs.model.TextFile("new.js", ""), 
+					file);
+			}
+		)
+		.listen(
+			childNode,
+			synthjs.ui.DirectoryNode.EventType.NEWDIRECTORY,
+			function(){
+				this._fileSystem.add(
+					new synthjs.model.Directory("new"), 
+					file);
+			}
+		)
 	}
 	// If the added node is not directory, 
 	// this dispatches event to activate the file related to the node. 

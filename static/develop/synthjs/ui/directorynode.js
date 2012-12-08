@@ -192,6 +192,14 @@ synthjs.ui.DirectoryNode.prototype._onContextMenuClick = function(e){
 		case "rename":
 			this.showRenamePrompt();
 			break;
+		case "new-file":
+			var event = new goog.events.Event(synthjs.ui.DirectoryNode.EventType.NEWFILE);
+			this.dispatchEvent(event);
+			break;
+		case "new-directory":
+			var event = new goog.events.Event(synthjs.ui.DirectoryNode.EventType.NEWDIRECTORY);
+			this.dispatchEvent(event);
+			break;
 	}
 }
 
@@ -286,5 +294,7 @@ synthjs.ui.DirectoryNode.EventType = {
 	DBLCLICK: "directory-node-dblclick",
 	RIGHTMOUSEDOWN: "directory-node-rightmousedown",
 	DROPFILE: "directory-node-dropfile",
-	DELETE: "directory-node-delete"
+	DELETE: "directory-node-delete",
+	NEWDIRECTORY: "directory-node-new-directory",
+	NEWFILE: "directory-node-new-file"
 };
