@@ -1,0 +1,114 @@
+/*
+ * start window section LESS VARIABLE
+ */
+@windowsection-outer-border-color: #BBBBBB;
+@windowsection-outer-border-width: 1px;
+@windowsection-border-width: 2px;
+@windowsection-normal-color: #EEEEEE;
+@windowsection-active-color: lighten(@second-accent-color, 30%);//#E1EBF5;//#DDDDEE;
+@windowsection-header-width: 24px;
+
+.windowsection-label-common() {
+    background-color: @windowsection-normal-color;
+    height: @windowsection-header-width;
+    box-sizing: border-box;
+    display: inline-block;
+    border-style: solid;
+    border-color: @windowsection-outer-border-color;
+}
+
+.windowsection-label-common-active() {
+    background-color: @windowsection-active-color;
+    //height: @windowsection-outer-border-width + @windowsection-header-width;
+}
+
+/*
+ * start window section LESS STYLE
+ */
+
+.windowsection-header {
+    height: @windowsection-header-width;
+}
+
+.windowsection-header-label-inner-wrapper {
+    display: inline-block;
+    position: relative;
+    z-index: 10;
+    _margin-top: 0px;
+    margin-right: 2px;
+    height: @windowsection-header-width;
+}
+
+.windowsection-header-label-inner-wrapper.active {
+    //_height: @windowsection-outer-border-width + @windowsection-header-width;
+}
+
+.windowsection-header-label.left {
+    .windowsection-label-common();
+    width: 8px;
+    _border-width: @windowsection-outer-border-width 0 0 @windowsection-outer-border-width;
+    border-width: 0 0 0 @windowsection-outer-border-width;
+}
+.windowsection-header-label.left.active {
+    .windowsection-label-common-active()
+}
+
+.windowsection-header-label.center {
+    .windowsection-label-common();
+    vertical-align: top;
+    _border-width: @windowsection-outer-border-width 0 0 0;
+    border-width: 0 0 0 0;
+    
+    span {
+        line-height: @windowsection-header-width;
+        height: 100%;
+    }
+}
+.windowsection-header-label.center.active {
+    .windowsection-label-common-active()
+}
+
+.windowsection-header-label.right {
+    .windowsection-label-common();
+    width: 8px;
+    _border-width: @windowsection-outer-border-width @windowsection-outer-border-width 0 0;
+    border-width: 0 @windowsection-outer-border-width 0 0;
+}
+.windowsection-header-label.right.active {
+    .windowsection-label-common-active()
+}
+.windowsection-header-label-closebutton {
+    display: inline-block;
+    overflow: hidden;
+    text-indent: -120px;
+    margin-left: 2px;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    text-align: center;
+    background: url('../img/closebutton.png') no-repeat 0px 0px;
+}
+.windowsection-header-label-closebutton:hover {
+    background: url('../img/closebutton.png') no-repeat 0px -20px;
+}
+
+.windowsection-body {
+    position: relative;
+    box-sizing: border-box;
+    _background-color: #FFFFFF;
+    _border: @windowsection-outer-border-width solid @windowsection-outer-border-color;
+}
+
+.windowsection-body-inner-wrapper.active {
+    border-color: @windowsection-active-color;
+    overflow: hidden;
+}
+
+.windowsection-body-inner-wrapper {
+    position: absolute;
+    box-sizing: border-box;
+    background-color: #FFFFFF;
+    border: @windowsection-border-width solid @windowsection-normal-color;
+    width: 100%;
+    height: 100%;
+}

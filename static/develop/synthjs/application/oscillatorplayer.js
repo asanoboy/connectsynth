@@ -49,9 +49,28 @@ synthjs.application.OscillatorPlayer = function(id, params){
 	goog.base(this, id);
 	//this._audioplayer =  synthjs.audiocore.Player.getInstance();
 	
+	/**
+	 * @private
+	 */
+	this._isOscillatorEditable = false;
+	
+	/**
+	 * @protected
+	 * @type {synthjs.audiocore.WavePlugin} 
+	 */
+	this._wavePlugin = null;
+	
 };
 
 goog.inherits(synthjs.application.OscillatorPlayer, synthjs.application.Base);
+
+/**
+ * @protected
+ * @param {Boolean} flag
+ */
+synthjs.application.OscillatorPlayer.prototype._setIsOscillatorEditable = function(flag){
+	this._isOscillatorEditable = flag;
+}
 
 synthjs.application.OscillatorPlayer.prototype.getApi = function(){
 	return this._apiPlugin;
@@ -189,7 +208,16 @@ synthjs.application.OscillatorPlayer.prototype.closeOscillator = function(){
  * @protected 
  */
 synthjs.application.OscillatorPlayer.prototype.createOscillatorInternal = function(){
-	return new synthjs.application.module.Oscillator(this._getApi() );//new goog.Uri(this._bootstrapJs));
+	if( this._wavePlugin ){
+		this._wavePlugin.dispose();
+		this._wavePlugin = null;
+	}
+	this._wavePlugin = new synthjs.audiocore.WavePlugin(this.getApi().getFile("main.js").toString(), {sampleRate: 48000});
+	return new synthjs.application.module.Oscillator(this._wavePlugin, this.getApi(), this._isOscillatorEditable);
+}
+
+synthjs.application.OscillatorPlayer.prototype.getOscillatorModule = function(){
+	return this._oscillatorModule || false;
 }
 
 /**

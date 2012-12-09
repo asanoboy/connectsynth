@@ -30,12 +30,13 @@ goog.require("synthjs.audiocore.MidiInterface");
 /**
  * @constructor
  * @extends {synthjs.utility.EventTarget}
+ * @param {synthjs.audiocore.WavePlugin}
  * @param {synthjs.application.api.Plugin} api
  * @param {boolean=} opt_isEditable
  */
-synthjs.application.module.Oscillator = function(api, opt_isEditable){
+synthjs.application.module.Oscillator = function(plugin, api, opt_isEditable){
 	this._isEditable = goog.isNull(opt_isEditable) ? false : !!opt_isEditable ;
-	
+	this._wavePlugin = plugin;
 	if( this._isEditable ){
 		//if( !opt_presetApis.post || !opt_presetApis.del || !opt_presetApis.list ){
 		//	goog.asserts.fail("If editable, opt_presetApis is repuired.");
@@ -59,8 +60,7 @@ goog.inherits(synthjs.application.module.Oscillator, synthjs.utility.EventTarget
 synthjs.application.module.Oscillator.prototype.init = function(){
 	
 	this._audioplayer =  synthjs.audiocore.Player.getInstance();
-	//this._wavePlugin = new synthjs.audiocore.WavePlugin(this._baseUri.toString() + this._filename, {sampleRate: 48000});
-	this._wavePlugin = new synthjs.audiocore.WavePlugin(this._bootstrapUri.toString(), {sampleRate: 48000});
+	//this._wavePlugin = new synthjs.audiocore.WavePlugin(this._bootstrapUri.toString(), {sampleRate: 48000});
 	
 	this._generator = new synthjs.audiocore.DynamicGenerator(this._wavePlugin);
 	this._audioplayer.addGenerator(this._generator);
@@ -108,9 +108,9 @@ synthjs.application.module.Oscillator.prototype.getWindow = function(){
 synthjs.application.module.Oscillator.prototype.disposeInternal = function(){
 	goog.ui.Component.superClass_.disposeInternal.call(this);
 	
-	
 	this._audioplayer.removeGenerator(this._generator);
-	this._wavePlugin.dispose();	
+	// Don't dispose plugin.
+	//this._wavePlugin.dispose();	
 }
 
 synthjs.application.module.Oscillator.prototype._onHandler = function(e){
@@ -270,6 +270,9 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 				this.onPresetDelete
 			);
 		
+		this._backgroundWidth = controller['background']['width'];
+		this._backgroundHeight = controller['background']['height'];
+		
 	}
 
 	this._oscillatorWindow = new synthjs.ui.window.Oscillator( 
@@ -288,6 +291,13 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 	this._updatePresets();
 		
 	this.dispatchEvent(new goog.events.Event(synthjs.application.module.OscillatorEventType.INIT) );
+}
+
+synthjs.application.module.Oscillator.prototype.getWidth = function(){
+	return this._backgroundWidth ? this._backgroundWidth : 0;
+}
+synthjs.application.module.Oscillator.prototype.getHeight = function(){
+	return this._backgroundHeight ? this._backgroundHeight + 26 : 0; // 26 is preset height;
 }
 
 /**

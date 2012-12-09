@@ -25,9 +25,10 @@ synthjs.application.SDKOscillator = function(id, params){
 	this._publishStatus = synthjs.application.SDKOscillator.StatusType.INITIAL;
 	
 	this._publishUri = new goog.Uri(params['publishapi']);
-	this._presetPostUri = new goog.Uri(params['presetpostapi']);
-	this._presetDeleteUri = new goog.Uri(params['presetdeleteapi']);
-	this._presetListUri = new goog.Uri(params['presetlistapi']);
+	// this._presetPostUri = new goog.Uri(params['presetpostapi']);
+	// this._presetDeleteUri = new goog.Uri(params['presetdeleteapi']);
+	// this._presetListUri = new goog.Uri(params['presetlistapi']);
+	this._setIsOscillatorEditable(true);
 	goog.base(this, id, params);
 }
 
@@ -264,20 +265,6 @@ synthjs.application.SDKOscillator.prototype._onOscillatorError = function(e){
 synthjs.application.SDKOscillator.prototype._onOscillatorInit = function(e){
 	goog.base(this, "_onOscillatorInit", e);	
 	this._publishStatus = synthjs.application.SDKOscillator.StatusType.SUCCESS;
-}
-
-/**
- * @override 
- */
-synthjs.application.SDKOscillator.prototype.createOscillatorInternal = function(){
-	//return new synthjs.application.module.Oscillator(new goog.Uri(this._bootstrapJs), 
-	return new synthjs.application.module.Oscillator(this.getApi(), //new goog.Uri(this._bootstrapJs), 
-		true, 
-		{
-			post: this._presetPostUri,
-			del: this._presetDeleteUri,
-			list: this._presetListUri 
-		});
 }
 
 synthjs.application.SDKOscillator.StatusType = {

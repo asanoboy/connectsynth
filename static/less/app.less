@@ -1,10 +1,13 @@
 @import "mixins.less";
 @import "vars.less";
+@import "windowbase.less";
+@import "verticalkeyboard.less";
+@import "closure.less";
 
 #application * {
     cursor: default;
+    
 }
-
 
 @appmenu-height: 26px;
 @appmenu-padding: 10px;
@@ -31,6 +34,14 @@
     _background-color: @bg-color;
 }
 
+html {
+    height: 100%;
+}
+
+#embed_application {
+    height: 100%;
+    background-color: #FFF;
+}
 
 
 #appmenu, .synthjs-sdkoscillator-menu-container {
@@ -46,182 +57,12 @@ body {
     height: 100%;
 }
 
-#workspace {
-    _height: 100%;
-}
-
-
-/*
- * start window section LESS VARIABLE
- */
-@windowsection-outer-border-color: #BBBBBB;
-@windowsection-outer-border-width: 1px;
-@windowsection-border-width: 2px;
-@windowsection-normal-color: #EEEEEE;
-@windowsection-active-color: lighten(@second-accent-color, 30%);//#E1EBF5;//#DDDDEE;
-@windowsection-header-width: 24px;
-
-.windowsection-label-common() {
-    background-color: @windowsection-normal-color;
-    height: @windowsection-header-width;
-    box-sizing: border-box;
-    display: inline-block;
-    border-style: solid;
-    border-color: @windowsection-outer-border-color;
-}
-
-.windowsection-label-common-active() {
-    background-color: @windowsection-active-color;
-    //height: @windowsection-outer-border-width + @windowsection-header-width;
-}
-
-/*
- * start window section LESS STYLE
- */
-
-.windowsection-header {
-    height: @windowsection-header-width;
-}
-
-.windowsection-header-label-inner-wrapper {
-    display: inline-block;
-    position: relative;
-    z-index: 10;
-    _margin-top: 0px;
-    margin-right: 2px;
-    height: @windowsection-header-width;
-}
-
-.windowsection-header-label-inner-wrapper.active {
-    //_height: @windowsection-outer-border-width + @windowsection-header-width;
-}
-
-.windowsection-header-label.left {
-    .windowsection-label-common();
-    width: 8px;
-    _border-width: @windowsection-outer-border-width 0 0 @windowsection-outer-border-width;
-    border-width: 0 0 0 @windowsection-outer-border-width;
-}
-.windowsection-header-label.left.active {
-    .windowsection-label-common-active()
-}
-
-.windowsection-header-label.center {
-    .windowsection-label-common();
-    vertical-align: top;
-    _border-width: @windowsection-outer-border-width 0 0 0;
-    border-width: 0 0 0 0;
-    
-    span {
-        line-height: @windowsection-header-width;
-        height: 100%;
-    }
-}
-.windowsection-header-label.center.active {
-    .windowsection-label-common-active()
-}
-
-.windowsection-header-label.right {
-    .windowsection-label-common();
-    width: 8px;
-    _border-width: @windowsection-outer-border-width @windowsection-outer-border-width 0 0;
-    border-width: 0 @windowsection-outer-border-width 0 0;
-}
-.windowsection-header-label.right.active {
-    .windowsection-label-common-active()
-}
-.windowsection-header-label-closebutton {
-    display: inline-block;
-    overflow: hidden;
-    text-indent: -120px;
-    margin-left: 2px;
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
-    text-align: center;
-    background: url('../img/closebutton.png') no-repeat 0px 0px;
-}
-.windowsection-header-label-closebutton:hover {
-    background: url('../img/closebutton.png') no-repeat 0px -20px;
-}
-
-.windowsection-body {
-    position: relative;
-    box-sizing: border-box;
-    _background-color: #FFFFFF;
-    _border: @windowsection-outer-border-width solid @windowsection-outer-border-color;
-}
-
-.windowsection-body-inner-wrapper.active {
-    border-color: @windowsection-active-color;
-    overflow: hidden;
-}
-
-.windowsection-body-inner-wrapper {
-    position: absolute;
-    box-sizing: border-box;
-    background-color: #FFFFFF;
-    border: @windowsection-border-width solid @windowsection-normal-color;
-    width: 100%;
-    height: 100%;
-}
-
-.plugin-controlpanel-wrapper svg{
-    .box-shadow(0px 0px 15px rgba(0,0,0,.20));
-}
-
-/*
- * vertical keyboard
- */
-@verticalkeyboard-borderbox-width: 100px;
-@verticalkeyboard-borderwidth: 1px; 
-
-#application .white-keyboard > div.top, #application .black-keyboard > div.top {
-    border-top-width: @verticalkeyboard-borderwidth;
-}
-
-
-#application .white-keyboard > div.mouseover, #application .black-keyboard > div.mouseover {
-    background-color: #999;
-}
-
-#application .white-keyboard > div {
-    width: @verticalkeyboard-borderbox-width - @verticalkeyboard-borderwidth * 2;
-    cursor: pointer;
-    border-style: solid;
-    border-color:  #CCC;
-    border-top-width: 0px;
-    border-right-width: @verticalkeyboard-borderwidth;
-    border-bottom-width: @verticalkeyboard-borderwidth;
-    border-left-width: @verticalkeyboard-borderwidth;
-    background-color: #FFF;
-}
-
-#application .white-keyboard > div.edge_short {
-    height: 9px;
-}
-
-#application .white-keyboard > div.short {
-    height: 14px;
-}
-
-#application .white-keyboard > div.long {
-    height: 19px;
-}
-
-#application .black-keyboard > div {
-    width: @verticalkeyboard-borderbox-width / 2 - @verticalkeyboard-borderwidth * 2;
-    height: 10px;
-    cursor: pointer;
-    border: solid #CCC @verticalkeyboard-borderwidth;
-    background-color: #000;
-}
 
 /*
  * start oscillator-window section LESS style 
  */
 
-#application .window-oscillator-keyboard {
+.window-oscillator-keyboard {
     overflow-y: scroll;
     width: @verticalkeyboard-borderbox-width + 17px;
     height: 100%;
@@ -229,21 +70,21 @@ body {
     float: left;
 }
 
-#application .window-oscillator-oscillator {
+.window-oscillator-oscillator {
     float: right;
     height: 100%;
     overflow: auto;
 }
 
 // preset add button
-#application .plugincontrol-header span {
+.plugincontrol-header span {
     margin-left: 5px;
     color: #333333;
     padding: 1px 5px;
     display: inline-block;
     
 }
-#application .plugincontrol-header a {
+.plugincontrol-header a {
     border: 1px #CCCCCC solid;
     font-size: 0.85em;
     .border-radius(3px);
@@ -254,83 +95,39 @@ body {
     color: #333333;
     margin-right: 5px;
 }
-#application .plugincontrol-header a:hover {
+.plugincontrol-header a:hover {
     background-color: #EEEEEE;
     .gradation(#EEEEEE, #EEEEEE);
 }
 
-/*
- * closure library modal prompt ui
- */
-.modal-dialog-bg, .ajaxloader-bg {
+.plugincontrol-wrapper {
     position: absolute;
-    top: 0px;
-    left: 0px;
-    background-color: #FFF;
-}
-.ajaxloader-bg {
-    opacity: 0.5;
-    z-index: 100;
-}
-.modal-dialog-bg {
-    z-index: 100;
-}
-.modal-dialog {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    min-width: 300px;
-    background-color: #AAF;
-    border: 2px solid #99c0ff;
-    z-index: 120;
-}
-.modal-dialog-title {
-    position: relative;
-    background: #C3D9FF;
-    padding: 4px;
-    font: bold 11px verdana;
-    cursor: default;
-}
-.modal-dialog-content {
-    background: #E8EEF7;
-    padding: 12px 18px 12px 18px;
-    font: normal 12px verdana;
-    font: normal 12px verdana;
-}
-.modal-dialog-userInput {
-    font: normal 12px verdana;
-    width: 90%;
-}
-.modal-dialog-buttons {
-    background: #E8EEF7;
-    padding: 4px;
-    font: normal 12px verdana;
-    text-align: right;
-}
-.modal-dialog-buttons button {
-    margin: 5px;
+    top: 96px;
 }
 
-.ajaxloader {
+.plugincontrol-header {
     position: absolute;
-    top: 0px;
-    left: 0px;
-    background-color: white;
-    border: 5px solid #556677;
-    .border-radius(5px);
-    padding: 10px;
+    top: 70px;
+}
+
+#embed_application {
+    .plugincontrol-wrapper {
+        top: 26px;
+    }
     
+    .plugincontrol-header {
+        top: 0px;
+    }
+    
+    .window-oscillator-oscillator {
+        overflow: hidden;
+    }
 }
 
-.ajaxloader-img {
-    width: 66px;
-    height: 66px;
-    background-image: url('/static/img/ajax-loader.gif');
-}
-
-
-#application .goog-splitpane-handle-horizontal {
-    cursor: w-resize;
+.plugin-controlpanel-wrapper svg{
+    .box-shadow(0px 0px 15px rgba(0,0,0,.20));
+    font-size: 0em;
+    display:block;
 }
 
 #application .goog-splitpane-first-container {

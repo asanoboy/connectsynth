@@ -27,3 +27,15 @@ def sdk_instrument_player_handler(request, code, plugin):
     
     else:
         return get_failure_response()
+
+@reject_invalid_code    
+def sdk_embed_instrument_player_handler(request, code, plugin):
+    if plugin.is_enabled and plugin.is_public:
+        return render_to_response('embed.html', {
+            "plugin": plugin,
+            "description": plugin.description,
+            "title": plugin.name + " - ConnectSynth" 
+        }, context_instance=RequestContext(request))
+    
+    else:
+        return HttpResponse("hoge")#get_failure_response()

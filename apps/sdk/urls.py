@@ -5,17 +5,20 @@ urlpatterns = patterns('sdk.views',
     
     url(r'^workspace/instrument/$', 
             'sdk_instrument_workspace_handler', name="sdk_instrument_workspace"),
-    url(r'^workspace/extend_instrument/(?P<code>.+)/$', 
+    url(r'^workspace/extend_instrument/(?P<code>[^/]+)/$', 
             'sdk_extend_instrument_handler', name="sdk_extend_instrument"),
     
     # publish
-    url(r'^workspace/publish/(?P<code>.+)/$', 
+    url(r'^workspace/publish/(?P<code>[^/]+)/$', 
             'sdk_publish_api_handler', name="sdk_publish_api"),
     
     ### public ###
     
-    url(r'^instrument/(?P<code>.+)/$', 
+    url(r'^instrument/(?P<code>[^/]+)/$', 
             'sdk_instrument_player_handler', name="sdk_instrument_player"),
+    
+    url(r'^instrument/(?P<code>[^/]+)/embed/$', 
+            'sdk_embed_instrument_player_handler', name="sdk_embed_instrument_player"),
 )
 
 # PRESET API
@@ -30,13 +33,13 @@ urlpatterns += patterns('sdk.views.preset',
 
 # PLUGIN API
 urlpatterns += patterns('sdk.views.plugin',
-    url(r'^plugin/filelist/(?P<code>.+)/$', 
+    url(r'^plugin/filelist/(?P<code>[^/]+)/$', 
             'sdk_plugin_filelist_api_handler', name="sdk_plugin_filelist_api"),
     url(r'^plugin/description/(?P<code>[^/]+)/$', 
             'sdk_plugin_description_api_handler', name="sdk_plugin_description_api"),
     url(r'^plugin/information/(?P<code>[^/]+)/$', 
             'sdk_plugin_information_api_handler', name="sdk_plugin_information_api"),
-    url(r'^plugin/delete/(?P<code>.+)/$', 
+    url(r'^plugin/delete/(?P<code>[^/]+)/$', 
             'sdk_plugin_delete_handler', name="sdk_plugin_delete"),
                         
     url(r'^plugin/(?P<code>[^/]+)/$', 

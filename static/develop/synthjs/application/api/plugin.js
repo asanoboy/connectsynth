@@ -11,6 +11,10 @@ synthjs.application.api.Plugin = function(pluginCode){
 	this._baseUri = new goog.Uri("/app/");
 };
 
+synthjs.application.api.Plugin.prototype.embedUri = function(path){
+	return this._baseUri.resolve(new goog.Uri("instrument/"+this._pluginCode+"/embed/"));
+}
+
 synthjs.application.api.Plugin.prototype.copyPlugin = function(){
 	return this._baseUri.resolve(new goog.Uri("workspace/extend_instrument/"+this._pluginCode+"/"));
 }

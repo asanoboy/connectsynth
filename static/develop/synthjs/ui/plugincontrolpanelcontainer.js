@@ -29,11 +29,11 @@ synthjs.ui.PluginControlPanelContainer.prototype.decorateInternal = function(ele
 	dom.appendChild( this._header, this._presetSelector );
 	goog.style.setFloat(this._presetSelector, 'right');	 
 	goog.style.setStyle(this._header, {
-		width: this._controlPanel.getBackgroundWidth() + "px",
-		position: 'absolute',
-		top: '70px'
+		width: this._controlPanel.getBackgroundWidth() + "px"
+		// position: 'absolute',
+		// top: '70px'
 	});	 
-	dom.appendChild( this._presetSelector, dom.createDom("span", "", "preset: "));
+	//dom.appendChild( this._presetSelector, dom.createDom("span", "", "preset: "));
 	
 	if( this._isEditable ){
 		this._controlWrapper = dom.createDom("div");
@@ -50,7 +50,7 @@ synthjs.ui.PluginControlPanelContainer.prototype.decorateInternal = function(ele
 		});
 	}
 	
-	this._panel = dom.createDom("div");
+	this._panel = dom.createDom("div", "plugincontrol-wrapper");
 	dom.appendChild(this._wrapper, this._panel);
 	dom.appendChild(this._wrapper, this._header);
 	
@@ -61,8 +61,8 @@ synthjs.ui.PluginControlPanelContainer.prototype.decorateInternal = function(ele
 		position: 'relative'
 	});
 	goog.style.setStyle(this._panel, {
-		position: 'absolute',
-		top: '100px'
+		// position: 'absolute',
+		// top: '100px'
 	});
 
 };

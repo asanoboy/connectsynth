@@ -15,6 +15,7 @@ synthjs.application.PublicOscillator = function(id, params){
 	this._extendUri = new goog.Uri(params['extendapi']);
 	this._isOwner = goog.isNull(params['isOwner']) ? false : !!params['isOwner']; 
 	goog.base(this, id, params);
+	this._setIsOscillatorEditable(false);
 	this.launchOscillator();
 }
 
@@ -33,7 +34,8 @@ synthjs.application.PublicOscillator.prototype._getDirectoryControl = function()
 synthjs.application.PublicOscillator.prototype._getMenuComponent = function(){
 	var arr = [
 				{label:"Instrument: "+this._oscillatorName, sublist: [
-					{label:'Copy To Workspace', callback: goog.bind(this.onExtendOscillator, this)},
+					{label:'Embed', callback: goog.bind(this.onShowEmbed, this)},
+					{label:'Fork', callback: goog.bind(this.onExtendOscillator, this)},
 					{label:'About', callback: goog.bind(this.onShowInformation, this)}
 				]}
 			];
@@ -232,6 +234,19 @@ synthjs.application.PublicOscillator.prototype.postExtendOscillator = function()
 	//document.location = this._extendUri.toString();
 }
 
+synthjs.application.PublicOscillator.prototype.onShowEmbed = function(){
+	var module = this.getOscillatorModule(),
+		width = module.getWidth() + 117, // A width of the vertical keyboard is 117px.
+		height = module.getHeight();
+	
+	
+	var iframe = "<iframe src='"+document.location.origin + this.getApi().embedUri().toString()+"' width='"+width+"' height='"+height+"'></iframe>",
+		input = "<input value="+goog.string.quote(iframe)+" style='width:"+width+"px;'></input>",
+		html = iframe + "<br/>" + input;
+		
+	synthjs.ui.Dialog.alertOK("Embed", html);
+}
+
 synthjs.application.PublicOscillator.prototype.onShowInformation = function(){
 	new synthjs.utility.AjaxDeferred(this.getApi().getInformation().toString(), {
 		responseType: goog.net.XhrIo.ResponseType.TEXT,
@@ -272,14 +287,5 @@ synthjs.application.PublicOscillator.prototype.onDirectoryNodeSelect = function(
 		
 	}
 }
-
-/**
- * @override 
- */
-synthjs.application.PublicOscillator.prototype.createOscillatorInternal = function(){
-	//return new synthjs.application.module.Oscillator(new goog.Uri(this._bootstrapJs), false);
-	return new synthjs.application.module.Oscillator(this.getApi(), false);
-}
-
 
 window['PublicOscillator'] = synthjs.application.PublicOscillator;

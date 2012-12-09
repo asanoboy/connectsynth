@@ -8,7 +8,8 @@ from privates import sdk_instrument_workspace_handler, \
     #sdk_preset_post_api_handler, \
     #sdk_preset_delete_api_handler
 
-from publics import sdk_instrument_player_handler
+from publics import sdk_instrument_player_handler, \
+    sdk_embed_instrument_player_handler
     #sdk_filelist_api_handler, \
     #sdk_get_api_handler, \
     #sdk_presetlist_handler

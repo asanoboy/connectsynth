@@ -98,7 +98,7 @@ synthjs.ui.SDKOscillator.prototype.enterDocument = function(){
 }
 
 synthjs.ui.SDKOscillator.prototype._initializeSizeInternal = function(){
-	this._eventHandler.listen(goog.dom.getWindow(), goog.events.EventType.RESIZE, this.onResize, false, this);
+	//this._eventHandler.listen(goog.dom.getWindow(), goog.events.EventType.RESIZE, this.onResize, false, this);
 	this._eventHandler.listen(this._splitPane, goog.events.EventType.CHANGE, this.onResizeChildren, false, this);
 	
 	this.onResize();

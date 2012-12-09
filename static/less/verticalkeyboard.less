@@ -1,0 +1,47 @@
+/*
+ * vertical keyboard
+ */
+@verticalkeyboard-borderbox-width: 100px;
+@verticalkeyboard-borderwidth: 1px; 
+
+.white-keyboard > div.top, #application .black-keyboard > div.top {
+    border-top-width: @verticalkeyboard-borderwidth;
+}
+
+
+.white-keyboard > div.mouseover, #application .black-keyboard > div.mouseover {
+    background-color: #999;
+}
+
+.white-keyboard > div {
+    width: @verticalkeyboard-borderbox-width - @verticalkeyboard-borderwidth * 2;
+    cursor: pointer;
+    border-style: solid;
+    border-color:  #CCC;
+    border-top-width: 0px;
+    border-right-width: @verticalkeyboard-borderwidth;
+    border-bottom-width: @verticalkeyboard-borderwidth;
+    border-left-width: @verticalkeyboard-borderwidth;
+    background-color: #FFF;
+}
+
+.white-keyboard > div.edge_short {
+    height: 9px;
+}
+
+.white-keyboard > div.short {
+    height: 14px;
+}
+
+.white-keyboard > div.long {
+    height: 19px;
+}
+
+.black-keyboard > div {
+    width: @verticalkeyboard-borderbox-width / 2 - @verticalkeyboard-borderwidth * 2;
+    height: 10px;
+    cursor: pointer;
+    border: solid #CCC @verticalkeyboard-borderwidth;
+    background-color: #000;
+}
+
