@@ -17,7 +17,7 @@ synthjs.ui.AjaxDialog = function(title, uri, opt_class, opt_useIframeForIE, opt_
 	this.setButtonSet(new goog.ui.Dialog.ButtonSet().
 		addButton(goog.ui.Dialog.ButtonSet.DefaultButtons.CANCEL, false, true));
 		
-	console.log(goog.ui.Dialog.ButtonSet.CANCEL);
+	// console.log(goog.ui.Dialog.ButtonSet.CANCEL);
 	this._hasGotContent = false;
 	this._contentUri = uri;
 }

@@ -14,11 +14,14 @@ goog.require("synthjs.model.TextFile");
  */
 synthjs.application.SDKOscillatorBase = function(id, params){
 	
+	/*
+	 * this._fileSystem and this._oscillatorName must be set before goog.base().
+	 */
 	this._fileSystem = new synthjs.model.FileSystem();
-
 	this._oscillatorName = params && params['name'];
 	
 	goog.base(this, id, params);
+	
 	
 	this._api = params && params['api'];
 	if( !this._api ){

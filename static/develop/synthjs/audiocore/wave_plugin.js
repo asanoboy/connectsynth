@@ -27,7 +27,7 @@ synthjs.audiocore.WavePlugin = function(url, opt_params){
 	 */
 	this._sampleRate = opt_params && opt_params.sampleRate ? opt_params.sampleRate : 48000;
 	if( !(opt_params && opt_params.sampleRate) ){
-		console.log("wavePlugin set default sample rate: 48000");
+		// console.log("wavePlugin set default sample rate: 48000");
 	}
 	
 	/**
@@ -124,7 +124,7 @@ synthjs.audiocore.WavePlugin.prototype.getBufferDeferred = function(len){
 	var workerD = this._workerCreator.create( 
 		{action:'getbuffer', length:len},
 		{error: function(){
-			console.log("GET BUFFER ERROR");
+			// console.log("GET BUFFER ERROR");
 			return {leftBuffer: new Float32Array(len), rightBuffer: new Float32Array(len)};
 		}}
 	);

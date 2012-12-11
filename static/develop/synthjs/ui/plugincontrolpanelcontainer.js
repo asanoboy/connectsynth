@@ -37,7 +37,7 @@ synthjs.ui.PluginControlPanelContainer.prototype.decorateInternal = function(ele
 	
 	if( this._isEditable ){
 		this._controlWrapper = dom.createDom("div");
-		this._addButton = dom.createDom("a", 'add-btn' , "add");
+		this._addButton = dom.createDom("a", 'add-btn' , "save");
 		this._deleteButton = dom.createDom("a", 'delete-btn', "delete");
 		
 		//dom.appendChild(this._controlWrapper, this._addButton);

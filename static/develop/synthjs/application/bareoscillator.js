@@ -17,7 +17,7 @@ synthjs.application.BareOscillator = function(id, code){
 	this._api = new synthjs.application.api.Plugin(code);
 	this._domId = id;
 	this._wavePlugin = new synthjs.audiocore.WavePlugin(
-		this._api.getFile("main.js").toString(), 
+		this._api.getFile("bootstrap.js?bootstrap=1").toString(), 
 		{
 			sampleRate: 48000
 		});

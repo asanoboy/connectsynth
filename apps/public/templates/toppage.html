@@ -55,370 +55,190 @@
 	<div class="document">
 		<div class="section">
 			<h3>概要</h3>
-			<p>WebAudioWorkerはJavascriptで動作するWeb音源のプラグイン規格です。
-				WebAudioAPI/AudioDataAPIに対応しているブラウザ(Chrome、Safari、Firefoxなど)上での動作を想定しています。
-				プラグインとホストはそれぞれ別のプロセス上で動作し、ホストがmain.jsをWebWorkerとして呼び出すことでプラグインは起動します。以下はシンプルな例です。</p>
+			<p>WebAudioWorkerはJavascript上で動作するデジタル楽器のプラグイン規格です。
+				WebAudioAPI/AudioDataAPIに対応しているブラウザ(Chrome、Safari、Firefoxなど)上での動作を想定しており、実行プロセスはWebWorker上になります。
+				</p>
+			<p>以下はシンプルな例です。</p>
+
 			<ul>
 				<li>main.js</li>
 			</ul>
 			<pre><code class="javascript">
-addEventListener('message', onGetWave, false);
+function Instrument(){
+	this.sampleRate = null;
+	this.offsetRadian = 0;
+	this.stepRadian = false;
+}
 
-var sampleRate, currentRadian = 0, freqPerSample = false;
+Instrument.prototype.setSampleRate = function(sampleRate){
+	this.sampleRate = sampleRate;
+}
 
-function onGetWave(e) {
-	var request = e.data, response = {
-		callback : request.callback
-	};
-	
-	switch(request.action) {
-		case 'init':
-			sampleRate = request.samplerate;
-			break;
-		case 'midi':
-			switch(request.type) {
-				case "noteon":
-					var freq = 440 * Math.pow(2, (request.note / 12) - 5) * 2 * Math.PI;
-					freqPerSample = freq / sampleRate;
-					break;
-				case "noteoff":
-				case "notealloff":
-				default:
-					freqPerSample = false;
-					break;
-			}
-			break;
-		case 'getbuffer':
-			var buffer = new Float32Array(request.length);
-			if(freqPerSample !== false) {
-				for(var i = 0; i < request.length; i++) {
-					currentRadian += freqPerSample;
-					buffer[i] = Math.sin(currentRadian);
-				}
-			}
-			response.leftbuffer = buffer;
-			response.rightbuffer = buffer;
-			break;
-		default:
-			return;
+Instrument.prototype.onNote = function(note){
+	this.stepRadian = 440 * Math.pow(2, (note / 12) - 5) * 2 * Math.PI / this.sampleRate;
+}
+
+Instrument.prototype.offNote = 
+Instrument.prototype.offAllNote = function(){
+	this.stepRadian = false;
+}
+
+Instrument.prototype.getBuffer = function(length){
+	var buffer = new Float32Array(length);
+	if(this.stepRadian !== false) {
+		for(var i = 0; i < length; i++) {
+			this.offsetRadian += this.stepRadian;
+			buffer[i] = Math.sin(this.offsetRadian);
+		}
 	}
-
-	postMessage(response);
-};
+	return [buffer, buffer];	
+}
 			</code></pre>
-			<p>
-				以下では上記サンプルのrequestを<strong>リクエスト</strong>、responseを<strong>レスポンス</strong>と呼びます。
-				プラグインは各リクエスト毎にレスポンスをホストに送信しなければなりません。
-			</p>
-			<p>
-				リクエストは以下の属性を持ちます。
-			</p>
+			<p>プラグイン側で定義されたInstrumentクラスがホストとのインターフェースとなります。Instrumentクラスには以下のメソッドを定義しておく必要があります。</p>
+			
 			<table>
 				<tbody><tr>
-					<th>リクエスト属性</th>
-					<th>説明</th>
+					<th colspan=2>必須メソッド</th>
 				</tr>
 				<tr>
-					<td>{String} action</td>
-					<td>リクエストの種類を表します。"init"、"set"、"midi"、"getbuffer"の4種類があります。</td>
+					<td>{null}</td>
+					<td><strong>setSampleRate({number} sampleRate)</strong><br/>
+						最初に呼ばれます。サンプリングレートを設定します。
+					</td>
 				</tr>
 				<tr>
-					<td>{String} callback</td>
-					<td>ホスト側でコールバックで呼ばれる関数の名前です。レスポンスの属性として設定します。</td>
+					<td>{null}</td>
+					<td><strong>onNote({number} note, {number} verocity)</strong><br/>
+						MIDIのONイベントを受け取とります。noteはMIDIのnoteidです。(例:60=440Hz)
+					</td>
+				</tr>
+				<tr>
+					<td>{null}</td>
+					<td><strong>offNote({number} note)</strong><br/>
+						MIDIのOFFイベントを受け取とります。
+					</td>
+				</tr>
+				<tr>
+					<td>{null}</td>
+					<td><strong>offAllNote()</strong><br/>
+						MIDIのALLOFFイベントを受け取とります。</td>
+				</tr>
+				<tr>
+					<td>{Array}</td>
+					<td><strong>getBuffer({number} length)</strong><br/>
+						波形バッファーを要求します。<br/>
+						[{Float32Array} LeftBuffer, {Float32Array} RightBuffer]の配列を返します。
+					</td>
 				</tr>
 				</tbody>
 			</table>
+			
+			<p>また任意で以下のメソッドを追加する事もできます。</p>
+			<table>
+				<tbody><tr>
+					<th colspan=2>任意メソッド</th>
+				</tr>
+				<tr>
+					<td>{Object}</td>
+					<td><strong>getBackground()</strong><br/>
+						背景を指定します。<br/>
+						返り値は{number} width、{number} height、{string} imageの3つの属性を持ったオブジェクトです。<br/>
+						widht、heightは縦横pixel、imageはプラグインのルートからの画像の相対パスです。<br/>
+					</td>
+				</tr>
+				<tr>
+					<td>{Array}</td>
+					<td><strong>getControlList()</strong><br/>
+						getBackground()メソッドが有効なときに定義されていれば呼ばれます。<br/>
+						コントロールオブジェクトのGUI設定を配列で返します。<br/>
+						コントロールオブジェクトについては後述します。
+					</td>
+				</tr>
+				<tr>
+					<td>{null}</td>
+					<td><strong>setValue({string} id, {string|number} value)</strong><br/>
+						コントロールが変更されたら呼ばれます。<br/>
+						idはコントロールオブジェクトのid属性で指定した文字列です。<br/>
+						コントロールオブジェクトについては後述します。
+					</td>
+				</tr>
+				</tbody>
+			</table>
+			
 		</div>
 		
-		<div class="section">	
-			<h3>リクエストとレスポンス</h3>
-			<p>リクエストのaction属性によって、リクエストが持つ属性、レスポンスに含める属性が異なります。ここではそのタイプごとの説明をします。</p>
-			<h4 class="first">initリクエスト</h4>
-			<p>
-				プラグインをホストが起動して最初に呼ばれます。
-			</p>
-			<table>
-				<tbody>
-				<tr>
-					<th>リクエスト属性</th>
-					<th>説明</th>
-				</tr>
-				<tr>
-					<td>{Number} samplerate</td>
-					<td>サンプリング周波数[Hz]</td>
-				</tr>
-				</tbody>
-			</table>
-			<table>
-				<tbody>
-				<tr>
-					<th>レスポンス属性</th>
-					<th>説明</th>
-				</tr>
-				<tr>
-					<td>{Object} controller</td>
-					<td>GUIコントローラを設定します。詳しくは<a href="#guicontroller">GUIコントローラの設定</a>で説明します。</td>
-				</tr>
-				</tbody>
-			</table>
-			
-			<h4>setリクエスト</h4>
-			<p>
-				プラグイン側で設定したパラメータにGUIコントローラなどから変更が加えられたときに呼ばれます。パラメータの設定方法については後述のGUIコントローラの説明で行います。
-			</p>
-			<table>
-				<tbody>
-				<tr>
-					<th>リクエスト属性</th>
-					<th>説明</th>
-				</tr>
-				<tr>
-					<td>{String} id</td>
-					<td>変更されたパラメータのid</td>
-				</tr>
-				<tr>
-					<td>{String|Number} value</td>
-					<td>変更されたパラメータの値</td>
-				</tr>
-				</tbody>
-			</table>
-			<p>
-				レスポンスには特に追加する属性はありません。
-			</p>
-			<h4>midiリクエスト</h4>
-			<p>
-				midiイベントを受信します。
-			</p>
-			<table>
-				<tbody>
-				<tr>
-					<th>リクエスト属性</th>
-					<th>説明</th>
-				</tr>
-				<tr>
-					<td>{String} type</td>
-					<td>MIDIイベントのタイプです。"noteon"、"noteoff"、"notealloff"の種類があります。</td>
-				</tr>
-				<tr>
-					<td>{Number} note</td>
-					<td>"noteon"、"noteoff"の場合のMIDIノート番号です。</td>
-				</tr>
-				<tr>
-					<td>{Number} verocity</td>
-					<td>"noteon"の場合のベロシティです。範囲は[0, 1]です。</td>
-				</tr>
-				</tbody>
-			</table>
-			<p>
-				レスポンスには特に追加する属性はありません。
-			</p>
-			
-			<h4>getbufferリクエスト</h4>
-			<p>
-				サンプリングデータを要求します。
-			</p>
-			<table>
-				<tbody>
-				<tr>
-					<th>リクエスト属性</th>
-					<th>説明</th>
-				</tr>
-				<tr>
-					<td>{Number} length</td>
-					<td>データバッファーのサイズ</td>
-				</tr>
-				</tbody>
-			</table>
-			<table>
-				<tbody>
-				<tr>
-					<th>レスポンス属性</th>
-					<th>説明</th>
-				</tr>
-				<tr>
-					<td>{Float32Array} rightbuffer</td>
-					<td>右サンプルバッファーです。</td>
-				</tr>
-				<tr>
-					<td>{Float32Array} leftbuffer</td>
-					<td>左サンプルバッファーです。</td>
-				</tr>
-				</tbody>
-			</table>			
-		</div>
-
 		<div class="section">
-			<h3 id="guicontroller">GUIコントローラの設定</h3>
-			<p>initリクエストに対するレスポンスのcontroller属性がGUIを定義します。</p>
-			
-			<h4 class="first">{Object} controller.background</h4>
-			<p>背景画像の設定を行います。</p>
-			<table>
-				<tbody>
-				<tr>
-					<th>controller属性</th>
-					<th>説明</th>
-				</tr>
-				<tr>
-					<td>{String} image</td>
-					<td>背景画像の相対URLです</td>
-				</tr>
-				<tr>
-					<td>{String} height</td>
-					<td>背景画像の縦pixelです</td>
-				</tr>
-				<tr>
-					<td>{String} width</td>
-					<td>背景画像の幅pixelです</td>
-				</tr>
-				</tbody>
-			</table>				
-			
-			<h4>{Array} controller.controls</h4>
-			<p>各GUIコントロールの情報を配列で設定します。コントロールには"knob"、"toggle"、"radio"の種類があります。</p>
-			<table>
-				<tbody>
-				<tr>
-					<th>control共通属性</th>
-					<th>説明</th>
-				</tr>
-				<tr>
-					<td>{String} type</td>
-					<td>"knob"、"toggle"、"radio"のうちどれかのタイプを指定します。</td>
-				</tr>
-				<tr>
-					<td>{String} id</td>
-					<td>idを指定します。setリクエストのid属性に対応します。</td>
-				</tr>
-				<tr>
-					<td>{String|Number} value</td>
-					<td>初期値です。</td>
-				</tr>
-				<tr>
-					<td>{Number} height</td>
-					<td>画像の縦pixelです。</td>
-				</tr>
-				<tr>
-					<td>{Number} width</td>
-					<td>画像の幅pixelです。</td>
-				</tr>
-				</tbody>
-			</table>		
+			<h3 id="guicontroller">GUIコントロールの設定</h3>
+			<p>getControlList()メソッドの返り値配列の要素にコントロールオブジェクトを設定します。"knob"、"toggle"、"radio"の3種類があります。</p>
+
 		
 			<h4>knobコントロール</h4>
-			<p>回転ノブです。ノブは真上を中心として270°回転します。</p>
-			<table>
-				<tbody>
-				<tr>
-					<th>control属性</th>
-					<th>説明</th>
-				</tr>
-				<tr>
-					<td>{String} image</td>
-					<td>コントロール画像の相対URLです。</td>
-				</tr>
-				<tr>
-					<td>{Number} offsetx</td>
-					<td>コントロール画像の背景画像左上を原点としたときの右方向オフセットpixelです。</td>
-				</tr>
-				<tr>
-					<td>{Number} offsety</td>
-					<td>コントロール画像の背景画像左上を原点としたときの下方向オフセットpixelです。</td>
-				</tr>
-				<tr>
-					<td>{Number} min</td>
-					<td>[optional]<br/>
-						最小値です。デフォルトは0です。</td>
-				</tr>
-				<tr>
-					<td>{Number} max</td>
-					<td>[optional]<br/>
-						最大値です。デフォルトは1です。</td>
-				</tr>
-				<tr>
-					<td>{Number} step</td>
-					<td>[optional]<br/>
-						ステップ値です。デフォルトは0.001です。</td>
-				</tr>
-				<tr>
-					<td>{boolean} label</td>
-					<td>[optional]<br/>
-						ラベルを表示するフラグです。デフォルトはfalseです。</td>
-				</tr>
-				<tr>
-					<td>{Number} labeloffsetx</td>
-					<td>[optional]<br/>
-						label==trueのときに任意で右方向へのオフセット値を設定できます。<br/>
-						デフォルトは0でコントロールの回転中心を中心とした位置に配置されます。</td>
-				</tr>
-				<tr>
-					<td>{Number} labeloffsety</td>
-					<td>[optional]<br/>
-						label==trueのときに任意で下方向へのオフセット値を設定できます。<br/>
-						デフォルトは0でコントロールの回転中心を中心とした位置に配置されます。</td>
-				</tr>
-				<tr>
-					<td>{String} labelprefix</td>
-					<td>[optional]<br/>label==trueのときに任意でラベルの接頭文字を設定できます。</td>
-				</tr>
-				<tr>
-					<td>{String} labelpostfix</td>
-					<td>[optional]<br/>label==trueのときに任意でラベルの接尾文字を設定できます。</td>
-				</tr>
-				</tbody>
-			</table>
+			<p>回転ノブです。ノブは真上を中心として270°回転します。setValueメソッドのvalueには[min, max]区間の数値が設定されます。</p>
+			
+			<pre><code class="javascript">
+{
+	type : 'knob',	// {string} 'knob'を指定する
+	id : 'volume',	// {string} setValue(id,value)のidに対応する
+	value : 0.5,	// {number} 初期値
+	image : 'img/volume.png',	// 画像パス
+	height : 120,	// {number} 画像の高さ
+	width : 120,	// {number} 画像の幅
+	offsetx : 56,	// {number} コントロールパネル左上を原点とした右方向オフセット
+	offsety : 95,	// {number} コントロールパネル左上を原点とした下方向オフセット
+	min : 0,	// [optional] {number} 最小値(default: 0)
+	max : 1,	// [optional] {number} 最代値(default: 1)
+	step : 0.001,	// [optional] {number} 増減単位(default: 0.001)
+	label: false,	// [optional] {boolean} trueのとき値がノブの中心に表示される。(default: false)
+	
+	// 以下label==trueの場合のみ有効
+	labeloffsetx: 0,	// [optional] {number} ラベルの表示右方向オフセット(default: 0)
+	labeloffsety: 0,	// [optional] {number} ラベルの表示右方向オフセット(default: 0)
+	labelprefix: '',	// [optional] {string} ラベルの接頭文字(default: '')
+	labelpostfix: ''	// [optional] {string} ラベルの接尾文字(default: '')
+}
+			</code></pre>
 			
 			<h4>toggleコントロール</h4>
-			<p>トグルボタンです。setリクエストのvalue属性にはbooleanが設定されます。</p>
-			<table>
-				<tbody>
-				<tr>
-					<th>control属性</th>
-					<th>説明</th>
-				</tr>
-				<tr>
-					<td>{String} imageon</td>
-					<td>オンのときの画像相対URLです。</td>
-				</tr>
-				<tr>
-					<td>{String} imageoff</td>
-					<td>オフのときの画像の相対URLです。</td>
-				</tr>
-				<tr>
-					<td>{Number} offsetx</td>
-					<td>コントロール画像の背景画像左上を原点としたときの右方向オフセットpixelです。</td>
-				</tr>
-				<tr>
-					<td>{Number} offsety</td>
-					<td>コントロール画像の背景画像左上を原点としたときの下方向オフセットpixelです。</td>
-				</tr>
-				</tbody>
-			</table>
+			<p>トグルボタンです。setValueメソッドのvalueにはbooleanが設定されます。</p>
 			
+			<pre><code class="javascript">
+{
+	type : "toggle",	// {string} 'toggle'を指定する
+	id : "glide",　		// {string} setValue(id,value)のidに対応する
+	imageon : "img/on.png",	// ON画像パス
+	imageoff : "img/off.png",	// OFF画像パス
+	height : 24,	// {number} 画像の高さ
+	width : 24,	// {number} 画像の幅
+	value : 0,	// {number} 初期値。0か1を指定する。
+	offsetx : 240,	// {number} コントロールパネル左上を原点とした右方向オフセット
+	offsety : 144	// {number} コントロールパネル左上を原点とした下方向オフセット
+}
+			</code></pre>			
+
 			<h4>radioコントロール</h4>		
-			<p>ラジオボタンです。setリクエストのvalue属性には、下表のoffsets属性で設定したラジオボタン配列のインデックス値が設定されます。</p>
-			<table>
-				<tbody>
-				<tr>
-					<th>control属性</th>
-					<th>説明</th>
-				</tr>
-				<tr>
-					<td>{String} imageon</td>
-					<td>オンのときの画像相対URLです。</td>
-				</tr>
-				<tr>
-					<td>{String} imageoff</td>
-					<td>オフのときの画像の相対URLです。</td>
-				</tr>
-				<tr>
-					<td>{Array} offsets</td>
-					<td>{Number} offsetx、{Number} offsetyを要素としたオブジェクトの配列です。</td>
-				</tr>
-				</tbody>
-			</table>
+			<p>ラジオボタンです。setValueメソッドのvalueには、offsets属性で設定した配列のインデックス値が設定されます。</p>
+			<pre><code class="javascript">
+{
+	type : "radio",	// {string} 'radio'を指定する
+	id : "oscillator", // {string} setValue(id,value)のidに対応する
+	imageon : "img/on.png",	// ON画像パス
+	imageoff : "img/off.png",	// OFF画像パス
+	height : 24,	// {number} 画像の高さ
+	width : 24,	// {number} 画像の幅
+	value : 0,	// {number} 初期値。offsetsの配列インデックスを表示
+	offsets : [
+		{
+			offsetx : 56,	// {number} コントロールパネル左上を原点とした右方向オフセット
+			offsety : 48	// {number} コントロールパネル左上を原点とした下方向オフセット
+		}, 
+		{offsetx : 128, offsety : 48}, 
+		{offsetx : 200, offsety : 48}, 
+		{offsetx : 272, offsety : 48}
+	]
+}
+			</code></pre>				
 		</div>
-		
+
 		<div class="section">
 			<h3>デバッグ方法</h3>
 			<p>WebWorker内ではconsole.logなどのデバッグ用のAPIが提供されていません。プラグイン内でのオブジェクトの中身を確認したい場合は、callback要素を持たないオブジェクトをpostMessage()してください。そうすればホスト側のJavascriptコンソールで確認することが出来ます。</p>

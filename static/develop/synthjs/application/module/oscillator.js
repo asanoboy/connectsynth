@@ -51,7 +51,7 @@ synthjs.application.module.Oscillator = function(plugin, api, opt_isEditable){
 	/** @type {goog.Uri} */
 	this._presetListUri = api.getPresetList();//opt_presetApis.list;
 
-	this._bootstrapUri = api.getFile("main.js");
+	this._bootstrapUri = api.getFile("bootstrap.js?bootstrap=1");
 	
 }
 
@@ -152,13 +152,10 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 			return;
 		}
 		
-		if( !goog.isArray( controller['controls']) ){
-			alert("Plugin did not send 'background'");
-			return;
-		}
+		var controls = goog.isArray( controller['controls']) ? controller['controls'] : [];
 		
 		var isValid = true;
-		goog.array.forEach(controller['controls'], function(control){
+		goog.array.forEach(controls, function(control){
 			//if( !goog.isString( control['name'] ) || !goog.isNumber( control['value'] ) ){
 			if( !goog.isString( control['id'] ) || !goog.isNumber( control['value'] ) ){
 				isValid = false;
@@ -239,11 +236,9 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 					synthjs.model.EventType.CHANGE,
 					this._updateParam);				
 			}, this)
-			
-			
 		}
 		else{
-			alert("Plugin init parameter is invalid.;")
+			alert("Plugin init parameter is invalid.");
 			return;
 		}
 		
@@ -252,7 +247,9 @@ synthjs.application.module.Oscillator.prototype._initHandler = function(e){
 			this._bootstrapUri.resolve(new goog.Uri(controller['background']['image'])).toString(),
 			controller['background']['width'],
 			controller['background']['height']);
-		this._controlPanelContainer = new synthjs.ui.PluginControlPanelContainer(this._controlPanel, this._isEditable);	
+		this._controlPanelContainer = new synthjs.ui.PluginControlPanelContainer(
+			this._controlPanel, 
+			this._isEditable);	
 		
 		this.getHandler().listen(
 				this._controlPanelContainer,
@@ -359,7 +356,7 @@ synthjs.application.module.Oscillator.prototype.onPresetAdd = function(e){
 	}, this);
 	
 	var value = goog.json.serialize(param);
-	var prompt = new goog.ui.Prompt("Add Preset", 
+	var prompt = new goog.ui.Prompt("Save Preset", 
 		"Input preset name:", 
 		goog.bind(function(name){
 			if( name == null ){

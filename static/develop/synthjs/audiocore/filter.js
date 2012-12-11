@@ -209,11 +209,11 @@ synthjs.audiocore.Filter.prototype.doFilter = function(input){
  	var stockLen = this._length * this._sampleRate;
  	if( stockLen > 0 ){
  		if( stockLen < filtered.length ){
-console.log("stockLen < filtered.length"); 			
+// console.log("stockLen < filtered.length"); 			
  			this._buffer = filtered.subarray(filtered.length-stockLen, stockLen);
  		}
  		else if( stockLen < filtered.length + this._buffer.length ){
-console.log("stockLen < filtered.length + this._buffer.length"); 			
+// console.log("stockLen < filtered.length + this._buffer.length"); 			
  			var oldOffset = this._buffer.length + filtered.length - stockLen,
  			oldBuffer = this._buffer;
  			
@@ -232,7 +232,7 @@ console.log("stockLen < filtered.length + this._buffer.length");
  			}
  		}
  		else {
-console.log("else");
+// console.log("else");
  			var oldBuffer = this._buffer,
  			zeroOffset = stockLen - oldBuffer.length - filtered.length;
  			this._buffer = new Float32Array(stockLen);

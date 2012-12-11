@@ -23,7 +23,7 @@ goog.inherits(synthjs.ui.window.Image, synthjs.ui.window.FileBase);
 synthjs.ui.window.Image.prototype.decorateInternal = function(element){
 	goog.base(this, "decorateInternal", element);
 	var dataUrl = this._file.getDataUrl(); 
-	console.log(this._file);
+	// console.log(this._file);
 	/**
 	 * @type {Element}
 	 */

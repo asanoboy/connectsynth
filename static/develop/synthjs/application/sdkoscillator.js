@@ -22,14 +22,14 @@ goog.require("goog.ui.Dialog.ButtonSet");
  */
 synthjs.application.SDKOscillator = function(id, params){
 	
-	this._publishStatus = synthjs.application.SDKOscillator.StatusType.INITIAL;
+	goog.base(this, id, params);
 	
+	this._publishStatus = synthjs.application.SDKOscillator.StatusType.INITIAL;
 	this._publishUri = new goog.Uri(params['publishapi']);
 	// this._presetPostUri = new goog.Uri(params['presetpostapi']);
 	// this._presetDeleteUri = new goog.Uri(params['presetdeleteapi']);
 	// this._presetListUri = new goog.Uri(params['presetlistapi']);
 	this._setIsOscillatorEditable(true);
-	goog.base(this, id, params);
 }
 
 goog.inherits(synthjs.application.SDKOscillator, synthjs.application.SDKOscillatorBase);
@@ -41,7 +41,7 @@ synthjs.application.SDKOscillator.prototype._getMenuComponent = function(){
 	return synthjs.ui.MenuBar.createFromSetting(
 		[
 			{label:"Workspace", sublist: [
-				{label:'Post & Launch', callback: goog.bind(this.onDebugRun, this)},
+				{label:'Run', callback: goog.bind(this.onDebugRun, this)},
 				{label:'Publish', callback: goog.bind(this.onPublish, this)}
 			]}
 		]
@@ -105,7 +105,7 @@ synthjs.application.SDKOscillator.prototype._showPublishPrompt = function(){
 							}
 						)
 					dialog.setTitle("Success");
-					dialog.setContent("Move the instrument public page.");
+					dialog.setContent("Move the page created now.");
 					dialog.setVisible(true);
 					
 				}
@@ -135,11 +135,11 @@ synthjs.application.SDKOscillator.prototype._showPublishAlertPrompt = function()
 	switch( this._publishStatus ){
 		case synthjs.application.SDKOscillator.StatusType.INITIAL:
 			dialog.setTitle("Attention");
-			dialog.setContent("First launch your instrument from the menu.");
+			dialog.setContent("Please run the instrument before publish");
 			break;
 		case synthjs.application.SDKOscillator.StatusType.ERROR:
 			dialog.setTitle("Attention");
-			dialog.setContent("Your instrument has crushed. Please review it.");
+			dialog.setContent("Your instrument has crushed.");
 			break;
 		default:
 			goog.asserts.assertTrue(falsej, 'Invalid publish status');

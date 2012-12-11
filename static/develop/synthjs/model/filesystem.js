@@ -162,7 +162,7 @@ synthjs.model.FileSystem.prototype.getPath = function(file){
  */
 synthjs.model.FileSystem.prototype.canAdd = function(file, parent){
 	if( !this.has(parent) ) {
-		console.log("Parent does not exist.");
+		// console.log("Parent does not exist.");
 		return false;
 	}
 	

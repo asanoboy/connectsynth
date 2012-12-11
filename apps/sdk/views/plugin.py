@@ -1,4 +1,5 @@
 import mimetypes
+import os.path
 from django.http import HttpResponse
 from django.utils import simplejson
 from decorators import reject_invalid_code, reject_invalid_or_unowned_code
@@ -11,6 +12,7 @@ from sdk.models import Plugin, File
 from forms import FilesForm, PluginDescriptionForm
 from django.core.exceptions import ObjectDoesNotExist
 from common.models import TwitterUser
+
 
 """
 requset.method = "POST" or "DELETE"
@@ -83,6 +85,11 @@ def sdk_plugin_get_api_handler(request, code, path, plugin):
     
     if not plugin.is_public and request.user!=plugin.user:
         return get_failure_response()
+    
+    is_bootstrap = request.GET.get("bootstrap", False)
+    if is_bootstrap:
+        bootstrap_path = os.path.join( os.path.dirname(os.path.abspath(__file__)), "bootstrap.js" )
+        return HttpResponse(open(bootstrap_path).read(), content_type="text/javascript")
     
     try:
         file = File.objects.get(plugin=plugin, path__exact=path, is_enabled=True)

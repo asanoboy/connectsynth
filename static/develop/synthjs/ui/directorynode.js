@@ -37,7 +37,7 @@ goog.inherits(synthjs.ui.DirectoryNode, goog.ui.tree.TreeNode);
 
 synthjs.ui.DirectoryNode.prototype.decorateInternal = function(element){
 	goog.base(this, "decorateInternal", element);
-	console.log("decorate");
+	// console.log("decorate");
 
 }
 

@@ -15,8 +15,9 @@ synthjs.application.PublicOscillator = function(id, params){
 	this._extendUri = new goog.Uri(params['extendapi']);
 	this._isOwner = goog.isNull(params['isOwner']) ? false : !!params['isOwner']; 
 	goog.base(this, id, params);
-	this._setIsOscillatorEditable(false);
+	
 	this.launchOscillator();
+	this._setIsOscillatorEditable(false);
 }
 
 goog.inherits(synthjs.application.PublicOscillator, synthjs.application.SDKOscillatorBase);
@@ -172,7 +173,7 @@ synthjs.application.PublicOscillator.prototype.onExtendOscillator = function(){
 	var dialog = new goog.ui.Dialog(null, false);
 	dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
 	dialog.setTitle("Attention");
-	dialog.setContent("This action intends to copy this plugin to your workspace. If your plugin exists in the workspace, it will be overwrited.");
+	dialog.setContent("Do you overwrite your workspace with this instrument?");
 	//dialog.setContent("This action requires you to sign in. Have you already signed in?");
 			
 	this.getHandler()

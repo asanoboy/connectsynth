@@ -1,1 +1,1 @@
-goog.require("synthjs.application.OscillatorTestPlayer");
+//goog.require("synthjs.application.OscillatorTestPlayer");

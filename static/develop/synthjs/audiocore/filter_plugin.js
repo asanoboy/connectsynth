@@ -23,8 +23,8 @@ synthjs.audiocore.FilterPlugin = function(url){
 	this._worker = new Worker(url);
 	
 	this._worker.addEventListener("error", function(e){
-		console.log('error');
-		console.log(e);
+		// console.log('error');
+		// console.log(e);
 		throw new Error("Filter Plugin has clashed.");
 	});
 };

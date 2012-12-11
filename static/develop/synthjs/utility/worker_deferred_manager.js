@@ -45,7 +45,7 @@ synthjs.utility.WorkerDeferredManager.prototype.onPostMessage = function(e){
 		}
 	}
 	else{
-		console.log(e['data']);
+		// console.log(e['data']);
 	}
 }
 
