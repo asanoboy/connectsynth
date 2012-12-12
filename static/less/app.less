@@ -1,8 +1,17 @@
+@import "closure/menu.less";
+@import "closure/menubar.less";
+@import "closure/menubutton.less";
+@import "closure/menuitem.less";
+@import "closure/menuseparator.less";
+@import "closure/tree.less";
+
 @import "mixins.less";
 @import "vars.less";
 @import "windowbase.less";
 @import "verticalkeyboard.less";
-@import "closure.less";
+
+
+
 
 #application * {
     cursor: default;
@@ -133,4 +142,49 @@ body {
 
 #application .goog-splitpane-first-container {
     overflow: hidden;
+}
+
+
+/*
+ * CodeMirror customize
+ */
+#application {
+    .CodeMirror {
+        height: 100%;
+    }
+    .CodeMirror-scroll {
+        height: 100%;
+    }
+}
+
+@menu-border-color: #999999;
+
+#workspace {
+    #directory-tree {
+        float: left;
+        width: 200px;
+        height: 100%;
+        background-color: #FFFFFF;
+        padding: 10px;
+        box-sizing: border-box;
+        border-color: @menu-border-color;
+        border-style: solid;
+        border-width: 0 1px 1px 1px;
+    }
+    > .separator {
+        float: left;
+        width: 3px;
+        height: 100%;
+    }
+    #windowholder {
+        float: left;
+        _background-color: green;
+        height: 100%;
+    }
+}
+
+.synthjs-sdkoscillator-tree-pane {
+    box-sizing: border-box;
+    background-color: white;
+    padding: 10px;
 }

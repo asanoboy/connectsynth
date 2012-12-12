@@ -2,21 +2,13 @@
 
 {% block cssfile %}
 {{ block.super }}
-<link rel="stylesheet" href="{{ STATIC_URL }}css/closure/tree.css">
-<link rel="stylesheet" href="{{ STATIC_URL }}css/closure/menu.css">
-<link rel="stylesheet" href="{{ STATIC_URL }}css/closure/menubar.css">
-<link rel="stylesheet" href="{{ STATIC_URL }}css/closure/menubutton.css">
-<link rel="stylesheet" href="{{ STATIC_URL }}css/closure/menuitem.css">
-<link rel="stylesheet" href="{{ STATIC_URL }}css/closure/menuseparator.css">
 <link rel="stylesheet" href="{{ STATIC_URL }}css/codemirror/codemirror.css">
 <!--<link rel="stylesheet" href="{{ STATIC_URL }}css/codemirror/docs.css">-->
 
 {% if debug %}
 <link rel="stylesheet/less" type="text/css" href="{{ STATIC_URL }}less/app.less">
-<link rel="stylesheet/less" type="text/css" href="{{ STATIC_URL }}less/sdk.less">
 {% else %}
 <link rel="stylesheet" href="{{ STATIC_URL }}css/app.css">
-<link rel="stylesheet" href="{{ STATIC_URL }}css/sdk.css">
 {% endif %}
 
 
