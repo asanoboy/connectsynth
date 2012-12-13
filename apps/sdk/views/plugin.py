@@ -33,10 +33,16 @@ def sdk_plugin_api_handler(request, code, plugin):
         #form = FilesForm(request.POST, request.FILES)
         
         if( len(request.FILES) == 0 ):
-            print 'hoge'
             return get_failure_response()
         
         updated_flags = { file.path: False for file in File.objects.filter(plugin=plugin).all()}
+        
+        size_sum = 0
+        for name, file in request.FILES.items():
+            size_sum += file.size
+        
+        if size_sum > 1024 * 1024 * 10: # limit under 10MB
+            return get_failure_response()
         
         for name, file in request.FILES.items():
             

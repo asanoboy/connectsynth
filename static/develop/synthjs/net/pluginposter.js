@@ -40,8 +40,13 @@ synthjs.net.PluginPoster.prototype.getRequestDeferred = function(){
 		data: fd,
 		method: 'post',
 		_contentType: null,
-		success: function(){
-			
+		success: function(rt){
+			if( rt.getResponseText()=="ok" ){
+				
+			}
+			else {
+				// File size too big.
+			}
 		}
 	});
 }
