@@ -61,4 +61,4 @@ div.section{width:100%;}div.section div.sectioncontainer{width:1000px;margin:0 a
 #content .document table th{padding:4px;border:#D7D7D7 solid;_border:#C8C8C8 solid;border-width:0 0 1px 1px;background:#EEE;font-weight:bold;line-height:150%;font-size:0.85em;text-align:center;}
 #content .document table tr td:first-child{text-align:center;width:15%;}
 #content .document table td{padding:6px;border:1px #E3E3E3 solid;border-width:0 0 1px 1px;line-height:150%;font-size:0.85em;_text-align:center;vertical-align:top;}#content .document table td strong{font-size:1.1em;}
-code{margin-bottom:2em;}
+code{margin-bottom:2em;font-size:13px;}

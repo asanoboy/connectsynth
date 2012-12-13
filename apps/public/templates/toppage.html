@@ -17,7 +17,7 @@
 					<div id="google_plusone" class="socialbutton"></div>
 			</div>
 		</div>
-		<p class="description">WebAudioWorkerプラグインの実験サイトです。誰でも楽器の作成、テスト、公開が出来ます。またすでに公開されている楽器をコピー、改変し、公開することも可能です。</p>
+		<p class="description">Audio Script Interface(ASI)の実験サイトです。Web楽器プラグインの作成、テスト、公開が出来ます。このサイトではプラグインはWebWorkerプロセスで動作します。</p>
 	</div>
 	<div class="open-instrument-container">
 		<a class="open-instrument" href="{% url sdk_instrument_workspace %}">Open Workspace</a>	
@@ -50,13 +50,13 @@
 </div>
 <div class="inner-section develop-info">
 	<div class="section-title">
-		<h2 id="document">プラグイン仕様</h2>
+		<h2 id="document">プラグイン仕様(ドラフト版)</h2>
 	</div>
 	<div class="document">
 		<div class="section">
 			<h3>概要</h3>
-			<p>WebAudioWorkerはJavascript上で動作するデジタル楽器のプラグイン規格です。
-				WebAudioAPI/AudioDataAPIに対応しているブラウザ(Chrome、Safari、Firefoxなど)上での動作を想定しており、実行プロセスはWebWorker上になります。
+			<p>ASIはJavascript上で動作するデジタル楽器のプラグイン規格です。
+				WebAudioAPI/AudioDataAPIに対応しているブラウザ(Chrome、Safari、Firefoxなど)上での動作を想定しています。
 				</p>
 			<p>以下はシンプルな例です。</p>
 
@@ -109,13 +109,13 @@ Instrument.prototype.getBuffer = function(length){
 				<tr>
 					<td>{null}</td>
 					<td><strong>onNote({number} note, {number} verocity)</strong><br/>
-						MIDIのONイベントを受け取とります。noteはMIDIのnoteidです。(例:60=440Hz)
+						MIDIのONイベントを受け取とります。noteはMIDIノート番号です。
 					</td>
 				</tr>
 				<tr>
 					<td>{null}</td>
 					<td><strong>offNote({number} note)</strong><br/>
-						MIDIのOFFイベントを受け取とります。
+						MIDIのOFFイベントを受け取とります。noteはMIDIノート番号です。
 					</td>
 				</tr>
 				<tr>
@@ -126,7 +126,7 @@ Instrument.prototype.getBuffer = function(length){
 				<tr>
 					<td>{Array}</td>
 					<td><strong>getBuffer({number} length)</strong><br/>
-						波形バッファーを要求します。<br/>
+						波形バッファーを要求されます。<br/>
 						[{Float32Array} LeftBuffer, {Float32Array} RightBuffer]の配列を返します。
 					</td>
 				</tr>
@@ -142,8 +142,12 @@ Instrument.prototype.getBuffer = function(length){
 					<td>{Object}</td>
 					<td><strong>getBackground()</strong><br/>
 						背景を指定します。<br/>
-						返り値は{number} width、{number} height、{string} imageの3つの属性を持ったオブジェクトです。<br/>
-						widht、heightは縦横pixel、imageはプラグインのルートからの画像の相対パスです。<br/>
+						返り値は以下のような属性を持つオブジェクトで返します。<br/>
+						<pre><code class="javascript">{
+	width: 100,	// {number} 画像の高さ
+	height: 100,	// {number} 画像の幅
+	image: "img/background.png"	// {string} 画像パス
+}</code></pre>
 					</td>
 				</tr>
 				<tr>
@@ -157,9 +161,8 @@ Instrument.prototype.getBuffer = function(length){
 				<tr>
 					<td>{null}</td>
 					<td><strong>setValue({string} id, {string|number} value)</strong><br/>
-						コントロールが変更されたら呼ばれます。<br/>
-						idはコントロールオブジェクトのid属性で指定した文字列です。<br/>
-						コントロールオブジェクトについては後述します。
+						getControlList()で設定したコントロールが変更されたら呼ばれます。<br/>
+						idはコントロールオブジェクトのid属性で指定した文字列です。
 					</td>
 				</tr>
 				</tbody>
@@ -180,7 +183,7 @@ Instrument.prototype.getBuffer = function(length){
 	type : 'knob',	// {string} 'knob'を指定する
 	id : 'volume',	// {string} setValue(id,value)のidに対応する
 	value : 0.5,	// {number} 初期値
-	image : 'img/volume.png',	// 画像パス
+	image : 'img/volume.png',	// {string} 画像パス
 	height : 120,	// {number} 画像の高さ
 	width : 120,	// {number} 画像の幅
 	offsetx : 56,	// {number} コントロールパネル左上を原点とした右方向オフセット
@@ -205,8 +208,8 @@ Instrument.prototype.getBuffer = function(length){
 {
 	type : "toggle",	// {string} 'toggle'を指定する
 	id : "glide",　		// {string} setValue(id,value)のidに対応する
-	imageon : "img/on.png",	// ON画像パス
-	imageoff : "img/off.png",	// OFF画像パス
+	imageon : "img/on.png",	// {string} ON画像パス
+	imageoff : "img/off.png",	// {string} OFF画像パス
 	height : 24,	// {number} 画像の高さ
 	width : 24,	// {number} 画像の幅
 	value : 0,	// {number} 初期値。0か1を指定する。
@@ -221,8 +224,8 @@ Instrument.prototype.getBuffer = function(length){
 {
 	type : "radio",	// {string} 'radio'を指定する
 	id : "oscillator", // {string} setValue(id,value)のidに対応する
-	imageon : "img/on.png",	// ON画像パス
-	imageoff : "img/off.png",	// OFF画像パス
+	imageon : "img/on.png",	// {string} ON画像パス
+	imageoff : "img/off.png",	// {string} OFF画像パス
 	height : 24,	// {number} 画像の高さ
 	width : 24,	// {number} 画像の幅
 	value : 0,	// {number} 初期値。offsetsの配列インデックスを表示
