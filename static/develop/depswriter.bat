@@ -1,1 +1,1 @@
-python closure/bin/build/depswriter.py --root_with_prefix="synthjs  ../../synthjs" --output_file=deps.js
+python closurelibrary/closure/bin/build/depswriter.py --root_with_prefix="synthjs  ../../../synthjs" --output_file=deps.js

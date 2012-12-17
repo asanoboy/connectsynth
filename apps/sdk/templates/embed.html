@@ -19,7 +19,7 @@
 {% block scriptfile %}
 {{ block.super }}
 {% if debug %}
-<script src="{{ STATIC_URL }}develop/closure/goog/base.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}develop/closurelibrary/closure/goog/base.js" type="text/javascript"></script>
 <script src="{{ STATIC_URL }}develop/deps.js" type="text/javascript"></script>
 <script src="{{ STATIC_URL }}develop/synthjs/bareoscillator.js" type="text/javascript"></script>
 {% else %}
