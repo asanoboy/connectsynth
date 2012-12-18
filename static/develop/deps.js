@@ -19,6 +19,7 @@ goog.addDependency('../../synthjs/audiocore/wave.js', ['synthjs.audiocore.Wave']
 goog.addDependency('../../synthjs/audiocore/wave_plugin.js', ['synthjs.audiocore.WaveEvent', 'synthjs.audiocore.WavePlugin', 'synthjs.audiocore.WavePluginEventType'], ['synthjs.utility.EventTarget', 'synthjs.utility.WorkerDeferredManager']);
 goog.addDependency('../../synthjs/bridge/codemirror.js', ['synthjs.CodeMirror'], []);
 goog.addDependency('../../synthjs/bridge/template.js', ['synthjs.Template'], ['goog.net.XhrIo', 'synthjs.utility.Deferred']);
+goog.addDependency('../../synthjs/encode/midi.js', ['synthjs.encode.Midi'], []);
 goog.addDependency('../../synthjs/encode/utility.js', ['synthjs.encode.Utility'], ['goog.array']);
 goog.addDependency('../../synthjs/encode/wav.js', ['synthjs.encode.Wav'], []);
 goog.addDependency('../../synthjs/model/base.js', ['synthjs.model.Base'], ['goog.events.EventTarget', 'goog.object', 'synthjs.model.EventType']);
