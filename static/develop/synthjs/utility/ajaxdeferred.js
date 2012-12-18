@@ -63,8 +63,7 @@ synthjs.utility.AjaxDeferred = function(url, settings, opt_context){
 			settings.success = goog.bind(settings.success, opt_context);
 		}
 		this._eventHandler.listen( this._xhr, goog.net.EventType.SUCCESS, function(e){
-			settings.success(e.target);
-			dWait.callback();
+			dWait.callback(settings.success(e.target));
 		});
 	}
 	
