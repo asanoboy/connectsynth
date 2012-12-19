@@ -98,7 +98,11 @@ synthjs.encode.MidiEvent.createMidiEvent = function(statusByte, dataByte, veroci
 	return new synthjs.encode.MidiEvent();
 }
 
-synthjs.encode.MidiEvent.createMetaEvent = function(){
+/**
+ * @param {number} typeByte 1byte
+ * @param {Uint8Array} data
+ */
+synthjs.encode.MidiEvent.createMetaEvent = function(typeByte, data){
 	return new synthjs.encode.MidiEvent();
 }
 
@@ -329,14 +333,20 @@ synthjs.encode.MidiParser.prototype.attachTrackEvent = function(track){
 	}
 	else if( $.cur()==0xff ) { // Meta Event
 		// pass
+		
 		if( !$.next() ) return;
+		
+		var typeByte = $.cur();
 		if( !$.next() ) return; // pass meta event type
 		
-		var len = $.readVariableLength();
-		while(len--){
+		var len = $.readVariableLength(), i = 0;
+		var data = new Uint8Array(len);
+		while(i++<len){
+			data[i-1] = $.cur(); 
 			if( !$.next() ) return;
 		}
 		//return synthjs.encode.MidiEvent.createMetaEvent();
+		track.addEvent(delta, synthjs.encode.MidiEvent.createMetaEvent(typeByte, data));
 		return true;
 	}
 	else { // Midi Event
@@ -364,7 +374,7 @@ synthjs.encode.MidiParser.prototype.attachTrackEvent = function(track){
 			return false;
 		}
 		
-		track.addEvent(event);
+		track.addEvent(delta, event);
 		return true;
 		
 		//return synthjs.encode.MidiEvent.createMidiEvent(status, dataByte, verocityByte); 
