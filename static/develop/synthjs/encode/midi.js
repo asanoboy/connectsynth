@@ -112,6 +112,11 @@ synthjs.encode.MidiEventType = {
 	META: 'meta'
 };
 
+synthjs.encode.MidiMetaEventType = {
+	END: 0x00,
+	TEMPO: 0x00
+};
+
 synthjs.encode.MidiEventStatusType = {
 	ON: 'on',
 	OFF: 'off'
@@ -174,7 +179,7 @@ synthjs.encode.MidiParser.prototype.cur = function(){
  * @return {boolean}
  */
 synthjs.encode.MidiParser.prototype.next = function(){
-	if( this._needle >= this._buffer.length - 1){
+	if( this._needle >= this._buffer.length ){
 		return false;
 	}
 	this._needle++;
@@ -236,7 +241,6 @@ synthjs.encode.MidiParser.prototype.createMidi = function(){
 	var trackcnt = midi.getTrackNum(), t, len, track;
 	
 	while(trackcnt--){
-		
 		if( !( track=$.createMidiTrack() ) ){
 			return false;
 		}
@@ -244,16 +248,17 @@ synthjs.encode.MidiParser.prototype.createMidi = function(){
 		midi.addTrack(track);
 	}
 	
-	
-	if( !synthjs.encode.Midi.checkFormat(buffer) ){
+	if( !$.next() ){ // Confirm EOF.
+		return midi;
+	}
+	else{
 		return false;
 	}
 	
-	return midi;	
+		
 }
 
 synthjs.encode.MidiParser.prototype.createMidiTrack = function(){
-	console.log("Start create track");
 	this._lastMidiStatus = null;
 	var track = new synthjs.encode.MidiTrack();
 	
@@ -271,7 +276,6 @@ synthjs.encode.MidiParser.prototype.createMidiTrack = function(){
 		return false;
 	}
 	
-	console.log("NEEDLE="+this._needle.toString(16));
 	
 	len = $.cur();
 	$.next();
@@ -283,31 +287,20 @@ synthjs.encode.MidiParser.prototype.createMidiTrack = function(){
 	$.next();
 	
 	var end = this._needle + len, event;
-	console.log(len);
 	while(this._needle < end) {
-		if( this._needle > 0x4e00 ){
-			console.log("needle="+this._needle.toString(16));
-			console.log("; end="+end.toString(16));
-		}
-		
-		if( !( event = $.createEvent()) ){
-			console.log("hoge");
+		if( !$.attachTrackEvent(track) ){
 			return false;
 		}
 	}
 	
 	if( this._needle != end ){
-		console.log("NG");
 		return false;
 	}
-	else{
-		console.log("OK");
-	} 
 	
-	return true;
+	return track;
 }
 
-synthjs.encode.MidiParser.prototype.createEvent = function(){
+synthjs.encode.MidiParser.prototype.attachTrackEvent = function(track){
 	var $ = this,
 		delta = $.readVariableLength();
 
@@ -320,7 +313,8 @@ synthjs.encode.MidiParser.prototype.createEvent = function(){
 			if( !$.next() ) return;
 		}
 		
-		return synthjs.encode.MidiEvent.createSysExEvent();
+		//return synthjs.encode.MidiEvent.createSysExEvent();
+		return true;
 	}
 	else if( $.cur()==0xf7 ){ // SysEx Event
 		// pass
@@ -330,10 +324,10 @@ synthjs.encode.MidiParser.prototype.createEvent = function(){
 			if( !$.next() ) return;
 		}
 		
-		return synthjs.encode.MidiEvent.createSysExEvent();
+		//return synthjs.encode.MidiEvent.createSysExEvent();
+		return true;
 	}
 	else if( $.cur()==0xff ) { // Meta Event
-		
 		// pass
 		if( !$.next() ) return;
 		if( !$.next() ) return; // pass meta event type
@@ -342,7 +336,8 @@ synthjs.encode.MidiParser.prototype.createEvent = function(){
 		while(len--){
 			if( !$.next() ) return;
 		}
-		return synthjs.encode.MidiEvent.createMetaEvent();
+		//return synthjs.encode.MidiEvent.createMetaEvent();
+		return true;
 	}
 	else { // Midi Event
 		if( $.cur() & 0x80 ){
@@ -356,11 +351,23 @@ synthjs.encode.MidiParser.prototype.createEvent = function(){
 			return false;
 		}
 		
-		if( !$.next() ) return;
-		if( !$.next() ) return;
+		var dataByte = $.cur();
+		if( (dataByte & 0x80) && !$.next() ) return;
+		
+		var verocityByte = $.cur();
+		if( (verocityByte & 0x80) && !$.next() ) return;
 		
 		this._lastMidiStatus = status;
-		return synthjs.encode.MidiEvent.createMidiEvent(); 
+		
+		var event = synthjs.encode.MidiEvent.createMidiEvent(status, dataByte, verocityByte);
+		if( event === false ){
+			return false;
+		}
+		
+		track.addEvent(event);
+		return true;
+		
+		//return synthjs.encode.MidiEvent.createMidiEvent(status, dataByte, verocityByte); 
 	}
 }
 
