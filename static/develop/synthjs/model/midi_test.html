@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../closurelibrary/closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+	goog.require("goog.testing.jsunit");
+	goog.require("goog.testing.AsyncTestCase");
+	
+	goog.require("goog.net.XhrIo.ResponseType");
+	goog.require("goog.fs.FileReader");
+	goog.require("goog.events.EventHandler");
+	
+	goog.require("synthjs.utility.Deferred");
+	goog.require("synthjs.utility.AjaxDeferred");
+	goog.require("synthjs.encode.MidiFile");
+	goog.require("synthjs.model.Midi");
+	
+</script>
+</head>
+<body>
+<script>
+
+var MidiFile = synthjs.encode.MidiFile,
+	Midi = synthjs.model.Midi,
+	Ajax = synthjs.utility.AjaxDeferred,
+	D = synthjs.utility.Deferred,
+	asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall(),
+	midipath = "midi_test.mid";
+
+function setUp() {
+
+}
+
+function tearDown() {
+
+}
+
+function createReadArrayBufferDeferred(){
+	var reader = new goog.fs.FileReader();
+	var handler = new goog.events.EventHandler();
+	var dWait = new synthjs.utility.Deferred();
+	return	new synthjs.utility.Deferred()
+		.addCallback(function(file){
+
+			handler.listen(reader,
+				goog.fs.FileReader.EventType.LOAD,
+				function(e){
+					handler.dispose();
+					handler = null;
+										
+					dWait.callback(
+						e.target.getResult()
+					);
+				});
+			
+			reader.readAsArrayBuffer(file);		
+		})
+		.awaitDeferred(dWait)
+}
+
+function createGetMidifileDeferred(){
+	return new Ajax(midipath, {
+		responseType: goog.net.XhrIo.ResponseType.BLOB,
+		success: function(e){
+			return e.getResponse();
+		}
+	});
+}
+
+function testRead() {
+	var d = createGetMidifileDeferred()
+	.assocChainDeferred(
+		createReadArrayBufferDeferred()
+	)
+	.addCallback(function(buffer){
+		var parser = new synthjs.encode.MidiParser(buffer);
+		return parser.createMidi();
+	})
+	.addCallback(function(midifile){
+		var midi = Midi.createByMidiFile(midifile);
+		assertTrue(midi instanceof Midi);
+		asyncTestCase.continueTesting();
+	});
+
+	asyncTestCase.waitForAsync();
+	d.callback();	
+}
+
+</script>
+</body>
+</html>

@@ -19,7 +19,7 @@ goog.addDependency('../../../synthjs/audiocore/wave.js', ['synthjs.audiocore.Wav
 goog.addDependency('../../../synthjs/audiocore/wave_plugin.js', ['synthjs.audiocore.WaveEvent', 'synthjs.audiocore.WavePlugin', 'synthjs.audiocore.WavePluginEventType'], ['synthjs.utility.EventTarget', 'synthjs.utility.WorkerDeferredManager']);
 goog.addDependency('../../../synthjs/bridge/codemirror.js', ['synthjs.CodeMirror'], []);
 goog.addDependency('../../../synthjs/bridge/template.js', ['synthjs.Template'], ['goog.net.XhrIo', 'synthjs.utility.Deferred']);
-goog.addDependency('../../../synthjs/encode/midi.js', ['synthjs.encode.Midi'], ['goog.events.EventHandler', 'goog.fs.FileReader', 'synthjs.utility.Deferred']);
+goog.addDependency('../../../synthjs/encode/midifile.js', ['synthjs.encode.MidiFile', 'synthjs.encode.MidiParser'], ['goog.asserts']);
 goog.addDependency('../../../synthjs/encode/utility.js', ['synthjs.encode.Utility'], ['goog.array']);
 goog.addDependency('../../../synthjs/encode/wav.js', ['synthjs.encode.Wav'], []);
 goog.addDependency('../../../synthjs/model/base.js', ['synthjs.model.Base'], ['goog.events.EventTarget', 'goog.object', 'synthjs.model.EventType']);
@@ -29,6 +29,8 @@ goog.addDependency('../../../synthjs/model/eventtype.js', ['synthjs.model.EventT
 goog.addDependency('../../../synthjs/model/filebase.js', ['synthjs.model.FileBase', 'synthjs.model.FileType'], ['synthjs.model.Base']);
 goog.addDependency('../../../synthjs/model/filesystem.js', ['synthjs.model.FileSystem'], ['goog.events.EventHandler', 'goog.ui.Dialog', 'synthjs.model.Collection', 'synthjs.model.Directory', 'synthjs.model.FileBase']);
 goog.addDependency('../../../synthjs/model/imagefile.js', ['synthjs.model.ImageFile'], ['goog.asserts', 'synthjs.model.FileBase', 'synthjs.model.FileType']);
+goog.addDependency('../../../synthjs/model/midi.js', ['synthjs.model.Midi'], ['goog.asserts', 'synthjs.model.Base', 'synthjs.model.Collection', 'synthjs.model.MidiTrack']);
+goog.addDependency('../../../synthjs/model/miditrack.js', ['synthjs.model.MidiEvent', 'synthjs.model.MidiTrack'], ['synthjs.model.MidiTrack']);
 goog.addDependency('../../../synthjs/model/plugincontrolparam.js', ['synthjs.model.PluginControlParam'], ['synthjs.model.Base']);
 goog.addDependency('../../../synthjs/model/pluginparam.js', ['synthjs.model.PluginParam'], ['synthjs.model.Base']);
 goog.addDependency('../../../synthjs/model/pluginpreset.js', ['synthjs.model.PluginPreset'], ['goog.json', 'synthjs.model.Base']);
