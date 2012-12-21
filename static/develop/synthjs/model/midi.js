@@ -33,13 +33,17 @@ synthjs.model.Midi.createByMidiFile = function(midifile){
 	var midi = new synthjs.model.Midi(midifile.getHeaderDelta()),
 		track, trackdata, delta;
 	
+	
 	for( var i=0; i<midifile.getTrackNum(); i++ ){
 		track = new synthjs.model.MidiTrack();
 		trackdata = midifile.getTrack(i);
+		var offset = 0;
 		for( var j=0; j<trackdata.getEventNum(); j++ ){
 			delta = trackdata.getEventDelta(j);
 			goog.asserts.assertNumber(delta);
-			track.set("delta", delta);
+			
+			offset += delta;
+			track.set("offset", offset);
 		}
 		midi.addTrack(track);
 	}
