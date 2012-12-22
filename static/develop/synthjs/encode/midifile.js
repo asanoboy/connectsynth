@@ -138,7 +138,27 @@ synthjs.encode.MidiTrack.prototype.getEventDelta = function(index){
 	return delta;
 }
 
+synthjs.encode.MidiTrack.prototype.getEventData = function(index){
+	if( index >= this._eventList.length ) return false;
+	
+	var buffer = this._eventList[index];
+	var delta = 0, finished = false;
+	for( var i=0; i<buffer.length; i++){
+		delta = delta << 8;
+		if( buffer[i] & 0x80 ){
+			delta += (buffer[i] & ~0x80);
+			continue;
+		}
+		delta += buffer[i];
+		finished = true;
+		break;
+	}
+	
+	goog.asserts.assert(finished);
+	return buffer.subarray(i+1);
+}
 
+/*
 synthjs.encode.MidiTrack.prototype.getEventType = function(index){
 	if( index >= this._eventList.length ) return false;
 	
@@ -152,7 +172,7 @@ synthjs.encode.MidiTrack.prototype.getEventType = function(index){
 		default:
 	}
 }
-
+*/
 
 
 

@@ -31,28 +31,64 @@ synthjs.model.Midi.prototype.addTrack = function(track){
 synthjs.model.Midi.createByMidiFile = function(midifile){
 	var buffer = midifile.getHeader();
 	var midi = new synthjs.model.Midi(midifile.getHeaderDelta()),
-		track, trackdata, delta;
+		track, trackdata, delta, eventdata, event;
 	
 	
 	for( var i=0; i<midifile.getTrackNum(); i++ ){
 		track = new synthjs.model.MidiTrack();
 		trackdata = midifile.getTrack(i);
-		var offset = 0;
+		var offset = 0, lastStatus = null;
 		for( var j=0; j<trackdata.getEventNum(); j++ ){
 			delta = trackdata.getEventDelta(j);
 			goog.asserts.assertNumber(delta);
+			eventdata = trackdata.getEventData(j);
+			goog.asserts.assert(eventdata instanceof Uint8Array);
+
+			
+			event = synthjs.model.Midi.createEventByBuffer(eventdata, lastStatus);
+			goog.asserts.assert(event instanceof synthjs.model.MidiEventBase);
 			
 			offset += delta;
-			track.set("offset", offset);
+			event.set("offset", offset);
+			track.addEvent(event);
+
+			if( event instanceof synthjs.model.MidiEvent ){
+				lastStatus = event.get("status");
+			}
 		}
 		midi.addTrack(track);
 	}
-	
 	
 	//TODO:
 	return midi;
 }
 
+/**
+ * @param {Uint8Array} buffer
+ * @param {number} opt_prevStatus Uses for runnning status in Midi format.
+ */
+synthjs.model.Midi.createEventByBuffer = function(buffer, opt_prevStatus){
+	if( buffer[0]==0xf0 || buffer[0]==0xf7 ){
+		return new synthjs.model.MidiSysExEvent(buffer);
+	}
+	else if( buffer[0]==0xff ){
+		return new synthjs.model.MidiMetaEvent(buffer[0], buffer.subarray(1));
+	}
+	else {
+		var status = opt_prevStatus,
+			needle = 0;
+		if( buffer[0] & 0x80 ){
+			status = buffer[0];
+			needle++;
+		}
+		return new synthjs.model.MidiEvent(
+			status, 
+			0, 
+			buffer[needle++], 
+			buffer[needle++]);
+
+	}
+}
 /**
  * @constructor
  * @extends {synthjs.model.MidiTrackCollection}
