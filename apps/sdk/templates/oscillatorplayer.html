@@ -50,15 +50,17 @@
 				(function(){
 					$('#google_plusone').socialbutton('google_plusone', {
 						lang: 'ja',
-						size: 'medium'
+						size: 'medium',
+						url: document.location.origin + document.location.pathname
 					}).width(65);
-					$('#hatena').socialbutton('hatena');
 					$('#twitter').socialbutton('twitter', {
 						button: 'horizontal',
-				        text: '{{ plugin.name }} - Synthcript'
+				        text: '{{ plugin.name }} - Synthcript',
+						url: document.location.origin + document.location.pathname
 					}).width(117);
 					$('#facebook_like').socialbutton('facebook_like', {
-						button: 'button_count'
+						button: 'button_count',
+						url: document.location.origin + document.location.pathname
 					}).width(105);
 				})();
 			}
