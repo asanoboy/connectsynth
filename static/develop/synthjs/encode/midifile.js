@@ -405,11 +405,32 @@ synthjs.encode.MidiParser.prototype.attachTrackEvent = function(track){
 			return false;
 		}
 		
-		// check databyte
-		if( ($.cur() & 0x80) && !$.next() ) return false;
-		
-		// check databyte
-		if( ($.cur() & 0x80) && !$.next() ) return false;
+		switch( status & 0xf0 ){
+			case 0xb0:
+				if( $.cur()==0x7e ){
+					// check databyte
+					if( ($.cur() & 0x80) ) return false;
+					if( !$.next() ) return false;
+				}
+			case 0x80:
+			case 0xa0:
+			case 0x90:
+			case 0xe0:
+				// check databyte
+				if( ($.cur() & 0x80) ) return false;
+				if( !$.next() ) return false;
+				
+				// check databyte
+				if( ($.cur() & 0x80) ) return false;
+				if( !$.next() ) return false;
+
+				break;
+			default:
+				// check databyte
+				if( ($.cur() & 0x80) ) return false;
+				if( !$.next() ) return false;
+				break;
+		}	
 		
 		this._lastMidiStatus = status;
 		

@@ -39,8 +39,12 @@ goog.inherits(synthjs.model.MidiEventBase, synthjs.model.Base);
  * @param {number} note In range [0, 127] integer
  * @param {number} verocity In range [0, 127] integer
  */
-synthjs.model.MidiEvent = function(status, offset, note, verocity){
+synthjs.model.MidiKeyEvent = function(status, offset, note, verocity){
 	goog.asserts.assert(goog.isNumber(status));
+	goog.asserts.assert((status & 0xf0)==0x80 || (status & 0xf0) ==0x90);
+//	if ( (status & 0xf0) ==0x90 && verocity==0 ){
+//		status = (status & 0x0f) | 0x80;
+//	}
 	goog.base(this, {
 		"status": status,
 		"offset": offset,
@@ -48,12 +52,25 @@ synthjs.model.MidiEvent = function(status, offset, note, verocity){
 		"verocity": verocity
 	});
 }
-goog.inherits(synthjs.model.MidiEvent, synthjs.model.MidiEventBase);
+goog.inherits(synthjs.model.MidiKeyEvent, synthjs.model.MidiEventBase);
 
-synthjs.model.MidiEventType = {
-	ON: 0x80,
-	OFF: 0x90
+//synthjs.model.MidiKeyEventStatus = {
+//	ON: 0x90,
+//	OFF: 0x80
+//}
+
+/**
+ * Represents MIDI event exclude MidiKeyEvent.
+ * @constructor
+ * @extends {synthjs.model.MidiEventBase}
+ */
+synthjs.model.MidiOtherEvent = function(buffer){
+	goog.base(this, {
+		"offset": 0,
+		"buffer": buffer
+	})
 }
+goog.inherits(synthjs.model.MidiOtherEvent, synthjs.model.MidiEventBase);
 
 /**
  * @constructor

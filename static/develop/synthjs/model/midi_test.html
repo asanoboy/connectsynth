@@ -82,6 +82,28 @@ function testRead() {
 		var midi = Midi.createByMidiFile(midifile);
 		assertTrue(midi instanceof Midi);
 		asyncTestCase.continueTesting();
+		return midi;
+	})
+	.addCallback(function(midi){
+		var tracklist = midi.get('tracks').getAll();
+		for( var i=0; i<tracklist.length; i++){
+			var track = tracklist[i];
+			console.log("Track "+i);
+			console.log(track);
+			var eventlist = track.get('eventcollection').getAll();
+			console.log("EventNum: "+eventlist.length);
+			var statuslist = [];
+			for( var j=0; j<eventlist.length; j++ ){
+				var event = eventlist[j];
+				if( event instanceof synthjs.model.MidiKeyEvent ){
+					var status = event.get("status");
+					if( !( status in statuslist) ){
+						statuslist.push(status);
+					}
+				}
+			}
+			console.log(statuslist);
+		}
 	});
 
 	asyncTestCase.waitForAsync();

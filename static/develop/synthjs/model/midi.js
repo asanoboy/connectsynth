@@ -52,7 +52,7 @@ synthjs.model.Midi.createByMidiFile = function(midifile){
 			event.set("offset", offset);
 			track.addEvent(event);
 
-			if( event instanceof synthjs.model.MidiEvent ){
+			if( event instanceof synthjs.model.MidiKeyEvent ){
 				lastStatus = event.get("status");
 			}
 		}
@@ -81,12 +81,22 @@ synthjs.model.Midi.createEventByBuffer = function(buffer, opt_prevStatus){
 			status = buffer[0];
 			needle++;
 		}
-		return new synthjs.model.MidiEvent(
-			status, 
-			0, 
-			buffer[needle++], 
-			buffer[needle++]);
-
+		switch(status & 0xf0 ){
+			case 0x80:
+			case 0x90:
+				var note = buffer[needle++];
+				var verocity = buffer[needle++];
+				goog.asserts.assertNumber(note);
+				goog.asserts.assertNumber(verocity);
+				return new synthjs.model.MidiKeyEvent(
+					status, 
+					0, 
+					note, 
+					verocity);
+				break;
+			default:
+				return new synthjs.model.MidiOtherEvent(buffer);
+		}
 	}
 }
 /**

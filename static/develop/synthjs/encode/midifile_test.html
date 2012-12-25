@@ -94,7 +94,9 @@ function testBuild() {
 	.addCallback(function(buffer){
 		orgBuffer = buffer;
 		var parser = new synthjs.encode.MidiParser(buffer);
-		return parser.createMidi();
+		var midifile = parser.createMidi();
+		assertTrue(midifile!==false);
+		return midifile;
 	})
 	.addCallback(function(midi){
 		var builder = new synthjs.encode.MidiBuilder(midi);
