@@ -154,15 +154,11 @@ synthjs.synthlib.Performer.prototype.getBufferDeferred = function(len){
 			.addCallback((function(index){
 				return function(buffers){
 					switch(thisPerformer._timeline[index].type){
-						case 0: 
-							// thisPerformer._dynamicGenerator.removeNote(
-								// thisPerformer._timeline[index].note);
+						case 0:
 							thisPerformer._dynamicGenerator.removeNoteDeferred(
 								thisPerformer._timeline[index].note).callback();
 							break;
-						case 1: 
-							// thisPerformer._dynamicGenerator.addNote(
-								// thisPerformer._timeline[index].note);
+						case 1:
 							thisPerformer._dynamicGenerator.addNoteDeferred(
 								thisPerformer._timeline[index].note).callback();
 							break;
@@ -187,7 +183,7 @@ synthjs.synthlib.Performer.prototype.getBufferDeferred = function(len){
 			goog.array.forEach(buffersList, function(buffers){
 				for(var i=0; i<buffers[1].leftBuffer.length; i++){
 					leftBufferAll[i+offset] = buffers[1].leftBuffer[i];
-					rightBufferAll[i+offset] = buffers[1].rightBuffer[i]; 
+					rightBufferAll[i+offset] = buffers[1].rightBuffer[i];
 				}
 				offset += buffers[1].leftBuffer.length;
 			});
@@ -206,12 +202,12 @@ synthjs.synthlib.Performer.prototype.getBufferDeferred = function(len){
 synthjs.synthlib.Performer.prototype.setSampleRate = function(sampleRate){
 	/** @private */
 	this._sampleRate = sampleRate;
- 	this._dynamicGenerator.setSampleRate(sampleRate);
- 	
- 	for( var i=0; i<this._filters.length; i++){
- 		rt = this._filters[i].setSampleRate(sampleRate);
- 	}	
-}
+	this._dynamicGenerator.setSampleRate(sampleRate);
+
+	for( var i=0; i<this._filters.length; i++){
+		rt = this._filters[i].setSampleRate(sampleRate);
+	}
+};
 
 
 /**
@@ -220,4 +216,4 @@ synthjs.synthlib.Performer.prototype.setSampleRate = function(sampleRate){
 synthjs.synthlib.Performer.prototype.eof = function(){
 	return this._eof;
 	
-}
+};

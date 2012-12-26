@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>synthjs Unit Tests</title>
+<title>synthjs Unit Tests dynamicgenerator</title>
 <script src="../../closurelibrary/closure/goog/base.js"></script>
 <script src="../../deps.js"></script>
 <script>
@@ -11,21 +11,25 @@
 	goog.require("goog.net.XhrIo.ResponseType");
 	goog.require("goog.fs.FileReader");
 	goog.require("goog.events.EventHandler");
-	
+
 	goog.require("synthjs.utility.Deferred");
 	goog.require("synthjs.utility.AjaxDeferred");
+	goog.require("synthjs.audiocore.WavePlugin");
+	goog.require("synthjs.audiocore.Performer");
+	goog.require("synthjs.audiocore.Note");
 	goog.require("synthjs.encode.MidiFile");
-	
+	goog.require("synthjs.model.Midi");
 </script>
 </head>
 <body>
 <script>
 
 var MidiFile = synthjs.encode.MidiFile,
+	Midi = synthjs.model.Midi,
 	Ajax = synthjs.utility.AjaxDeferred,
 	D = synthjs.utility.Deferred,
 	asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall(),
-	midipath = "midifile_test.mid";
+	midipath = "../encode/midifile_test.mid";
 
 function setUp() {
 
@@ -41,7 +45,6 @@ function createReadArrayBufferDeferred(){
 	var dWait = new synthjs.utility.Deferred();
 	return	new synthjs.utility.Deferred()
 		.addCallback(function(file){
-
 			handler.listen(reader,
 				goog.fs.FileReader.EventType.LOAD,
 				function(e){
@@ -67,64 +70,49 @@ function createGetMidifileDeferred(){
 	});
 }
 
-function testRead() {
-	var d = createGetMidifileDeferred()
+function getMidiDeferred() {
+	return createGetMidifileDeferred()
 	.assocChainDeferred(
 		createReadArrayBufferDeferred()
 	)
 	.addCallback(function(buffer){
-		var parser = new synthjs.encode.MidiParser(buffer);
-		return parser.createMidi();
-	})
-	.addCallback(function(midi){
-		for(var i=0; i<midi.getTrackNum(); i++){
-			var track = midi.getTrack(i);
-			for( var j=0; j<track.getEventNum(); j++){
-				var e = track.getEvent(j);
-				if( e[1]===0xff && e[2]===0x51 && e[3]===0x03 ){
-					console.log("tracknum="+i+", eventnum="+j);
-					console.log(e);
-					console.log( ((((e[4]<<8)+e[5])<<8)+e[6]));
-
-				}
-			}
-		}
-		assertTrue(midi instanceof MidiFile);
-		asyncTestCase.continueTesting();
-	});
-
-	asyncTestCase.waitForAsync();
-	d.callback();	
-}
-
-function testBuild() {
-	var orgBuffer = null;
-	var d = createGetMidifileDeferred()
-	.assocChainDeferred(
-		createReadArrayBufferDeferred()
-	)
-	.addCallback(function(buffer){
-		orgBuffer = buffer;
 		var parser = new synthjs.encode.MidiParser(buffer);
 		var midifile = parser.createMidi();
-		assertTrue(midifile!==false);
-		return midifile;
-	})
-	.addCallback(function(midi){
-		var builder = new synthjs.encode.MidiBuilder(midi);
-		var destBuffer = builder.build();
-		assertTrue(destBuffer instanceof ArrayBuffer);
-		
-		assertEquals(orgBuffer.length, destBuffer.length);
-		for( var i=0; i<orgBuffer.length; i++){
-			assertEquals(orgBuffer[i], destBuffer[i]);
-		}
-		
-		asyncTestCase.continueTesting();
+		return Midi.createByMidiFile(midifile);
 	});
+}
 
+function test1() {
+	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), 
+		len = 21,
+		sampleRate = 48000,
+		cnt = 0,
+		performer = new synthjs.audiocore.Performer();
+
+	performer.setWave(wave);
+	performer.setSampleRate(48000);
+	performer.setDelta(480);
+
+	var d = getMidiDeferred().addCallback(function(midi){
+		assert(midi instanceof synthjs.model.Midi);
+		var tracks = midi.get('tracks').getAll();
+		goog.array.forEach(tracks, function(track){
+			if( !track.hasKeyEvent() ) return;
+
+			performer.setTrack(track);
+			performer.rewind();
+			while( !performer.eof() ){
+				d.assocChainDeferred(performer.getBufferDeferred(2048));
+			}
+		})
+		d.addCallback(function(){
+			asyncTestCase.continueTesting();
+		});
+	});
+	
 	asyncTestCase.waitForAsync();
-	d.callback();	
+	d.callback();
+	
 }
 
 </script>

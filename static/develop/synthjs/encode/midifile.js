@@ -9,7 +9,7 @@ goog.require("goog.asserts");
 
 
 /**
- * Wraps binary midi data in Uint8Array. 
+ * Wraps binary midi data in Uint8Array.
  * @constructor
  * @private
  */
@@ -21,28 +21,28 @@ synthjs.encode.MidiFile = function(){
 	this._header = new Uint8Array(0);
 	
 	/**
-	 * @type {Array} 
+	 * @type {Array}
 	 */
 	this._tracks = [];
-}
+};
 
 /**
  * @param {Uint8Array} header
  */
 synthjs.encode.MidiFile.prototype.setHeader = function(header){
 	this._header = header;
-}
+};
 
 /**
  * @return {Uint8Array}
  */
 synthjs.encode.MidiFile.prototype.getHeader = function(){
 	return this._header;
-}
+};
 
 synthjs.encode.MidiFile.prototype.getHeaderDelta = function(){
-	return this._header[12] << 8 + this._header[13]; 
-}
+	return this._header[12] << 8 + this._header[13];
+};
 
 
 
@@ -51,14 +51,14 @@ synthjs.encode.MidiFile.prototype.getHeaderDelta = function(){
  */
 synthjs.encode.MidiFile.prototype.getTrackNum = function(){
 	return this._tracks.length;
-}
+};
 
 /**
  * @param {synthjs.encode.MidiTrack} track
  */
 synthjs.encode.MidiFile.prototype.addTrack = function(track){
 	this._tracks.push(track);
-}
+};
 
 /**
  * @return {synthjs.encode.MidiTrack}
@@ -67,45 +67,45 @@ synthjs.encode.MidiFile.prototype.getTrack = function(index){
 	if( index >= this._tracks.length ) return false;
 	
 	return this._tracks[index];
-}
+};
 
 
 /**
- * Wraps midi track data in Uint8Array. 
+ * Wraps midi track data in Uint8Array.
  * @constructor
  */
 synthjs.encode.MidiTrack = function(){
 	this._eventList = [];
 	this._header = new Uint8Array(0);
-}
+};
 
 /**
  * @param {Uint8Array} header
  */
 synthjs.encode.MidiTrack.prototype.setHeader = function(header){
 	this._header = header;
-}
+};
 
 /**
  * @return {Uint8Array}
  */
 synthjs.encode.MidiTrack.prototype.getHeader = function(){
 	return this._header;
-}
+};
 
 /**
  * @param {Uint8Array} header
  */
 synthjs.encode.MidiTrack.prototype.addEvent = function(buffer){
 	this._eventList.push(buffer);
-}
+};
 
 /**
  * @return {number}
  */
 synthjs.encode.MidiTrack.prototype.getEventNum = function(){
 	return this._eventList.length;
-}
+};
 
 /**
  * @param {number} index
@@ -115,7 +115,7 @@ synthjs.encode.MidiTrack.prototype.getEvent = function(index){
 	if( index >= this._eventList.length ) return false;
 	
 	return this._eventList[index];
-}
+};
 
 synthjs.encode.MidiTrack.prototype.getEventDelta = function(index){
 	if( index >= this._eventList.length ) return false;
@@ -136,7 +136,7 @@ synthjs.encode.MidiTrack.prototype.getEventDelta = function(index){
 	goog.asserts.assert(finished);
 	
 	return delta;
-}
+};
 
 synthjs.encode.MidiTrack.prototype.getEventData = function(index){
 	if( index >= this._eventList.length ) return false;
@@ -156,7 +156,7 @@ synthjs.encode.MidiTrack.prototype.getEventData = function(index){
 	
 	goog.asserts.assert(finished);
 	return buffer.subarray(i+1);
-}
+};
 
 /*
 synthjs.encode.MidiTrack.prototype.getEventType = function(index){
@@ -177,7 +177,7 @@ synthjs.encode.MidiTrack.prototype.getEventType = function(index){
 
 
 /**
- * Parses ArrayBuffer as binary midi file and creates an instance of synthjs.encode.MidiFile. 
+ * Parses ArrayBuffer as binary midi file and creates an instance of synthjs.encode.MidiFile.
  * @constructor
  * @param {ArrayBuffer} arrayBuffer
  */
@@ -186,14 +186,14 @@ synthjs.encode.MidiParser = function(arrayBuffer){
 	this._needle = 0;
 	this._lastChannel = null;
 	this._bufferArray = [];
-}
+};
 
 /**
  * @return {number}
  */
 synthjs.encode.MidiParser.prototype.cur = function(){
 	return this._buffer[this._needle];
-}
+};
 
 /**
  * @return {boolean}
@@ -205,7 +205,7 @@ synthjs.encode.MidiParser.prototype.next = function(){
 	this._bufferArray.push(this.cur());
 	this._needle++;
 	return true;
-}
+};
 
 /**
  * @return {boolean}
@@ -213,14 +213,14 @@ synthjs.encode.MidiParser.prototype.next = function(){
 synthjs.encode.MidiParser.prototype.flushBuffer = function(){
 	this._bufferArray = [];
 	return true;
-}
+};
 
 /**
  * @return {Uint8Array}
  */
 synthjs.encode.MidiParser.prototype.getBuffer = function(){
 	return new Uint8Array(this._bufferArray);
-}
+};
 
 /**
  * @return {synthjs.encode.MidiFile|boolean}
@@ -235,12 +235,12 @@ synthjs.encode.MidiParser.prototype.createMidi = function(){
 		($.cur()==0x68 && $.next()) && // 'h'
 		($.cur()==0x64 && $.next()) && // 'd'
 		
-		($.cur()==0x00 && $.next()) &&
-		($.cur()==0x00 && $.next()) &&
-		($.cur()==0x00 && $.next()) &&
-		($.cur()==0x06 && $.next()) &&
+		($.cur()===0x00 && $.next()) &&
+		($.cur()===0x00 && $.next()) &&
+		($.cur()===0x00 && $.next()) &&
+		($.cur()===0x06 && $.next()) &&
 		
-		($.cur()==0x00 && $.next())
+		($.cur()===0x00 && $.next())
 	)
 	{
 		
@@ -257,7 +257,7 @@ synthjs.encode.MidiParser.prototype.createMidi = function(){
 	
 	var trackNum = $.cur() << 8;
 	$.next();
-	trackNum += $.cur();  
+	trackNum += $.cur();
 	$.next();
 	
 	if( $.cur() & 0x80 ){ // negative
@@ -290,7 +290,7 @@ synthjs.encode.MidiParser.prototype.createMidi = function(){
 	}
 	
 		
-}
+};
 
 synthjs.encode.MidiParser.prototype.createMidiTrack = function(){
 	this._lastMidiStatus = null;
@@ -335,15 +335,15 @@ synthjs.encode.MidiParser.prototype.createMidiTrack = function(){
 	}
 	
 	return track;
-}
+};
 
 /**
- * 
+ *
  * @param {synthjs.encode.MidiTrack} track
  * @return {boolean}
  */
 synthjs.encode.MidiParser.prototype.attachTrackEvent = function(track){
-	var $ = this,
+	var $ = this, len,
 		delta = $.readVariableLength();
 	
 	if( delta===false ) return false;
@@ -351,10 +351,10 @@ synthjs.encode.MidiParser.prototype.attachTrackEvent = function(track){
 	if( $.cur()==0xf0 ){ // SysEx Event
 		// pass
 		if( !$.next() ) return false;
-		var len = $.readVariableLength();
+		len = $.readVariableLength();
 		if( len===false ) return false;
 		while(len--){
-			if( len==0 && $.cur()!=0xf7 ) return false;
+			if( len===0 && $.cur()!=0xf7 ) return false;
 			if( !$.next() ) return false;
 			
 		}
@@ -366,7 +366,7 @@ synthjs.encode.MidiParser.prototype.attachTrackEvent = function(track){
 	else if( $.cur()==0xf7 ){ // SysEx Event
 		// pass
 		if( !$.next() ) return false;
-		var len = $.readVariableLength();
+		len = $.readVariableLength();
 		if( len===false ) return false;
 		while(len--){
 			if( !$.next() ) return false;
@@ -382,7 +382,7 @@ synthjs.encode.MidiParser.prototype.attachTrackEvent = function(track){
 		
 		if( !$.next() ) return false; // pass meta event type
 		
-		var len = $.readVariableLength();
+		len = $.readVariableLength();
 		if( len===false ) return false;
 		
 		while(len--){
@@ -394,12 +394,13 @@ synthjs.encode.MidiParser.prototype.attachTrackEvent = function(track){
 		return true;
 	}
 	else { // Midi Event
+		var status;
 		if( $.cur() & 0x80 ){
 			status = $.cur();
 			if( !$.next() ) return false;
 		}
 		else if( this._lastMidiStatus ){ // running status rule
-			status = this._lastMidiStatus
+			status = this._lastMidiStatus;
 		}
 		else {
 			return false;
@@ -430,7 +431,7 @@ synthjs.encode.MidiParser.prototype.attachTrackEvent = function(track){
 				if( ($.cur() & 0x80) ) return false;
 				if( !$.next() ) return false;
 				break;
-		}	
+		}
 		
 		this._lastMidiStatus = status;
 		
@@ -439,7 +440,7 @@ synthjs.encode.MidiParser.prototype.attachTrackEvent = function(track){
 		$.flushBuffer();
 		return true;
 	}
-}
+};
 
 
 synthjs.encode.MidiParser.prototype.readVariableLength = function(){
@@ -453,7 +454,7 @@ synthjs.encode.MidiParser.prototype.readVariableLength = function(){
 	if( !$.next() ) return false;
 	
 	return len;
-}
+};
 
 /**
  * Converts an instance of synthjs.encode.MidiFile to that of ArrayBuffer.
@@ -462,7 +463,7 @@ synthjs.encode.MidiParser.prototype.readVariableLength = function(){
  */
 synthjs.encode.MidiBuilder = function(midi){
 	this._midi = midi;
-}
+};
 
 /**
  * @return {ArrayBuffer}
@@ -484,4 +485,4 @@ synthjs.encode.MidiBuilder.prototype.build = function(){
 	}
 	
 	return new ArrayBuffer(arr);
-}
+};

@@ -28,7 +28,7 @@ synthjs.model.Collection.prototype.has = function(model){
 	return goog.array.find(this._models, function(m){
 		return m[0].equals(model);
 	}) ? true : false;
-}
+};
 
 
 /**
@@ -36,8 +36,36 @@ synthjs.model.Collection.prototype.has = function(model){
  */
 synthjs.model.Collection.prototype.add = function(model){
 	this._addInternal(model);
-}
+};
 
+/**
+ * Sorts collection.
+ * @param  {Function} compFunction [description]
+ * @return {boolean}              [description]
+ */
+synthjs.model.Collection.prototype.sort = function(compFunction){
+	goog.array.sort(this._models, function(a, b){
+		return compFunction(a[0], b[0]);
+	});
+	return true;
+};
+
+/**
+ * Gets model whose index is arg.
+ * @return {Object|boolean} [description]
+ */
+synthjs.model.Collection.prototype.getByIndex = function(index){
+	return this.hasIndex(index) ? this._models[index][0] : false;
+};
+
+/**
+ * Confirms that index is valid.
+ * @param  {number}  index [description]
+ * @return {Boolean}       [description]
+ */
+synthjs.model.Collection.prototype.hasIndex = function(index) {
+	return index in this._models;
+};
 /**
  * @private
  * @param {synthjs.model.Base} models
@@ -52,18 +80,18 @@ synthjs.model.Collection.prototype._addInternal = function(model, opt_param){
 	
 	this._models.push([model, opt_param]);
 	this.dispatchEvent(new goog.events.Event(
-		synthjs.model.Collection.EventType.ADD, 
+		synthjs.model.Collection.EventType.ADD,
 		model
 	));
 	
-}
+};
 
 /**
  * @param {synthjs.model.Base} models
  */
 synthjs.model.Collection.prototype.remove = function(model){
 	return this._removeInternal(model);
-}
+};
 
 /**
  * @private
@@ -79,13 +107,13 @@ synthjs.model.Collection.prototype._removeInternal = function(model){
 	
 	if( result ){
 		this.dispatchEvent(new goog.events.Event(
-			synthjs.model.Collection.EventType.REMOVE, 
+			synthjs.model.Collection.EventType.REMOVE,
 			model
 		));
 		return true;
 	}
 	return false;
-}
+};
 
 
 synthjs.model.Collection.prototype.reset = function(){
@@ -93,16 +121,16 @@ synthjs.model.Collection.prototype.reset = function(){
 };
 
 /**
- * @return {Array} 
+ * @return {Array}
  */
 synthjs.model.Collection.prototype.getAll = function(){
 	return goog.array.map(this._models, function(m){
 		return m[0];
 	});
-}
+};
 
 /**
- * 
+ *
  */
 synthjs.model.Collection.prototype._resetInternal = function(){
 	
@@ -110,10 +138,10 @@ synthjs.model.Collection.prototype._resetInternal = function(){
 	this.dispatchEvent(new goog.events.Event(
 		synthjs.model.Collection.EventType.RESET
 	));
-}
+};
 
 synthjs.model.Collection.EventType = {
 	ADD: "collection-add",
 	REMOVE: "collection-remove",
 	RESET: "collection-reset"
-}
+};

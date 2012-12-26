@@ -38,10 +38,11 @@ synthjs.audiocore.DynamicGenerator.logger = goog.debug.Logger.getLogger('synthjs
 synthjs.audiocore.DynamicGenerator.logger.setLevel(goog.debug.Logger.Level.ALL);
 
 /**
- * @param {synthjs.audiocore.Note} note
+ * @param {synthjs.audiocore.Note|number} note
  * @param {number=} opt_velocity
  */
 synthjs.audiocore.DynamicGenerator.prototype.addNoteDeferred = function(note, opt_velocity){
+	if( goog.isNumber(note) ) note = new synthjs.audiocore.Note.createByMidiFormat(note);
 	var velo = goog.isDef(opt_velocity) ? parseFloat(opt_velocity) : 1;
 	var d = this._wave.addEventDeferred(
 		new synthjs.audiocore.WaveEvent(
