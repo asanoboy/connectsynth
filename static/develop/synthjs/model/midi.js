@@ -38,6 +38,7 @@ synthjs.model.Midi.createByMidiFile = function(midifile){
 		track = new synthjs.model.MidiTrack();
 		trackdata = midifile.getTrack(i);
 		var offset = 0, lastStatus = null;
+		var events = [];
 		for( var j=0; j<trackdata.getEventNum(); j++ ){
 			delta = trackdata.getEventDelta(j);
 			goog.asserts.assertNumber(delta);
@@ -50,12 +51,14 @@ synthjs.model.Midi.createByMidiFile = function(midifile){
 			
 			offset += delta;
 			event.set("offset", offset);
-			track.addEvent(event);
+			//track.addEvent(event);
+			events.push(event);
 
 			if( event instanceof synthjs.model.MidiKeyEvent ){
 				lastStatus = event.get("status");
 			}
 		}
+		track.addEvent(events);
 		midi.addTrack(track);
 	}
 	
@@ -89,16 +92,15 @@ synthjs.model.Midi.createEventByBuffer = function(buffer, opt_prevStatus){
 				goog.asserts.assertNumber(note);
 				goog.asserts.assertNumber(verocity);
 				return new synthjs.model.MidiKeyEvent(
-					status, 
-					0, 
-					note, 
+					status,
+					0,
+					note,
 					verocity);
-				break;
 			default:
 				return new synthjs.model.MidiOtherEvent(buffer);
 		}
 	}
-}
+};
 /**
  * @constructor
  * @extends {synthjs.model.MidiTrackCollection}

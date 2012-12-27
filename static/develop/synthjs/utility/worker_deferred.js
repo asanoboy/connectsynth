@@ -18,7 +18,7 @@ synthjs.utility.WorkerDeferred = function(worker, opt_params, opt_settings){
 	this._settings = opt_settings ? opt_settings : {};
 	this._params = opt_params ? opt_params : null;
 	
-	this._attachListener(); 
+	this._attachListener();
 	
 	this.addCallback(goog.bind(this.postMessage, this)).awaitDeferred(this._dWait);
 	
@@ -36,13 +36,13 @@ synthjs.utility.WorkerDeferred.prototype.postMessage = function(e){
 		this._params['callback'] = this._callbackname;
 		this._worker.postMessage(this._params);
 	}
-}
+};
 
 synthjs.utility.WorkerDeferred.prototype._attachListener = function(){
 	this._worker.addEventListener("message", goog.bind(this.successListener, this));
 	
 	if( goog.isFunction(this._settings.error) ){
-		this._worker.addEventListener("error", goog.bind(this.errorListener, this));	
+		this._worker.addEventListener("error", goog.bind(this.errorListener, this));
 	}
 };
 
@@ -58,11 +58,11 @@ synthjs.utility.WorkerDeferred.prototype.errorListener = function(e){
 	this._worker.removeEventListener("error", this.errorListener);
 	this._dWait.callback( this._settings.error(e) );
 	e = void 0;
-}
+};
 
 synthjs.utility.WorkerDeferred.prototype._createUniqueId = function(){
 	return (((1+Math.random())*0x10000)|0).toString(16).substring(1) + '_' +
-		(((1+Math.random())*0x10000)|0).toString(16).substring(1) + '_' + 
+		(((1+Math.random())*0x10000)|0).toString(16).substring(1) + '_' +
 		(((1+Math.random())*0x10000)|0).toString(16).substring(1) + '_' +
 		(((1+Math.random())*0x10000)|0).toString(16).substring(1);
-}
+};

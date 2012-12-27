@@ -27,7 +27,6 @@ synthjs.audiocore.WavePlugin = function(url, opt_params){
 	 */
 	this._sampleRate = opt_params && opt_params.sampleRate ? opt_params.sampleRate : 48000;
 	if( !(opt_params && opt_params.sampleRate) ){
-		// console.log("wavePlugin set default sample rate: 48000");
 	}
 	
 	/**
@@ -45,7 +44,7 @@ synthjs.audiocore.WavePlugin = function(url, opt_params){
 		// if( !e["data"]["callback"] )
 			// console.log(e.data);
 	// });
-// 	
+//
 	this._errorHandler = goog.bind(function(e){
 		this._failed = true;
 		var event = new goog.events.Event(synthjs.audiocore.WavePluginEventType.ERROR);
@@ -67,15 +66,15 @@ synthjs.audiocore.WavePlugin.prototype.disposeInternal = function(){
 	this._eventHandler.dispose();
 	
 	this._workerCreator.dispose();
-}
+};
 
 synthjs.audiocore.WavePlugin.prototype.getUrl = function(){
 	return this._url;
-}
+};
 
 synthjs.audiocore.WavePlugin.prototype.clone = function(){
-	return new synthjs.audiocore.WavePlugin(this._url, {sampleRate: this._sampleRate}); 
-}
+	return new synthjs.audiocore.WavePlugin(this._url, {sampleRate: this._sampleRate});
+};
 
 /**
  * @param {array} opt_params
@@ -83,18 +82,18 @@ synthjs.audiocore.WavePlugin.prototype.clone = function(){
 synthjs.audiocore.WavePlugin.prototype.initDeferred = function(opt_params){
 	this._initialized = true;
 	var self = this;
-	//return new synthjs.utility.WorkerDeferred(this._worker, 
+	//return new synthjs.utility.WorkerDeferred(this._worker,
 	return this._workerCreator.create(
 		//{'action':'init', "initParams": {"sampleRate": this._sampleRate}})
 		{'action':'init', "samplerate": this._sampleRate})
 		.addCallback(function(e){
 			self.dispatchEvent(new goog.events.Event(
-				synthjs.audiocore.WavePluginEventType.INIT, 
+				synthjs.audiocore.WavePluginEventType.INIT,
 				e));
 			return e;
 		});
 
-}
+};
 
 /**
  * @param {synthjs.audiocore.WaveEvent} event
@@ -102,7 +101,7 @@ synthjs.audiocore.WavePlugin.prototype.initDeferred = function(opt_params){
 synthjs.audiocore.WavePlugin.prototype.addEventDeferred = function(event){
 	//var workerD = new synthjs.utility.WorkerDeferred(this._worker,
 	var request = event.createPostObject();
-	request['action'] = 'midi';  
+	request['action'] = 'midi';
 	
 	var workerD = this._workerCreator.create(
 		request);
@@ -115,26 +114,24 @@ synthjs.audiocore.WavePlugin.prototype.addEventDeferred = function(event){
 		return this.initDeferred().assocChainDeferred(workerD);
 	}
 	
-}
+};
 
 
 
 synthjs.audiocore.WavePlugin.prototype.getBufferDeferred = function(len){
-	
-	var workerD = this._workerCreator.create( 
+	var workerD = this._workerCreator.create(
 		{action:'getbuffer', length:len},
 		{error: function(){
-			// console.log("GET BUFFER ERROR");
 			return {leftBuffer: new Float32Array(len), rightBuffer: new Float32Array(len)};
 		}}
 	);
 		
-		
+	var d;
 	if( this._initialized ){
-		var d = workerD;
+		d = workerD;
 	}
 	else {
-		var d = this.initDeferred().assocChainDeferred(workerD);
+		d = this.initDeferred().assocChainDeferred(workerD);
 		//return this.initDeferred().assocChainDeferred(workerD);
 	}
 	
@@ -144,7 +141,7 @@ synthjs.audiocore.WavePlugin.prototype.getBufferDeferred = function(len){
 			rightBuffer: e['rightbuffer']
 		};
 	});
-}
+};
 
 /**
  * @param {string} name
@@ -157,7 +154,7 @@ synthjs.audiocore.WavePlugin.prototype.setParamDeferred = function(name, value){
 			goog.asserts.assert("Can't set param to plugin");
 		}}
 	);
-}
+};
 
 /**
  * MIDIイベントと出来るだけ互換性があるようにしておく
@@ -194,7 +191,7 @@ synthjs.audiocore.WaveEvent = function(type, opt_params){
 synthjs.audiocore.WaveEvent.prototype.createPostObject = function(){
 	var rt = {};
 	rt['type'] = this.type;
-	var eventType = synthjs.audiocore.WaveEventType;	
+	var eventType = synthjs.audiocore.WaveEventType;
 	switch(this.type){
 		case eventType.NOTEON:
 			goog.asserts.assertInstanceof(this.note, synthjs.audiocore.Note, "invalid");

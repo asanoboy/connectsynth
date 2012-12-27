@@ -29,6 +29,7 @@ function testWavePlugin1() {
 	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), len = 21;
 	
 	var d = wave.getBufferDeferred(len).addCallback(function(buffers1){
+		console.log(buffers1);
 		assertEquals(buffers1.leftBuffer.length, len);
 		assertEquals(buffers1.rightBuffer.length, len);
 		
@@ -78,7 +79,7 @@ function testWavePlugin1() {
 	asyncTestCase.waitForAsync();
 }
 
-function testContinuous() {
+function _testContinuous() {
 	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), len = 21;
 	
 	setInterval(function(){

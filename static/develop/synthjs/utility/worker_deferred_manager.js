@@ -15,7 +15,7 @@ synthjs.utility.WorkerDeferredManager = function(worker){
 	
 	this._waitDeferredList = {};
 	this._errorHandlerList = {};
-	this._onPostMessageBinded = goog.bind(this.onPostMessage, this)
+	this._onPostMessageBinded = goog.bind(this.onPostMessage, this);
 	this._worker.addEventListener("message", this._onPostMessageBinded);
 	
 	
@@ -24,7 +24,7 @@ synthjs.utility.WorkerDeferredManager = function(worker){
 synthjs.utility.WorkerDeferredManager.prototype.dispose = function(){
 
 	this._worker.removeEventListener("message", this._onPostMessageBinded);
-}
+};
 
 /**
  * callback from worker.
@@ -45,9 +45,9 @@ synthjs.utility.WorkerDeferredManager.prototype.onPostMessage = function(e){
 		}
 	}
 	else{
-		// console.log(e['data']);
+		console.log(e['data']);
 	}
-}
+};
 
 synthjs.utility.WorkerDeferredManager.prototype.create = function(opt_params, opt_settings){
 	opt_params = opt_params || {};

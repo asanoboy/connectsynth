@@ -121,11 +121,11 @@ synthjs.audiocore.Player.prototype.play = function(){
 		return this._playByWebAudioApi();
 	}
 	else {
-		goog.asserts.fail("Audio API is not available.")
+		goog.asserts.fail("Audio API is not available.");
 		return false;
 	}
 	
-}
+};
 
 // synthjs.audiocore.Player.prototype.clearEventHandler = function(){
 	// //this._pubsub.dispose();
@@ -150,7 +150,7 @@ synthjs.audiocore.Player.prototype.stop = function(){
 	else {
 		return false;
 	}
-}
+};
 
 synthjs.audiocore.Player.prototype.eof = function(){
 	var eof = true;
@@ -218,7 +218,7 @@ synthjs.audiocore.Player.prototype._playByWebAudioApi = function(){
 				data1[i] = rightsBuffer[i];
 				i++;
 			}
-		}
+		};
 		
 		var data0 = e['outputBuffer']['getChannelData'](0), 
 			data1 = e['outputBuffer']['getChannelData'](1), i=0, arr;

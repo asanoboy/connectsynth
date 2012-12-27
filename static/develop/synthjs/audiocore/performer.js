@@ -124,13 +124,24 @@ synthjs.audiocore.Performer.prototype.getBufferDeferred = function(len){
 	var self = this;
 	var dList = [];
 	for(;;){
+
 		if( nextEvent===false || nextEvent.get("offset") > to ){
 			dList.push(this._dynamicGenerator.getBufferDeferred(len-filled));
+			this._currentOffset = to;
 			break;
 		}
 		
 		buflen = Math.floor(( nextEvent.get("offset") - this._currentOffset) / this._deltaPerSample );
-		d = this._dynamicGenerator.getBufferDeferred(buflen);
+
+		if( buflen > 0 ){
+			d = this._dynamicGenerator.getBufferDeferred(buflen);
+			this._currentOffset = nextEvent.get("offset");
+		}
+		else{
+			d = (new D()).addCallback(function(){
+				return {leftBuffer: new Float32Array(0), rightBuffer: new Float32Array(0)};
+			});
+		}
 
 
 		eventOffset = nextEvent.get("offset");
@@ -142,27 +153,12 @@ synthjs.audiocore.Performer.prototype.getBufferDeferred = function(len){
 			}
 			else if( nextEvent instanceof synthjs.model.MidiKeyEvent ){
 				if( nextEvent.get("offset")==eventOffset ){
-
 					switch(nextEvent.get("type")){
 						case synthjs.model.MidiKeyEventType.ON:
-							d.addCallback((function(event){
-								return function(buffers){
-									self._dynamicGenerator.addNoteDeferred(
-										event.get("note")
-										).callback();
-									return buffers;
-								};
-							})(nextEvent));
+							d.assocChainDeferred(self._dynamicGenerator.addNoteDeferred(nextEvent.get("note"), nextEvent.get("verocity")));
 							break;
 						case synthjs.model.MidiKeyEventType.OFF:
-							d.addCallback((function(event){
-								return function(buffers){
-									self._dynamicGenerator.removeNoteDeferred(
-										nextEvent.get("note")
-										).callback();
-									return buffers;
-								};
-							})(nextEvent));
+							d.assocChainDeferred(self._dynamicGenerator.removeNoteDeferred(nextEvent.get("note"), nextEvent.get("verocity")));
 							break;
 					}
 				}
@@ -181,6 +177,7 @@ synthjs.audiocore.Performer.prototype.getBufferDeferred = function(len){
 
 		
 		filled += buflen;
+		dList.push(d);
 	}
 	
 	if( nextEvent===false ){
@@ -188,26 +185,34 @@ synthjs.audiocore.Performer.prototype.getBufferDeferred = function(len){
 		this._eof = true;
 	}
 
-	var dWait = new D();
-	return new D().addCallback(function(){
-		new DL(dList).addCallback(function(buffersList){
-			var leftBufferAll = new Float32Array(len);
-			var rightBufferAll = new Float32Array(len);
-			var offset=0;
-			goog.array.forEach(buffersList, function(buffers){
-				for(var i=0; i<buffers[1].leftBuffer.length; i++){
-					leftBufferAll[i+offset] = buffers[1].leftBuffer[i];
-					rightBufferAll[i+offset] = buffers[1].rightBuffer[i];
+	var dStart = new D(),
+		dWait = new D();
+	var bufferFilled = 0;
+		leftBufferAll = new Float32Array(len),
+		rightBufferAll = new Float32Array(len);
+
+	goog.array.forEach(dList, function(d, idx){
+		dStart.assocChainDeferred(d.addCallback(
+			function(buffers){
+				if( buffers && buffers.leftBuffer && buffers.rightBuffer ){
+
+					var left = buffers.leftBuffer;
+					var right = buffers.rightBuffer;
+					for( var i=0; i<left.length; i++){
+						leftBufferAll[bufferFilled + i] = left[i];
+						rightBufferAll[bufferFilled + i] = right[i];
+						bufferFilled++;
+					}
 				}
-				offset += buffers[1].leftBuffer.length;
+			}
+		));
+		if( idx==dList.length-1 ){
+			dStart.addCallback(function(){
+				dWait.callback({leftBuffer: leftBufferAll, rightBuffer: rightBufferAll});
 			});
-			return {leftBuffer: leftBufferAll, rightBuffer: rightBufferAll};
-		}).assocChainDeferred(dWait);
-		
-		goog.array.forEach(dList, function(d){
-			setTimeout(function(){d.callback();}, 0);
-		});
-	}).awaitDeferred(dWait);
+		}
+	});
+	return dStart.awaitDeferred(dWait);
 };
 
 /**

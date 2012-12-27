@@ -20,9 +20,17 @@ goog.inherits(synthjs.model.MidiTrack, synthjs.model.Base);
  * @param {synthjs.model.MidiEventBase} event
  */
 synthjs.model.MidiTrack.prototype.addEvent = function(event) {
-	this.get("eventcollection").add(event);
+	if( goog.isArray(event) ){
+		goog.array.forEach(event, function(e){
+			this.get("eventcollection").add(e);
+		}, this);
+	}
+	else {
+		this.get("eventcollection").add(event);
+	}
+
 	this.get("eventcollection").sort(function(a, b){
-		return a.get('offset') >= b.get('offset');
+		return a.get('offset') - b.get('offset');
 	});
 };
 

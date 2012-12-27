@@ -88,10 +88,7 @@ function testRead() {
 		var tracklist = midi.get('tracks').getAll();
 		for( var i=0; i<tracklist.length; i++){
 			var track = tracklist[i];
-			console.log("Track "+i);
-			console.log(track);
 			var eventlist = track.get('eventcollection').getAll();
-			console.log("EventNum: "+eventlist.length);
 			var statuslist = [];
 			for( var j=0; j<eventlist.length; j++ ){
 				var event = eventlist[j];
@@ -102,13 +99,25 @@ function testRead() {
 					}
 				}
 			}
-			console.log(statuslist);
 		}
 	});
 
 	asyncTestCase.waitForAsync();
 	d.callback();	
 }
+
+function testSort(){
+	var track = new synthjs.model.MidiTrack();
+	for( var i=0; i<100; i++){
+		track.addEvent( new synthjs.model.MidiKeyEvent(0x91, Math.floor(Math.random()*10000), 60, 100));
+	}
+
+	var prev = 0;
+	goog.array.forEach(track.get("eventcollection").getAll(), function(e){
+		assertTrue(prev <= e.get("offset"));
+		prev = e.get("offset");
+	})
+};
 
 </script>
 </body>

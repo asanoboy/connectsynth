@@ -14,6 +14,7 @@
 
 	goog.require("synthjs.utility.Deferred");
 	goog.require("synthjs.utility.AjaxDeferred");
+	goog.require("synthjs.audiocore.Player");
 	goog.require("synthjs.audiocore.WavePlugin");
 	goog.require("synthjs.audiocore.Performer");
 	goog.require("synthjs.audiocore.Note");
@@ -29,7 +30,7 @@ var MidiFile = synthjs.encode.MidiFile,
 	Ajax = synthjs.utility.AjaxDeferred,
 	D = synthjs.utility.Deferred,
 	asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall(),
-	midipath = "../encode/midifile_test.mid";
+	midipath = "test.mid";
 
 function setUp() {
 
@@ -82,11 +83,38 @@ function getMidiDeferred() {
 	});
 }
 
-function test1() {
-	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), 
-		len = 21,
+
+
+function _test() {
+	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}),
 		sampleRate = 48000,
-		cnt = 0,
+		performer = new synthjs.audiocore.Performer(),
+		track = new synthjs.model.MidiTrack(),
+		player = synthjs.audiocore.Player.getInstance();
+
+	track.addEvent( new synthjs.model.MidiKeyEvent(0x91, 0, 60, 100));
+	track.addEvent( new synthjs.model.MidiKeyEvent(0x91, 1920, 60, 0));
+
+
+	performer.setWave(wave);
+	performer.setSampleRate(sampleRate);
+	performer.setDelta(480);
+	performer.setTrack(track);
+	player.addGenerator(performer);
+
+	player.play();
+	setInterval(function(){
+		if( performer.eof() ){
+			player.stop();
+			asyncTestCase.continueTesting();
+		}
+	}, 20);
+	asyncTestCase.waitForAsync();
+}
+
+function _test1() {
+	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), 
+		sampleRate = 48000,
 		performer = new synthjs.audiocore.Performer();
 
 	performer.setWave(wave);
@@ -96,14 +124,20 @@ function test1() {
 	var d = getMidiDeferred().addCallback(function(midi){
 		assert(midi instanceof synthjs.model.Midi);
 		var tracks = midi.get('tracks').getAll();
+		var cnt = 0;
 		goog.array.forEach(tracks, function(track){
 			if( !track.hasKeyEvent() ) return;
 
+			if( cnt ) return;
 			performer.setTrack(track);
 			performer.rewind();
+			var hoge = 0;
 			while( !performer.eof() ){
+				hoge++;
 				d.assocChainDeferred(performer.getBufferDeferred(2048));
+				if( hoge>100 ) break;
 			}
+			cnt++;
 		})
 		d.addCallback(function(){
 			asyncTestCase.continueTesting();
@@ -113,6 +147,43 @@ function test1() {
 	asyncTestCase.waitForAsync();
 	d.callback();
 	
+}
+
+function testbeep() {
+	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), 
+		sampleRate = 48000,
+		performer = new synthjs.audiocore.Performer(),
+		player = synthjs.audiocore.Player.getInstance();
+
+	performer.setWave(wave);
+	performer.setSampleRate(48000);
+	performer.setDelta(48);
+	performer.setTempo(500000);
+
+	player.addGenerator(performer);
+
+	var d = getMidiDeferred().addCallback(function(midi){
+		assert(midi instanceof synthjs.model.Midi);
+		var tracks = midi.get('tracks').getAll();
+		var cnt = 0;
+		goog.array.forEach(tracks, function(track){
+			if( !track.hasKeyEvent() ) return;
+
+			if( cnt==2 ){
+				performer.setTrack(track);
+				performer.rewind();
+				player.play();
+			}
+			console.log(cnt);
+			cnt++;
+		})
+		d.addCallback(function(){
+			asyncTestCase.continueTesting();
+		});
+	});
+	
+	asyncTestCase.waitForAsync();
+	d.callback();
 }
 
 </script>
