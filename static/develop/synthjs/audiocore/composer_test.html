@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests dynamicgenerator</title>
+<script src="../../closurelibrary/closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+	goog.require("goog.testing.jsunit");
+	goog.require("goog.testing.AsyncTestCase");
+	
+	goog.require("goog.net.XhrIo.ResponseType");
+	goog.require("goog.fs.FileReader");
+	goog.require("goog.events.EventHandler");
+
+	goog.require("synthjs.utility.Deferred");
+	goog.require("synthjs.utility.AjaxDeferred");
+	goog.require("synthjs.audiocore.Player");
+	goog.require("synthjs.audiocore.WavePlugin");
+	goog.require("synthjs.audiocore.Performer");
+	goog.require("synthjs.audiocore.Note");
+	goog.require("synthjs.encode.MidiFile");
+	goog.require("synthjs.model.Midi");
+</script>
+</head>
+<body>
+<script>
+
+var MidiFile = synthjs.encode.MidiFile,
+	Midi = synthjs.model.Midi,
+	Ajax = synthjs.utility.AjaxDeferred,
+	D = synthjs.utility.Deferred,
+	asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall(),
+	midipath = "test.mid";
+
+function setUp() {
+
+}
+
+function tearDown() {
+
+}
+
+
+</script>
+</body>
+</html>
