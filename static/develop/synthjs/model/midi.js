@@ -107,6 +107,6 @@ synthjs.model.Midi.createEventByBuffer = function(buffer, opt_prevStatus){
  */
 synthjs.model.MidiTrackCollection = function(){
 	goog.base(this, synthjs.model.MidiTrack);
-}
+};
 
 goog.inherits(synthjs.model.MidiTrackCollection, synthjs.model.Collection);

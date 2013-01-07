@@ -16,10 +16,9 @@ synthjs.audiocore.Composer = function(){
 };
 
 /**
- * @param {synthjs.data.Track} track
+ * @param {synthjs.audiocore.Performer} performer
  */
-synthjs.audiocore.Composer.prototype.addTrack = function(track){
-	var performer = new synthjs.audiocore.Performer(track, {bpm: this._bpm});
+synthjs.audiocore.Composer.prototype.addPerformer = function(performer){
 	performer.setSampleRate(this._sampleRate);
 	this._performers.push(performer);
 };
@@ -51,7 +50,6 @@ synthjs.audiocore.Composer.prototype.getBufferDeferred = function(len){
 					rightBufferAll[i] += buffers[1].rightBuffer[i];
 				}
 			});
-			
 			return {leftBuffer: leftBufferAll, rightBuffer: rightBufferAll};
 		}).chainDeferred(dWait);
 		

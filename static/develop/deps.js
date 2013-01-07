@@ -8,13 +8,14 @@ goog.addDependency('../../../synthjs/application/oscillatorplayer.js', ['synthjs
 goog.addDependency('../../../synthjs/application/publicoscillator.js', ['synthjs.application.PublicOscillator'], ['goog.string', 'synthjs.application.SDKOscillatorBase', 'synthjs.ui.Dialog', 'synthjs.ui.DirectoryControl', 'synthjs.utility.AjaxDeferred', 'synthjs.utility.TwitterUri']);
 goog.addDependency('../../../synthjs/application/sdkoscillator.js', ['synthjs.application.SDKOscillator'], ['goog.ui.Dialog', 'goog.ui.Dialog.ButtonSet', 'goog.ui.Prompt', 'synthjs.application.OscillatorPlayer', 'synthjs.application.SDKOscillatorBase', 'synthjs.model.Collection', 'synthjs.model.FileSystem', 'synthjs.model.TextFile', 'synthjs.net.PluginPoster', 'synthjs.ui.DirectoryControl', 'synthjs.ui.TextPrompt', 'synthjs.utility.AjaxDeferred', 'synthjs.utility.BlobBuilder']);
 goog.addDependency('../../../synthjs/application/sdkoscillatorbase.js', ['synthjs.application.SDKOscillatorBase'], ['synthjs.application.OscillatorPlayer', 'synthjs.model.Collection', 'synthjs.model.FileSystem', 'synthjs.model.TextFile']);
+goog.addDependency('../../../synthjs/audiocore/composer.js', ['synthjs.audiocore.Composer'], ['synthjs.audiocore.Performer']);
 goog.addDependency('../../../synthjs/audiocore/dynamicgenerator.js', ['synthjs.audiocore.DynamicGenerator'], ['goog.async.Deferred', 'goog.async.DeferredList', 'goog.debug.Logger', 'synthjs.audiocore.Generator', 'synthjs.audiocore.Note', 'synthjs.audiocore.Wave', 'synthjs.utility.Deferred', 'synthjs.utility.DeferredList']);
 goog.addDependency('../../../synthjs/audiocore/filter.js', ['synthjs.audiocore.Filter'], []);
 goog.addDependency('../../../synthjs/audiocore/filter_plugin.js', ['synthjs.audiocore.FilterPlugin'], ['synthjs.utility.WorkerDeferred']);
 goog.addDependency('../../../synthjs/audiocore/generator.js', ['synthjs.audiocore.Generator'], ['synthjs.audiocore.Filter', 'synthjs.audiocore.FilterPlugin']);
 goog.addDependency('../../../synthjs/audiocore/midiinterface.js', ['synthjs.audiocore.MidiInterface', 'synthjs.audiocore.MidiInterface.EventType'], ['goog.events.EventTarget']);
 goog.addDependency('../../../synthjs/audiocore/note.js', ['synthjs.audiocore.Note'], ['goog.array']);
-goog.addDependency('../../../synthjs/audiocore/performer.js', ['synthjs.audiocore.Performer'], []);
+goog.addDependency('../../../synthjs/audiocore/performer.js', ['synthjs.audiocore.Performer'], ['synthjs.audiocore.DynamicGenerator', 'synthjs.audiocore.Generator', 'synthjs.utility.Deferred', 'synthjs.utility.DeferredList']);
 goog.addDependency('../../../synthjs/audiocore/player.js', ['synthjs.audiocore.Player'], ['goog.object', 'synthjs.audiocore.Generator']);
 goog.addDependency('../../../synthjs/audiocore/wave.js', ['synthjs.audiocore.Wave'], ['goog.async.Deferred', 'goog.async.DeferredList']);
 goog.addDependency('../../../synthjs/audiocore/wave_plugin.js', ['synthjs.audiocore.WaveEvent', 'synthjs.audiocore.WavePlugin', 'synthjs.audiocore.WavePluginEventType'], ['synthjs.utility.EventTarget', 'synthjs.utility.WorkerDeferredManager']);

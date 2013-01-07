@@ -16,6 +16,7 @@
 	goog.require("synthjs.utility.AjaxDeferred");
 	goog.require("synthjs.audiocore.Player");
 	goog.require("synthjs.audiocore.WavePlugin");
+	goog.require("synthjs.audiocore.Composer");
 	goog.require("synthjs.audiocore.Performer");
 	goog.require("synthjs.audiocore.Note");
 	goog.require("synthjs.encode.MidiFile");
@@ -38,6 +39,91 @@ function setUp() {
 
 function tearDown() {
 
+}
+
+function createReadArrayBufferDeferred(){
+	var reader = new goog.fs.FileReader();
+	var handler = new goog.events.EventHandler();
+	var dWait = new synthjs.utility.Deferred();
+	return	new synthjs.utility.Deferred()
+		.addCallback(function(file){
+			handler.listen(reader,
+				goog.fs.FileReader.EventType.LOAD,
+				function(e){
+					handler.dispose();
+					handler = null;
+										
+					dWait.callback(
+						e.target.getResult()
+					);
+				});
+			
+			reader.readAsArrayBuffer(file);		
+		})
+		.awaitDeferred(dWait)
+}
+
+function createGetMidifileDeferred(){
+	return new Ajax(midipath, {
+		responseType: goog.net.XhrIo.ResponseType.BLOB,
+		success: function(e){
+			return e.getResponse();
+		}
+	});
+}
+
+function getMidiDeferred() {
+	return createGetMidifileDeferred()
+	.assocChainDeferred(
+		createReadArrayBufferDeferred()
+	)
+	.addCallback(function(buffer){
+		var parser = new synthjs.encode.MidiParser(buffer);
+		var midifile = parser.createMidi();
+		return Midi.createByMidiFile(midifile);
+	});
+}
+
+
+function testbeep() {
+	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), 
+		sampleRate = 48000,
+		composer = new synthjs.audiocore.Composer(),
+		player = synthjs.audiocore.Player.getInstance();
+
+
+	player.addGenerator(composer);
+
+	var d = getMidiDeferred().addCallback(function(midi){
+		assert(midi instanceof synthjs.model.Midi);
+		var tracks = midi.get('tracks').getAll();
+		var cnt = 0;
+		goog.array.forEach(tracks, function(track){
+			if( !track.hasKeyEvent() ) return;
+
+			cnt++;
+			if( cnt>5 ){
+				return;
+			}	
+			var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}),
+				performer = new synthjs.audiocore.Performer();
+			performer.setWave(wave);
+			performer.setSampleRate(48000);
+			performer.setDelta(48);
+			performer.setTempo(500000);
+			performer.setTrack(track);
+			composer.addPerformer(performer);
+
+		})
+		d.addCallback(function(){
+			composer.rewind();
+			player.play();
+			asyncTestCase.continueTesting();
+		});
+	});
+	
+	asyncTestCase.waitForAsync();
+	d.callback();
 }
 
 
