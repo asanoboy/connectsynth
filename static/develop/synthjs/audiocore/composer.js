@@ -57,12 +57,12 @@ synthjs.audiocore.Composer.prototype.getBufferDeferred = function(len){
 		
 		goog.array.forEach(dList, function(d){
 			d.callback();
-		})
+		});
 		
 	}).awaitDeferred(dWait);
 	
 	return d;
-}
+};
 
 /**
  * @param {number}
@@ -70,9 +70,9 @@ synthjs.audiocore.Composer.prototype.getBufferDeferred = function(len){
 synthjs.audiocore.Composer.prototype.setSampleRate = function(sampleRate){
 	/** @private */
 	this._sampleRate = sampleRate;
- 	for( var i=0; i<this._performers.length; i++){
- 		rt = this._performers[i].setSampleRate(sampleRate);
- 	}	
+	for( var i=0; i<this._performers.length; i++){
+		rt = this._performers[i].setSampleRate(sampleRate);
+	}
 };
 
 /**
@@ -85,5 +85,5 @@ synthjs.audiocore.Composer.prototype.eof = function(){
 		eof = eof && this._performers[i].eof();
 	}
 	//console.log(eof);
-	return eof;	
-}
+	return eof;
+};

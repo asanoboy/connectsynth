@@ -64,12 +64,12 @@ goog.inherits(synthjs.model.MidiEventBase, synthjs.model.Base);
  * @param {number} status Corresponds to MIDI format. ex. 0x80 means OFF event.
  * @param {number} offset Unit is one of 'delta' in MIDI format.
  * @param {number} note In range [0, 127] integer
- * @param {number} verocity In range [0, 127] integer
+ * @param {number} velocity In range [0, 127] integer
  */
-synthjs.model.MidiKeyEvent = function(status, offset, note, verocity){
+synthjs.model.MidiKeyEvent = function(status, offset, note, velocity){
 	goog.asserts.assert(goog.isNumber(status));
 	goog.asserts.assert((status & 0xf0)==0x80 || (status & 0xf0) ==0x90);
-//	if ( (status & 0xf0) ==0x90 && verocity==0 ){
+//	if ( (status & 0xf0) ==0x90 && velocity==0 ){
 //		status = (status & 0x0f) | 0x80;
 //	}
 	goog.base(this, {
@@ -77,7 +77,7 @@ synthjs.model.MidiKeyEvent = function(status, offset, note, verocity){
 		"status": status,
 		"offset": offset,
 		"note": note,
-		"verocity": verocity
+		"velocity": velocity
 	});
 };
 goog.inherits(synthjs.model.MidiKeyEvent, synthjs.model.MidiEventBase);
@@ -92,9 +92,10 @@ synthjs.model.MidiKeyEventType = {
  * @constructor
  * @extends {synthjs.model.MidiEventBase}
  */
-synthjs.model.MidiOtherEvent = function(buffer){
+synthjs.model.MidiOtherEvent = function(status, buffer){
 	goog.base(this, {
 		"offset": 0,
+		"status": status,
 		"buffer": buffer
 	});
 };

@@ -155,10 +155,10 @@ synthjs.audiocore.Performer.prototype.getBufferDeferred = function(len){
 				if( nextEvent.get("offset")==eventOffset ){
 					switch(nextEvent.get("type")){
 						case synthjs.model.MidiKeyEventType.ON:
-							d.assocChainDeferred(self._dynamicGenerator.addNoteDeferred(nextEvent.get("note"), nextEvent.get("verocity")));
+							d.assocChainDeferred(self._dynamicGenerator.addNoteDeferred(nextEvent.get("note"), nextEvent.get("velocity")));
 							break;
 						case synthjs.model.MidiKeyEventType.OFF:
-							d.assocChainDeferred(self._dynamicGenerator.removeNoteDeferred(nextEvent.get("note"), nextEvent.get("verocity")));
+							d.assocChainDeferred(self._dynamicGenerator.removeNoteDeferred(nextEvent.get("note"), nextEvent.get("velocity")));
 							break;
 					}
 				}

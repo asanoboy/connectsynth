@@ -45,7 +45,6 @@ synthjs.model.Midi.createByMidiFile = function(midifile){
 			eventdata = trackdata.getEventData(j);
 			goog.asserts.assert(eventdata instanceof Uint8Array);
 
-			
 			event = synthjs.model.Midi.createEventByBuffer(eventdata, lastStatus);
 			goog.asserts.assert(event instanceof synthjs.model.MidiEventBase);
 			
@@ -54,9 +53,10 @@ synthjs.model.Midi.createByMidiFile = function(midifile){
 			//track.addEvent(event);
 			events.push(event);
 
-			if( event instanceof synthjs.model.MidiKeyEvent ){
+			if( event instanceof synthjs.model.MidiKeyEvent || event instanceof synthjs.model.MidiOtherEvent ){
 				lastStatus = event.get("status");
 			}
+
 		}
 		track.addEvent(events);
 		midi.addTrack(track);
@@ -64,7 +64,7 @@ synthjs.model.Midi.createByMidiFile = function(midifile){
 	
 	//TODO:
 	return midi;
-}
+};
 
 /**
  * @param {Uint8Array} buffer
@@ -88,14 +88,14 @@ synthjs.model.Midi.createEventByBuffer = function(buffer, opt_prevStatus){
 			case 0x80:
 			case 0x90:
 				var note = buffer[needle++];
-				var verocity = buffer[needle++];
+				var velocity = buffer[needle++];
 				goog.asserts.assertNumber(note);
-				goog.asserts.assertNumber(verocity);
+				goog.asserts.assertNumber(velocity);
 				return new synthjs.model.MidiKeyEvent(
 					status,
 					0,
 					note,
-					verocity);
+					velocity);
 			default:
 				return new synthjs.model.MidiOtherEvent(buffer);
 		}

@@ -62,8 +62,8 @@ Instrument.prototype.getBuffer = function(length){
 	return [buffer, buffer];	
 }
 
-Instrument.prototype.onNote = function(note, verocity){
-	this.wave.addEvent("noteon", note, verocity);
+Instrument.prototype.onNote = function(note, velocity){
+	this.wave.addEvent("noteon", note, velocity);
 }
 
 Instrument.prototype.offNote = function(note){
