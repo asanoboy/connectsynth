@@ -67,7 +67,7 @@ Wave.prototype.getBuffer = function(len){
 	
 	for( var i=0; i<this._singingNotes.length; i++ ){
 		for( var j=0; j<len; j++ ){
-			arr[j] += 0.3 * Math.sin( this._singingNotes[i].radianPerSample * j + this._singingNotes[i].offsetRadian
+			arr[j] += 0.1 * Math.sin( this._singingNotes[i].radianPerSample * j + this._singingNotes[i].offsetRadian
 				+ 0.5*Math.sin(3 * (this._singingNotes[i].radianPerSample * j + this._singingNotes[i].offsetRadian)
 					+ 0.5*Math.sin(7 * (this._singingNotes[i].radianPerSample * j + this._singingNotes[i].offsetRadian))
 				));

@@ -2,22 +2,19 @@ goog.provide("synthjs.audiocore.Player");
 
 goog.require("synthjs.audiocore.Generator");
 goog.require('goog.object');
-//goog.require('goog.pubsub.PubSub');
-//goog.require('goog.debug.Logger');
+goog.require("goog.events.EventTarget");
 
 /** @const */
 var SAMPLE_RATE = 48000;
 
 /** @constructor */
 synthjs.audiocore.Player = function(){
+	goog.base(this);
+
 	/** @private */
 	this._sampleRate = SAMPLE_RATE;
 	
-	/** @private */
-	//this._pubsub = new goog.pubsub.PubSub();
 	
-	/** @private */
-	this._keysPubsub = [];
 	
 	/** @private */
 	this._hasWebAudioApi = ( typeof webkitAudioContext == 'function' ) ||
@@ -27,8 +24,8 @@ synthjs.audiocore.Player = function(){
 	this._hasAudioDataApi = false;
 	if( typeof Audio == 'function' ){
 		var a = new Audio();
-		this._hasAudioDataApi = typeof a['mozSetup'] == 'function'; 
-	} 
+		this._hasAudioDataApi = typeof a['mozSetup'] == 'function';
+	}
 	
 	/** @private */
 	this._generatorList = [];
@@ -40,30 +37,21 @@ synthjs.audiocore.Player = function(){
 	this._status = 'stop';
 	
 	this._stopTimer = null;
+
+	this._isLatencyTimer = false;
+	this._latencyFrom = null;
 };
+goog.inherits(synthjs.audiocore.Player, goog.events.EventTarget);
 
 goog.addSingletonGetter(synthjs.audiocore.Player);
 
-// synthjs.audiocore.Player.logger = goog.debug.Logger.getLogger('synthjs.audiocore.Player');
-// synthjs.audiocore.Player.logger.setLevel(goog.debug.Logger.Level.ALL);
-
 /**
- * @param {string}
- * @param {function()}
+ * If flag is true, the player dispatches PUT_LATENCY event.
+ * @param {Boolean} flag [description]
  */
-// synthjs.audiocore.Player.prototype.on = function(topic, callback){
-	// this._keysPubsub.push(this._pubsub.subscribe(topic, callback));
-// };
-
-/** 
- * @private
- * @param {string}
- */
-// synthjs.audiocore.Player.prototype._eventDispatch = function(topic){
-	// //this._pubsub.publish(topic);
-// };
-
-
+synthjs.audiocore.Player.prototype.setLatencyTimer = function(flag){
+	this._isLatencyTimer = flag;
+};
 /**
  * @public
  * @param {synthjs.audiocore.Generator}
@@ -74,27 +62,14 @@ synthjs.audiocore.Player.prototype.addGenerator = function(gen){
 	this._generatorList.push(gen);
 	
 	return index;
-}
-
-/**
- * @public
- * @param {number}
- */
-// synthjs.audiocore.Player.prototype.removeGeneratorAt = function(index){
-	// delete this._generatorList[index];
-// }
+};
 
 synthjs.audiocore.Player.prototype.removeGenerator = function(generator){
 	this._generatorList = goog.array.filter(this._generatorList, function(gen){
 		return gen!=generator;
 	}, this);
 	
-	// goog.object.forEach(this._generatorList, function(val, key){
-		// if( generator == val ){
-			// delete this._generatorList[key];
-		// }
-	// }, this);
-}
+};
 
 /**
  * @param {synthjs.audiocore.Generator}
@@ -127,23 +102,16 @@ synthjs.audiocore.Player.prototype.play = function(){
 	
 };
 
-// synthjs.audiocore.Player.prototype.clearEventHandler = function(){
-	// //this._pubsub.dispose();
-	// //this._pubsub = new goog.pubsub.PubSub();
-// }
-
 synthjs.audiocore.Player.prototype.stop = function(){
 	if( this._stopTimer ){
 		this._stopTimer = null;
 	}
 	
 	if( this._hasAudioDataApi ){
-		//this._pubsub.publish('finish');
 		this._status = 'stop';
 		return this._stopByAudioDataApi();
 	}
 	else if( this._hasWebAudioApi ){
-		//this._pubsub.publish('finish');
 		this._status = 'stop';
 		return this._stopByWebAudioApi();
 	}
@@ -164,7 +132,7 @@ synthjs.audiocore.Player.prototype.eof = function(){
 synthjs.audiocore.Player.prototype._getBufferDeferred = function(len){
 	
 	var dList = [];
-	
+		
 	goog.array.forEach(this._generatorList, function(gen){
 		if( !gen.eof() ){
 			dList.push(gen.getBufferDeferred(len));
@@ -183,7 +151,7 @@ synthjs.audiocore.Player.prototype._getBufferDeferred = function(len){
 							leftBufferTotal[i] += buffers[1].leftBuffer[i];
 							rightBufferTotal[i] += buffers[1].rightBuffer[i];
 						}
-					})
+					});
 				}
 				buffersList = void 0;
 					
@@ -212,15 +180,24 @@ synthjs.audiocore.Player.prototype._playByWebAudioApi = function(){
 	}
 	
 	this._WebAudioApiNode['onaudioprocess'] = goog.bind(function(e){
+		var self = this;
+		if( this._isLatencyTimer ){
+			this._latencyFrom = new Date();
+		}
 		var setBuffer = function(leftBuffer, rightsBuffer){
 			while(i<streamlength){
 				data0[i] = leftBuffer[i];
 				data1[i] = rightsBuffer[i];
 				i++;
 			}
+			if( self._isLatencyTimer ){
+				var time = (new Date()).getTime() - self._latencyFrom.getTime();
+				time /= 1000;
+				self.dispatchEvent(new goog.events.Event(synthjs.audiocore.PlayerEventType.PUT_LATENCY, time));
+			}
 		};
 		
-		var data0 = e['outputBuffer']['getChannelData'](0), 
+		var data0 = e['outputBuffer']['getChannelData'](0),
 			data1 = e['outputBuffer']['getChannelData'](1), i=0, arr;
 		
 		if( this.eof() ) {
@@ -237,7 +214,6 @@ synthjs.audiocore.Player.prototype._playByWebAudioApi = function(){
 		else {
 			var d = this._getBufferDeferred(streamlength)
 			.addCallback(function(buffers){
-				var d1 = new Date();
 				setBuffer(buffers.leftBuffer, buffers.rightBuffer);
 				buffers = void 0;
 				d = void 0;
@@ -249,13 +225,13 @@ synthjs.audiocore.Player.prototype._playByWebAudioApi = function(){
 			
 	}, this);
 	this._WebAudioApiNode['connect'](this._WebAudioApiContext['destination']);
-	return true;	
-}
+	return true;
+};
 
 synthjs.audiocore.Player.prototype._stopByWebAudioApi = function(){
 	this._WebAudioApiNode['disconnect']();
 	return true;
-}
+};
 
 /**
  * available for firefox
@@ -264,7 +240,7 @@ synthjs.audiocore.Player.prototype._stopByWebAudioApi = function(){
  */
 synthjs.audiocore.Player.prototype._playByAudioDataApi = function(){
 	var audio = new Audio();
-	var currentWritePosition=0, 
+	var currentWritePosition=0,
 		buffersize=this._sampleRate/4,
 		maxBuffersize=8192,
 		tail, player = this;
@@ -278,7 +254,7 @@ synthjs.audiocore.Player.prototype._playByAudioDataApi = function(){
 			buffer[2*i+1] = rightBuffer[i];
 		}
 		return audio['mozWriteAudio'](leftBuffer);
-	}
+	};
 	
 	/** @private */
 	this._audioDataApiTimer = setInterval(function(){
@@ -292,13 +268,12 @@ synthjs.audiocore.Player.prototype._playByAudioDataApi = function(){
 			totaltail+=tail.length;
 			written = audio['mozWriteAudio'](tail);
 			currentWritePosition += written;
-			tail = null
+			tail = null;
 		}
 		
 		var available = audio['mozCurrentSampleOffset']() + buffersize - currentWritePosition;
 		if( available>0 && !player.eof() ){
 			var readLength = available>=maxBuffersize ? maxBuffersize : available;
-// 			
 			var d = player._getBufferDeferred(readLength)
 			.addCallback(function(buffers){
 				written = setBuffer(buffers.leftBuffer, buffers.rightBuffer);
@@ -312,22 +287,18 @@ synthjs.audiocore.Player.prototype._playByAudioDataApi = function(){
 			// TODO: test
 			d.callback();
 			
-			// var soundData = player._getBuffer(readLength);
-// 			
-			// written = audio['mozWriteAudio'](soundData);
-			// if( written < readLength ){
-				// tail = soundData.subarray(written);
-			// }
-			
-			// currentWritePosition += written;
 		}
 		
 	}, 100);
 
 	return true;
-}
+};
 
 synthjs.audiocore.Player.prototype._stopByAudioDataApi = function(gen){
 	clearInterval(this._audioDataApiTimer);
 	return true;
+};
+
+synthjs.audiocore.PlayerEventType = {
+	PUT_LATENCY: 'put_latency'
 };

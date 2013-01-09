@@ -93,6 +93,18 @@ function testbeep() {
 
 
 	player.addGenerator(composer);
+	//player.setLatencyTimer(true);
+	var handler = new goog.events.EventHandler();
+	handler.listen(player, 
+		synthjs.audiocore.PlayerEventType.PUT_LATENCY, 
+		function(e){
+			var msec = Math.round(e.target*1000);
+			var str = '';
+			while(msec--){
+				str += "#";
+			}
+			console.log(str);
+		});
 
 	var d = getMidiDeferred().addCallback(function(midi){
 		assert(midi instanceof synthjs.model.Midi);
@@ -102,9 +114,6 @@ function testbeep() {
 			if( !track.hasKeyEvent() ) return;
 
 			cnt++;
-			if( cnt>5 ){
-				return;
-			}	
 			var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}),
 				performer = new synthjs.audiocore.Performer();
 			performer.setWave(wave);
