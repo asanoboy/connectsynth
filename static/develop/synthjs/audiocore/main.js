@@ -1,29 +1,6 @@
-addEventListener('message', onGetWave, false);
-
-function onGetWave(e){
-	var rt = {callback: e.data.callback};
-	switch(e.data.action){
-		case 'init':
-			wave.setSampleRate(e.data.samplerate);
-			break;
-		case 'midi':
-			wave.addEvent(e.data);
-			break;
-		case 'getbuffer':
-			var buffer = wave.getBuffer(e.data.length);
-			rt.leftbuffer = buffer;
-			rt.rightbuffer = new Float32Array(buffer);
-			break;
-	}
-	
-	postMessage( rt );
-}
-
-
 
 /** @constructor */
-var Wave = function(arr, opt_tableSize){
-	
+var Instrument = function(){
 	this._singingNotes = [];
 
 	this._removedNotes = [];	
@@ -33,12 +10,19 @@ var Wave = function(arr, opt_tableSize){
 /**
  * @private
  */
-Wave.prototype.setSampleRate = function(sampleRate){
+Instrument.prototype.setSampleRate = function(sampleRate){
 	this._sampleRate = sampleRate;
 };
 
-Wave.prototype.addEvent = function(event){
-	postMessage(this._singingNotes.length);
+Instrument.prototype.onNote = function(id, vel){
+	this.addEvent({type: 'noteon', note: id, velocity: vel});
+};
+
+Instrument.prototype.offNote = function(id){
+	this.addEvent({type: 'noteoff', note: id});
+};
+
+Instrument.prototype.addEvent = function(event){
 	if( event.type=='noteon' && event.velocity>0 ){
 		this._singingNotes.push({
 			radianPerSample: 440 * Math.pow(2, event.note/12-5) / this._sampleRate * 2 * Math.PI,
@@ -58,14 +42,12 @@ Wave.prototype.addEvent = function(event){
 	}
 };
 
-Wave.prototype.getBuffer = function(len){
-	
+Instrument.prototype.getBuffer = function(len){
 	var arr = new Float32Array(len), theta, lastAmp, amp, isRemoved;
 	
 	for( var i=0; i<this._singingNotes.length; i++ ){
 		isRemoved = false;
 		for( var m=0; m<this._removedNotes.length; m++){
-			//postMessage(this._removedNotes);
 			if( this._singingNotes[i].note==this._removedNotes[m].note ){
 
 				isRemoved = true;
@@ -83,12 +65,7 @@ Wave.prototype.getBuffer = function(len){
 				}
 			}
 
-			// arr[j] = 0.1 * Math.sin(this._singingNotes[i].radianPerSample * j + this._singingNotes[i].offsetRadian );
 			arr[j] = 0.1 * this._singingNotes[i].velocity * Math.sin(this._singingNotes[i].radianPerSample * j + this._singingNotes[i].offsetRadian );
-			// arr[j] += 0.1 * Math.sin( this._singingNotes[i].radianPerSample * j + this._singingNotes[i].offsetRadian
-			// 	+ 0.5*Math.sin(3 * (this._singingNotes[i].radianPerSample * j + this._singingNotes[i].offsetRadian)
-			// 		+ 0.5*Math.sin(7 * (this._singingNotes[i].radianPerSample * j + this._singingNotes[i].offsetRadian))
-				// ));
 		}
 		this._singingNotes[i].offsetRadian += this._singingNotes[i].radianPerSample * len;
 
@@ -116,7 +93,5 @@ Wave.prototype.getBuffer = function(len){
 	this._removedNotes = newRemovedNotes;
 	
 	
-	return arr;
+	return [arr, arr];
 };
-
-var wave = new Wave([0,1,0,-1]);

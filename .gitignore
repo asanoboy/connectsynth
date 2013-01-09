@@ -8,3 +8,4 @@ sqlite.db
 stunnel
 newreq.pem
 stunnel.log
+.DS_Store

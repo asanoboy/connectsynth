@@ -17,10 +17,12 @@ importScripts("main.js");
 					var controls = inst.getControlList && typeof(inst.getControlList)=='function' ?
 						inst.getControlList() :
 						false;
+					postMessage(controls);
 					if( controls ){
 						rt.controller.controls = controls;
 					}
 				}
+				postMessage(rt.controller);
 				break;
 			case 'set':
 				inst.setValue(e.data.id, e.data.value)
@@ -47,7 +49,7 @@ importScripts("main.js");
 				return;
 		}
 	
-		delete rt.callback;	
+		
 	
 		postMessage(rt);
 	});
