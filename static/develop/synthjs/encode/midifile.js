@@ -123,7 +123,7 @@ synthjs.encode.MidiTrack.prototype.getEventDelta = function(index){
 	var buffer = this._eventList[index];
 	var delta = 0, finished = false;
 	for( var i=0; i<buffer.length; i++){
-		delta = delta << 8;
+		delta = delta << 7;
 		if( buffer[i] & 0x80 ){
 			delta += (buffer[i] & ~0x80);
 			continue;
@@ -144,7 +144,7 @@ synthjs.encode.MidiTrack.prototype.getEventData = function(index){
 	var buffer = this._eventList[index];
 	var delta = 0, finished = false;
 	for( var i=0; i<buffer.length; i++){
-		delta = delta << 8;
+		delta = delta << 7;
 		if( buffer[i] & 0x80 ){
 			delta += (buffer[i] & ~0x80);
 			continue;
@@ -447,7 +447,7 @@ synthjs.encode.MidiParser.prototype.readVariableLength = function(){
 	
 	var len = 0, $ = this;
 	while($.cur() & 0x80){
-		len += len<<8 + ($.cur() & ~0x80);
+		len += len<<7 + ($.cur() & ~0x80);
 		if( !$.next() ) return false;
 	}
 	len += $.cur();
