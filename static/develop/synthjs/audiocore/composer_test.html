@@ -93,7 +93,7 @@ function testbeep() {
 
 
 	player.addGenerator(composer);
-	//player.setLatencyTimer(true);
+	// player.setLatencyTimer(true);
 	var handler = new goog.events.EventHandler();
 	handler.listen(player, 
 		synthjs.audiocore.PlayerEventType.PUT_LATENCY, 
@@ -114,6 +114,9 @@ function testbeep() {
 			if( !track.hasKeyEvent() ) return;
 
 			cnt++;
+			if( cnt!=3 && cnt!=80 ){
+				// return;
+			}
 			var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}),
 				performer = new synthjs.audiocore.Performer();
 			performer.setWave(wave);
