@@ -17,12 +17,12 @@ importScripts("main.js");
 					var controls = inst.getControlList && typeof(inst.getControlList)=='function' ?
 						inst.getControlList() :
 						false;
-					postMessage(controls);
+					// postMessage(controls);
 					if( controls ){
 						rt.controller.controls = controls;
 					}
 				}
-				postMessage(rt.controller);
+				// postMessage(rt.controller);
 				break;
 			case 'set':
 				inst.setValue(e.data.id, e.data.value)
