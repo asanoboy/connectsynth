@@ -86,7 +86,7 @@ function getMidiDeferred() {
 
 
 function _test() {
-	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}),
+	var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", {sampleRate: 48000}),
 		sampleRate = 48000,
 		performer = new synthjs.audiocore.Performer(),
 		track = new synthjs.model.MidiTrack(),
@@ -113,7 +113,7 @@ function _test() {
 }
 
 function _test1() {
-	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), 
+	var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", {sampleRate: 48000}), 
 		sampleRate = 48000,
 		performer = new synthjs.audiocore.Performer();
 
@@ -150,7 +150,7 @@ function _test1() {
 }
 
 function testbeep() {
-	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), 
+	var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", {sampleRate: 48000}), 
 		sampleRate = 48000,
 		performer = new synthjs.audiocore.Performer(),
 		player = synthjs.audiocore.Player.getInstance();

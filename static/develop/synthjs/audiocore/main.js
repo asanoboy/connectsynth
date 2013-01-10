@@ -3,7 +3,7 @@
 var Instrument = function(){
 	this._singingNotes = [];
 
-	this._removedNotes = [];	
+	this._removedNotes = [];
 	this._num = Math.random();
 };
 
@@ -49,11 +49,11 @@ Instrument.prototype.getBuffer = function(len){
 		isRemoved = false;
 		for( var m=0; m<this._removedNotes.length; m++){
 			if( this._singingNotes[i].note==this._removedNotes[m].note ){
-
 				isRemoved = true;
 				break;
 			}
 		}
+
 		for( var j=0; j<len; j++ ){
 			theta = this._singingNotes[i].radianPerSample * j + this._singingNotes[i].offsetRadian;
 			amp = Math.sin(theta);
@@ -64,8 +64,7 @@ Instrument.prototype.getBuffer = function(len){
 					break;
 				}
 			}
-
-			arr[j] = 0.1 * this._singingNotes[i].velocity * Math.sin(this._singingNotes[i].radianPerSample * j + this._singingNotes[i].offsetRadian );
+			arr[j] = 0.1 * this._singingNotes[i].velocity * amp;
 		}
 		this._singingNotes[i].offsetRadian += this._singingNotes[i].radianPerSample * len;
 

@@ -26,8 +26,8 @@ function tearDown() {
 
 }
 
-function _testDynamicGenerator1() {
-	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), 
+function testDynamicGenerator1() {
+	var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", {sampleRate: 48000}), 
 		len = 21,
 		sampleRate = 48000,
 		cnt = 0,
@@ -40,6 +40,7 @@ function _testDynamicGenerator1() {
 	})
 	.assocChainDeferred(gen.addNoteDeferred(note))
 	.assocChainDeferred(gen.getBufferDeferred(len).addCallback(function(buffers){
+		console.log(buffers.leftBuffer);
 		assertEquals(cnt++, 1);
 	}))
 	.assocChainDeferred(gen.removeNoteDeferred(note).addCallback(function(){
@@ -53,8 +54,36 @@ function _testDynamicGenerator1() {
 	
 }
 
+function testSequencially(){
+	var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", {sampleRate: 48000}), 
+		len = 21,
+		sampleRate = 48000,
+		cnt = 0,
+		gen = new synthjs.audiocore.DynamicGenerator(wave),
+		seq = new synthjs.audiocore.DynamicGeneratorSequence();
+
+	seq.pushNoteOn(60, 127);
+	seq.pushGetBuffer(len);
+	
+	gen.setSampleRate(sampleRate);
+	var d = gen.getBufferDeferred(len).addCallback(function(buffers){
+		assertEquals(cnt++, 0);
+	})
+	.assocChainDeferred(gen.querySequenceDeferred(seq).addCallback(function(buffers){
+		console.log(buffers.leftBuffer);
+		assertEquals(cnt++, 1);
+		asyncTestCase.continueTesting();
+	}));
+	
+	
+	asyncTestCase.waitForAsync();
+	d.callback();
+	
+
+}
+
 function testLargesize(){
-	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), 
+	var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", {sampleRate: 48000}), 
 		len = 2048,
 		sampleRate = 48000,
 		cnt = 0,

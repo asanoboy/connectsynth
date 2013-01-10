@@ -11,7 +11,7 @@ goog.require("synthjs.utility.Deferred");
 goog.require("synthjs.utility.DeferredList");
 var D = synthjs.utility.Deferred;
 var DL = synthjs.utility.DeferredList;
-/** 
+/**
  * @constructor
  * @implements synthjs.audiocore.Generator
  */
@@ -32,7 +32,7 @@ synthjs.audiocore.DynamicGenerator = function(wave){
 	
 	/** @private */
 	this._afterBuffer = new Float32Array(0);
-}
+};
 
 synthjs.audiocore.DynamicGenerator.logger = goog.debug.Logger.getLogger('synthjs.audiocore.DynamicGenerator');
 synthjs.audiocore.DynamicGenerator.logger.setLevel(goog.debug.Logger.Level.ALL);
@@ -54,7 +54,7 @@ synthjs.audiocore.DynamicGenerator.prototype.addNoteDeferred = function(note, op
 		);
 	
 	return d;
-}
+};
 
 /**
  * @param {synthjs.audiocore.Note} note
@@ -71,15 +71,15 @@ synthjs.audiocore.DynamicGenerator.prototype.removeNoteDeferred = function(note,
 		);
 	
 	return d;
-}
+};
 
 synthjs.audiocore.DynamicGenerator.prototype.clearNoteDeferred = function(){
 	return this._wave.addEventDeferred(
 		new synthjs.audiocore.WaveEvent(
-			synthjs.audiocore.WaveEventType.NOTEALLOFF, 
+			synthjs.audiocore.WaveEventType.NOTEALLOFF,
 			{})
 		);
-}
+};
 
 /**
  * @return {boolean}
@@ -87,14 +87,13 @@ synthjs.audiocore.DynamicGenerator.prototype.clearNoteDeferred = function(){
 synthjs.audiocore.DynamicGenerator.prototype.clearNote = function(){
 	this._playingNotes = [];
 	return true;
-}
+};
 
 synthjs.audiocore.DynamicGenerator.prototype.getBufferDeferred = function(len){
 	
 	if( !this._sampleRate ) throw new Error("Generator can't create buffer without setting sampleRate");
 	
 	var d = this._wave.getBufferDeferred(len);
-	d.name = 'wave'; // for debug
 	goog.array.forEach(this._filters, function(filter){
 		var dFilter = filter.getFilterDeferred();
 		dFilter.name = 'filter';
@@ -104,90 +103,37 @@ synthjs.audiocore.DynamicGenerator.prototype.getBufferDeferred = function(len){
 	});
 	
 	return d;
-}
+};
 
-
-// wavePluginに対応する前のgetBufferDeferred
-// synthjs.audiocore.DynamicGenerator.prototype.__getBufferDeferred = function(len){
-// 
-	// if( !this._sampleRate ) throw new Error("Generator can't create buffer without setting sampleRate");
-// 	
-	// var omega, i, thisGen=this;
-// 	
-	// var setBufferDeferredCallback = function(buffersList){
-// 	
-		// var leftBufferAll = new Float32Array(len), 
-			// rightBufferAll = new Float32Array(len);
-		// goog.array.forEach(buffersList, function(buffers){
-			// var left = buffers[1].leftBuffer,
-				// right = buffers[1].rightBuffer;
-			// for(var i=0; i<len; i++){
-				// leftBufferAll[i] += left[i];
-				// rightBufferAll[i] += right[i];
-			// }
-		// });
-// 		
-		// return {leftBuffer: leftBufferAll, rightBuffer:rightBufferAll};
-// 		
-	// }
-// 	
-	// var dList = [];
-	// //console.log("this._playingNotes.length="+this._playingNotes.length);
-	// for( i=0; i<this._playingNotes.length; i++){
-		// omega = 2*Math.PI / this._sampleRate * this._playingNotes[i].note.getFreq() ;
-		// dList.push( this._wave.setBufferDeferred(
-			// this._playingNotes[i].offsetRadian,
-			// len, 
-			// omega
-			// ));
-		// this._playingNotes[i].offsetRadian += omega * len;
-	// }
-// 	
-// //	var d = new goog.async.DeferredList(dList)
-// //		.addCallback(setBufferDeferredCallback);
-// 	
-	// // TODO: testが必要
-	// var dWait = new D();
-	// var d = new D().addCallback(function(){
-		// //console.log("dList.length="+dList.length);
-// 		
-		// if( dList.length ){
-// 			
-			// var dWaves = new DL(dList)
-				// .addCallback(setBufferDeferredCallback)
-				// .chainDeferred(dWait);
-			// goog.array.forEach(dList, function(d){
-				// setTimeout(function(){d.callback();}, 0);
-			// });
-		// }
-		// else {
-// 			
-			// dWait.callback({
-				// leftBuffer: new Float32Array(len),
-				// rightBuffer : new Float32Array(len)
-			// });
-		// }
-// 		
-	// }).awaitDeferred(dWait);
-// 	
-// 	
-	// goog.array.forEach(thisGen._filters, function(filter){
-		// filter.getFilterDeferred(len, d);
-		// //d.chainDeferred();
-	// });
-// 	
-	// return d;
-// };
+/**
+ * Queries many request at once.
+ * @param  {synthjs.audiocore.DynamicGeneratorSequence} seq
+ * @return {synthjs.utility.Deferred}
+ */
+synthjs.audiocore.DynamicGenerator.prototype.querySequenceDeferred = function(seq){
+	if( !this._sampleRate ) throw new Error("Generator can't create buffer without setting sampleRate");
+	
+	var d = this._wave.getBufferSequenciallyDeferred(seq.getSequence());
+	goog.array.forEach(this._filters, function(filter){
+		var dFilter = filter.getFilterDeferred();
+		dFilter.name = 'filter';
+		d.assocChainDeferred(dFilter);
+		//filter.getFilterDeferred(len, d);
+		//d.chainDeferred();
+	});
+	
+	return d;
+};
 
 synthjs.audiocore.DynamicGenerator.prototype.setSampleRate = function(sampleRate){
 	
 	/** @private */
 	this._sampleRate = sampleRate;
- 	
- 	for( i=0; i<this._filters.length; i++){
- 		rt = this._filters[i].setSampleRate(sampleRate);
- 	}
-}
+
+	for( i=0; i<this._filters.length; i++){
+		rt = this._filters[i].setSampleRate(sampleRate);
+	}
+};
 
 /**
  * DynamicGenerator does not finish.
@@ -195,7 +141,7 @@ synthjs.audiocore.DynamicGenerator.prototype.setSampleRate = function(sampleRate
  */
 synthjs.audiocore.DynamicGenerator.prototype.eof = function(){
 	return false;
-}
+};
 
 /**
  * @param {synthjs.audiocore.Filter}
@@ -205,4 +151,55 @@ synthjs.audiocore.DynamicGenerator.prototype.addFilter = function(filter){
 	filter.setSampleRate(this._sampleRate);
 	this._filters.push(filter);
 	return this;
-}
+};
+
+/**
+ * Creates a sequence object to be posted to worker.
+ * @constructor
+ */
+synthjs.audiocore.DynamicGeneratorSequence = function(){
+	this._sequenceArray = [];
+};
+
+synthjs.audiocore.DynamicGeneratorSequence.prototype.pushGetBuffer = function(len){
+	this._sequenceArray.push({
+		"action": "getbuffer",
+		"length": len});
+};
+
+synthjs.audiocore.DynamicGeneratorSequence.prototype.pushSet = function(id, value){
+	this._sequenceArray.push({
+		"action": "set",
+		"id": id,
+		"value": value
+	});
+};
+
+synthjs.audiocore.DynamicGeneratorSequence.prototype.pushNoteOn = function(noteid, velocity){
+	this._sequenceArray.push({
+		"action": "midi",
+		"type": "noteon",
+		"note": noteid,
+		"velocity": velocity/128
+	});
+};
+
+synthjs.audiocore.DynamicGeneratorSequence.prototype.pushNoteOff = function(noteid, velocity){
+	this._sequenceArray.push({
+		"action": "midi",
+		"type": "noteoff",
+		"note": noteid,
+		"velocity": velocity/128
+	});
+};
+
+synthjs.audiocore.DynamicGeneratorSequence.prototype.pushNoteAllOff = function(){
+	this._sequenceArray.push({
+		"action": "midi",
+		"type": "ntoealloff"
+	});
+};
+
+synthjs.audiocore.DynamicGeneratorSequence.prototype.getSequence = function(){
+	return this._sequenceArray;
+};

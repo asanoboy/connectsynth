@@ -123,10 +123,12 @@ synthjs.audiocore.Performer.prototype.getBufferDeferred = function(len){
 	var buflen, filled=0, d, eventOffset;
 	var self = this;
 	var dList = [];
+	var seq = new synthjs.audiocore.DynamicGeneratorSequence();
 	for(;;){
 
 		if( nextEvent===false || nextEvent.get("offset") > to ){
-			dList.push(this._dynamicGenerator.getBufferDeferred(len-filled));
+			//dList.push(this._dynamicGenerator.getBufferDeferred(len-filled));
+			seq.pushGetBuffer(len-filled);
 			this._currentOffset = to;
 			break;
 		}
@@ -134,13 +136,14 @@ synthjs.audiocore.Performer.prototype.getBufferDeferred = function(len){
 		buflen = Math.floor(( nextEvent.get("offset") - this._currentOffset) / this._deltaPerSample );
 
 		if( buflen > 0 ){
-			d = this._dynamicGenerator.getBufferDeferred(buflen);
+			// d = this._dynamicGenerator.getBufferDeferred(buflen);
+			seq.pushGetBuffer(buflen);
 			this._currentOffset = nextEvent.get("offset");
 		}
 		else{
-			d = (new D()).addCallback(function(){
-				return {leftBuffer: new Float32Array(0), rightBuffer: new Float32Array(0)};
-			});
+			// d = (new D()).addCallback(function(){
+			// 	return {leftBuffer: new Float32Array(0), rightBuffer: new Float32Array(0)};
+			// });
 		}
 
 
@@ -155,10 +158,12 @@ synthjs.audiocore.Performer.prototype.getBufferDeferred = function(len){
 				if( nextEvent.get("offset")==eventOffset ){
 					switch(nextEvent.get("type")){
 						case synthjs.model.MidiKeyEventType.ON:
-							d.assocChainDeferred(self._dynamicGenerator.addNoteDeferred(nextEvent.get("note"), nextEvent.get("velocity")));
+							// d.assocChainDeferred(self._dynamicGenerator.addNoteDeferred(nextEvent.get("note"), nextEvent.get("velocity")));
+							seq.pushNoteOn(nextEvent.get("note"), nextEvent.get("velocity"));
 							break;
 						case synthjs.model.MidiKeyEventType.OFF:
-							d.assocChainDeferred(self._dynamicGenerator.removeNoteDeferred(nextEvent.get("note"), nextEvent.get("velocity")));
+							// d.assocChainDeferred(self._dynamicGenerator.removeNoteDeferred(nextEvent.get("note"), nextEvent.get("velocity")));
+							seq.pushNoteOff(nextEvent.get("note"), nextEvent.get("velocity"));
 							break;
 					}
 				}
@@ -177,7 +182,7 @@ synthjs.audiocore.Performer.prototype.getBufferDeferred = function(len){
 
 		
 		filled += buflen;
-		dList.push(d);
+		//dList.push(d);
 	}
 	
 	if( nextEvent===false ){
@@ -185,6 +190,8 @@ synthjs.audiocore.Performer.prototype.getBufferDeferred = function(len){
 		this._eof = true;
 	}
 
+	return self._dynamicGenerator.querySequenceDeferred(seq);
+	
 	var dStart = new D(),
 		dWait = new D();
 	var bufferFilled = 0;

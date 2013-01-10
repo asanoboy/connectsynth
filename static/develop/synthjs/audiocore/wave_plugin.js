@@ -144,6 +144,36 @@ synthjs.audiocore.WavePlugin.prototype.getBufferDeferred = function(len){
 };
 
 /**
+ * Queries a lot action at once.
+ * @param  {Array} sequence
+ * @return {synthjs.utility.Deferred}
+ */
+synthjs.audiocore.WavePlugin.prototype.getBufferSequenciallyDeferred = function(sequence){
+	var workerD = this._workerCreator.create(
+		{action:'sequence', sequence: sequence},
+		{error: function(){
+			return {leftBuffer: new Float32Array(len), rightBuffer: new Float32Array(len)};
+		}}
+	);
+		
+	var d;
+	if( this._initialized ){
+		d = workerD;
+	}
+	else {
+		d = this.initDeferred().assocChainDeferred(workerD);
+		//return this.initDeferred().assocChainDeferred(workerD);
+	}
+	
+	return d.addCallback(function(e){
+		return {
+			leftBuffer: e['leftbuffer'],
+			rightBuffer: e['rightbuffer']
+		};
+	});
+};
+
+/**
  * @param {string} name
  * @param {number} value
  */
