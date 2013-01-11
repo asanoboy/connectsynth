@@ -116,6 +116,10 @@ synthjs.model.MidiMetaEvent = function(type, data){
 };
 goog.inherits(synthjs.model.MidiMetaEvent, synthjs.model.MidiEventBase);
 
+synthjs.model.MidiMetaEvent.prototype.isTempo = function(){
+	return this.get("data")[0]==0x51;
+};
+
 /**
  * @constructor
  * @param {Uint8Array} data fuga

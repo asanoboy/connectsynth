@@ -12,7 +12,8 @@ goog.require("synthjs.model.Collection");
 synthjs.model.Midi = function(delta){
 	goog.base(this, {
 		"delta": delta,
-		"tracks": new synthjs.model.MidiTrackCollection() 
+		"tracks": new synthjs.model.MidiTrackCollection(),
+		"tempoTrack": new synthjs.model.MidiTrack()
 	});
 }
 goog.inherits(synthjs.model.Midi, synthjs.model.Base);
@@ -33,12 +34,11 @@ synthjs.model.Midi.createByMidiFile = function(midifile){
 	var midi = new synthjs.model.Midi(midifile.getHeaderDelta()),
 		track, trackdata, delta, eventdata, event;
 	
-	
 	for( var i=0; i<midifile.getTrackNum(); i++ ){
 		track = new synthjs.model.MidiTrack();
 		trackdata = midifile.getTrack(i);
 		var offset = 0, lastStatus = null;
-		var events = [];
+		var events = [], tempoEvents = [];
 		for( var j=0; j<trackdata.getEventNum(); j++ ){
 			delta = trackdata.getEventDelta(j);
 			goog.asserts.assertNumber(delta);
@@ -48,6 +48,7 @@ synthjs.model.Midi.createByMidiFile = function(midifile){
 			event = synthjs.model.Midi.createEventByBuffer(eventdata, lastStatus);
 			goog.asserts.assert(event instanceof synthjs.model.MidiEventBase);
 			
+
 			offset += delta;
 			event.set("offset", offset);
 			//track.addEvent(event);
@@ -56,9 +57,15 @@ synthjs.model.Midi.createByMidiFile = function(midifile){
 			if( event instanceof synthjs.model.MidiKeyEvent || event instanceof synthjs.model.MidiOtherEvent ){
 				lastStatus = event.get("status");
 			}
+			else if( event instanceof synthjs.model.MidiMetaEvent ) {
+				if( event.isTempo() ){
+					tempoEvents.push( event );
+				}
+			}
 
 		}
 		track.addEvent(events);
+		midi.get("tempoTrack").addEvent(tempoEvents);
 		midi.addTrack(track);
 	}
 	

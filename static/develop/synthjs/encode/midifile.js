@@ -41,7 +41,7 @@ synthjs.encode.MidiFile.prototype.getHeader = function(){
 };
 
 synthjs.encode.MidiFile.prototype.getHeaderDelta = function(){
-	return this._header[12] << 8 + this._header[13];
+	return (this._header[12] << 8) + this._header[13];
 };
 
 

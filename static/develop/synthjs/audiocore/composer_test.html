@@ -120,13 +120,15 @@ function testbeep() {
 				performer = new synthjs.audiocore.Performer();
 			performer.setWave(wave);
 			performer.setSampleRate(48000);
-			performer.setDelta(48);
-			// performer.setTempo(1000000);
-			performer.setTempo(500000);
+			performer.setDelta(midi.get("delta"));
+			// performer.setTempo(250000);
+			// performer.setTempo(500000);
 			performer.setTrack(track);
 			composer.addPerformer(performer);
 
-		})
+		});
+		composer.setDelta(midi.get("delta"));
+		composer.setTrack(midi.get("tempoTrack"));
 		d.addCallback(function(){
 			composer.rewind();
 			player.play();
