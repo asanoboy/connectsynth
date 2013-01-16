@@ -90,38 +90,38 @@ synthjs.audiocore.Composer.prototype.getBufferDeferred = function(len){
 	return d;
 };
 
-synthjs.audiocore.Composer.prototype._getBufferDeferred = function(len){
-	if( !this._sampleRate ) throw new Error("Generator can't create buffer without setting sampleRate");
+// synthjs.audiocore.Composer.prototype._getBufferDeferred = function(len){
+// 	if( !this._sampleRate ) throw new Error("Generator can't create buffer without setting sampleRate");
 	
-	var dList = [];
-	goog.array.forEach(this._performers, function(p){
-		if( !p.eof() ){
-			dList.push(p.getBufferDeferred(len));
-		}
-	});
+// 	var dList = [];
+// 	goog.array.forEach(this._performers, function(p){
+// 		if( !p.eof() ){
+// 			dList.push(p.getBufferDeferred(len));
+// 		}
+// 	});
 	
-	var dWait = new goog.async.Deferred();
-	var d = new goog.async.Deferred().addCallback(function(){
-		var dPerformers = new goog.async.DeferredList(dList).addCallback(function(buffersList){
-			var leftBufferAll = new Float32Array(len);
-			var rightBufferAll = new Float32Array(len);
-			goog.array.forEach(buffersList, function(buffers, a){
-				for(var i=0; i<len; i++){
-					leftBufferAll[i] += buffers[1].leftBuffer[i];
-					rightBufferAll[i] += buffers[1].rightBuffer[i];
-				}
-			});
-			return {leftBuffer: leftBufferAll, rightBuffer: rightBufferAll};
-		}).chainDeferred(dWait);
+// 	var dWait = new goog.async.Deferred();
+// 	var d = new goog.async.Deferred().addCallback(function(){
+// 		var dPerformers = new goog.async.DeferredList(dList).addCallback(function(buffersList){
+// 			var leftBufferAll = new Float32Array(len);
+// 			var rightBufferAll = new Float32Array(len);
+// 			goog.array.forEach(buffersList, function(buffers, a){
+// 				for(var i=0; i<len; i++){
+// 					leftBufferAll[i] += buffers[1].leftBuffer[i];
+// 					rightBufferAll[i] += buffers[1].rightBuffer[i];
+// 				}
+// 			});
+// 			return {leftBuffer: leftBufferAll, rightBuffer: rightBufferAll};
+// 		}).chainDeferred(dWait);
 		
-		goog.array.forEach(dList, function(d){
-			d.callback();
-		});
+// 		goog.array.forEach(dList, function(d){
+// 			d.callback();
+// 		});
 		
-	}).awaitDeferred(dWait);
+// 	}).awaitDeferred(dWait);
 	
-	return d;
-};
+// 	return d;
+// };
 
 /**
  * @param {number}
@@ -136,7 +136,7 @@ synthjs.audiocore.Composer.prototype.setSampleRate = function(sampleRate){
 
 synthjs.audiocore.Composer.prototype.setTempo = function(tempo){
 	goog.base(this, "setTempo", tempo);
-	if( this._performsers ){
+	if( this._performers ){
 
 		for( var i=0; i<this._performers.length; i++ ){
 			this._performers[i].setTempo(tempo);
