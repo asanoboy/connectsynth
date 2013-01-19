@@ -113,7 +113,7 @@ function testbeep() {
 			if( !track.hasKeyEvent() ) return;
 
 			cnt++;
-			if( cnt!=3 && cnt!=80 ){
+			if( cnt!=20 && cnt!=30 && cnt!=9){
 				// return;
 			}
 			var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", {sampleRate: 48000}),

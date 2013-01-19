@@ -23,13 +23,35 @@ Instrument.prototype.offNote = function(id){
 };
 
 Instrument.prototype.addEvent = function(event){
+	// postMessage("type="+event.type+"; note="+event.note+"; vel="+event.velocity);
 	if( event.type=='noteon' && event.velocity>0 ){
-		this._singingNotes.push({
-			radianPerSample: 440 * Math.pow(2, event.note/12-5) / this._sampleRate * 2 * Math.PI,
-			note: event.note,
-			offsetRadian: 0,
-			velocity: event.velocity
-		});
+		var exists = false;
+		for( var i=0; i<this._singingNotes.length; i++){
+			if( this._singingNotes[i].note == event.note ){
+				exists = true;
+				break;
+			}
+		}
+
+		if( exists ){
+			var newRemovedNotes = [];
+			for( var j=0; j<this._removedNotes.length; j++){
+				if( event.note != this._removedNotes[j].note ){
+					newRemovedNotes.push(this._removedNotes[j]);
+				}
+			}
+
+			this._removedNotes = newRemovedNotes;
+		}
+		else {
+			this._singingNotes.push({
+				radianPerSample: 440 * Math.pow(2, event.note/12-5) / this._sampleRate * 2 * Math.PI,
+				note: event.note,
+				offsetRadian: 0,
+				velocity: 0,
+				topVelocity: event.velocity
+			});
+		}
 	}
 	else if( event.type=='noteoff' || (event.type=='noteon' && event.velocity===0) ){
 		this._removedNotes.push({
@@ -43,30 +65,39 @@ Instrument.prototype.addEvent = function(event){
 };
 
 Instrument.prototype.getBuffer = function(len){
-	var arr = new Float32Array(len), theta, lastAmp, amp, isRemoved;
+	var arr = new Float32Array(len), theta, lastAmp, amp, isRemoved, note;
 	
+	// postMessage(this._singingNotes.length);
 	for( var i=0; i<this._singingNotes.length; i++ ){
+		note = this._singingNotes[i];
 		isRemoved = false;
 		for( var m=0; m<this._removedNotes.length; m++){
-			if( this._singingNotes[i].note==this._removedNotes[m].note ){
+			if( note.note==this._removedNotes[m].note ){
 				isRemoved = true;
 				break;
 			}
 		}
 
 		for( var j=0; j<len; j++ ){
-			theta = this._singingNotes[i].radianPerSample * j + this._singingNotes[i].offsetRadian;
+			theta = note.radianPerSample * j + note.offsetRadian;
 			amp = Math.sin(theta);
 			if( isRemoved ){
-				this._singingNotes[i].velocity -= 0.01;
-				if(  this._singingNotes[i].velocity < 0 ){
+				note.velocity -= 0.01;
+				if(  note.velocity < 0 ){
 					this._removedNotes[m].isRemoved = true;
 					break;
 				}
 			}
-			arr[j] = 0.1 * this._singingNotes[i].velocity * amp;
+			else if(note.velocity < note.topVelocity){
+				note.velocity += 0.01;
+
+				if( note.velocity > note.topVelocity ){
+					note.velocity = note.topVelocity;
+				}
+			}
+			arr[j] += 0.1 * note.velocity * amp;
 		}
-		this._singingNotes[i].offsetRadian += this._singingNotes[i].radianPerSample * len;
+		note.offsetRadian += note.radianPerSample * len;
 
 	}
 
