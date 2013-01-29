@@ -27,6 +27,7 @@ urlpatterns += patterns('',
     url(r'^app/', include('sdk.urls')),
     #url(r'^plugin/', include('plugin.urls')),
     url(r'^auth/', include('autho.urls')),
+    url(r'^sequencer/', include('sequencer.urls')),
     #url(r'^account/', include('account.urls')),
     url(r'', include('public.urls')),
 )

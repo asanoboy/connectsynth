@@ -7,7 +7,7 @@ from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from common.models import Plugin
-from django.http import HttpResponse, HttpResponseRedirect 
+from django.http import HttpResponse, HttpResponseRedirect
 from decorators import reject_invalid_code
 from helpers import get_plugin_if_exists, get_unique_plugin_code, get_unique_preset_code
 from helpers import is_writable, is_readable, get_failure_response, get_success_response
