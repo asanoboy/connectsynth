@@ -16,3 +16,11 @@ HTTP_BASIC_AUTH_PW=****
 
 DJANGO_SETTINGS_MODULE=settings_dev
 PYTHONPATH=/usr/local/connectsynth/connectsynth
+
+
+
+=== node rquirement
+
+grunt
+grunt-exec
+less
