@@ -20,7 +20,6 @@ synthjs.application.Base = function(id){
 	this._rootComponent = new synthjs.ui.MenuAndBody(
 		this._getMenuComponent(),
 		this._getBodyComponent());
-console.log(synthjs.utility);
 	this._ajaxLoader = new synthjs.ui.AjaxLoader();
 	synthjs.utility.AjaxDeferred.defaultPresend = goog.bind(function(){
 		this._ajaxLoader.setVisible(true);

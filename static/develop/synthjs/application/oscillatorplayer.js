@@ -152,10 +152,10 @@ synthjs.application.OscillatorPlayer.prototype.onShowInformation = function(){
  */
 synthjs.application.OscillatorPlayer.prototype._getBodyComponent = function(){
 	if( !this._bodyComponent ){
-		this._bodyComponent = this._getWindowHolderComponent(); 
+		this._bodyComponent = this._getWindowHolderComponent();
 	}
 	return this._bodyComponent;
-}
+};
 
 /**
  * @protected
@@ -164,8 +164,8 @@ synthjs.application.OscillatorPlayer.prototype._getWindowHolderComponent = funct
 	if( !this._windowHolder ){
 		this._windowHolder = new synthjs.ui.window.WindowHolder();
 	}
-	return this._windowHolder; 
-}
+	return this._windowHolder;
+};
 
 /**
  * @protected
@@ -174,18 +174,18 @@ synthjs.application.OscillatorPlayer.prototype._attachEvents = function(){
 	
 	this.getHandler()
 		// Attach keyboard shortcut
-		.listen(document, 
-			goog.events.EventType.KEYDOWN, 
+		.listen(document,
+			goog.events.EventType.KEYDOWN,
 			this.onPressKey);
 
-}
+};
 
 /**
  * Set keyboard shortcut
  */
 synthjs.application.OscillatorPlayer.prototype.onPressKey = function(e){
 	
-}
+};
 
 
 /**

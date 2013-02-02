@@ -1,6 +1,8 @@
 goog.provide("synthjs.application.Sequencer");
 
 goog.require("synthjs.application.Base");
+goog.require("synthjs.ui.SequencerContainer");
+
 
 
 goog.scope(function(){
@@ -29,14 +31,7 @@ Sequencer.prototype._getMenuComponent = function(){
 };
 
 Sequencer.prototype._getBodyComponent = function(){
-    return synthjs.ui.MenuBar.createFromSetting(
-        [
-            {label:"Control", sublist: [
-                {label:'Copy To Workspace', callback: function(){}},
-                {label:'About', callback: function(){}}
-            ]}
-        ]
-    ); 
+    return new synthjs.ui.SequencerContainer();
 };
 
 
