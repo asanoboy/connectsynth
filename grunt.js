@@ -13,13 +13,16 @@ module.exports = function(grunt){
         },
         exec: {
             writedeps: {
-                command: 'writedeps.sh'
+                command: './writedeps.sh'
             },
             complie_js: {
                 command: 'compileclosure.sh'
             },
             compile_less: {
                 command: 'compileless.sh'
+            },
+            notify_ok: {
+                command: 'growlnotify -t "grunt.js" -m "OK"'
             }
         }
     });

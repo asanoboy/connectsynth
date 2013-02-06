@@ -79,10 +79,10 @@ goog.object.extend(Container.prototype, {
     },
 
     open: function(){
-        this.toggle(true);
+        this.slide(true);
     },
     close: function(){
-        this.toggle(false);
+        this.slide(false);
     },
     slide: function(isOpen){
         var animation = new AnimationParallelQueue();
@@ -108,6 +108,17 @@ goog.object.extend(Container.prototype, {
             goog.fx.easing.easeOut
             ));
         animation.play();
+    },
+    
+    setLeftPane: function(component){
+        var dom = this.getDomHelper();
+
+        if( !component.getElement() ){
+            component.createDom();
+        }
+        this._leftpaneComponent = component;
+        dom.removeChildren(this._leftpane);
+        dom.appendChild(this._leftpane, component.getElement());
     },
 
     onResize: function(size){
