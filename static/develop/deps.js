@@ -79,5 +79,5 @@ goog.addDependency('../../../synthjs/utility/twitteruri.js', ['synthjs.utility.T
 goog.addDependency('../../../synthjs/utility/uuid.js', ['synthjs.utility.UUID'], []);
 goog.addDependency('../../../synthjs/utility/worker_deferred.js', ['synthjs.utility.WorkerDeferred'], ['synthjs.utility.Deferred']);
 goog.addDependency('../../../synthjs/utility/worker_deferred_manager.js', ['synthjs.utility.WorkerDeferredManager'], ['synthjs.utility.Deferred', 'synthjs.utility.UUID']);
-goog.addDependency('../../../synthjs/window/child.js', ['synthjs.window.Child'], []);
-goog.addDependency('../../../synthjs/window/parent.js', ['synthjs.window.Parent'], []);
+goog.addDependency('../../../synthjs/window/child.js', ['synthjs.window.Child'], ['synthjs.utility.Deferred', 'synthjs.utility.EventTarget', 'synthjs.window.Parent']);
+goog.addDependency('../../../synthjs/window/parent.js', ['synthjs.window.Parent'], ['synthjs.utility.EventTarget', 'synthjs.window.Child']);

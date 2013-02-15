@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../closurelibrary/closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+    goog.require("goog.testing.jsunit");
+    goog.require("goog.testing.AsyncTestCase");
+    
+    goog.require("synthjs.window.Child");
+</script>
+</head>
+<body>
+<script>
+
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
+var childpath = "parent_test_child.html";
+function setUp() {
+
+}
+
+function tearDown() {
+
+}
+
+function test() {
+    var loadD = synthjs.window.Child.loadDeferred(childpath);
+
+    var message = "hello world.";
+
+    loadD.addCallback(function(child){
+        assertsTrue( instanceof child == synthjs.windowl.Child );
+        
+    })
+
+
+}
+
+
+
+</script>
+</body>
+</html>
+
