@@ -1,5 +1,6 @@
 module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-exec');
+    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.initConfig({
         watch: {
             js: {
@@ -15,7 +16,7 @@ module.exports = function(grunt){
             writedeps: {
                 command: 'writedeps.sh'
             },
-            complie_js: {
+            compile_js: {
                 command: 'compileclosure.sh'
             },
             compile_less: {
