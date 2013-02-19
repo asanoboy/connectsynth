@@ -13,7 +13,7 @@ module.exports = function(grunt){
         },
         exec: {
             writedeps: {
-                command: './writedeps.sh'
+                command: 'writedeps.sh'
             },
             complie_js: {
                 command: 'compileclosure.sh'

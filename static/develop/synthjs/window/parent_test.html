@@ -27,12 +27,19 @@ function tearDown() {
 function test() {
     var loadD = synthjs.window.Child.loadDeferred(childpath);
 
-    var message = "hello world.";
+    var message = "hello world.", child;
 
-    loadD.addCallback(function(child){
-        assertsTrue( instanceof child == synthjs.windowl.Child );
+    loadD.addCallback(function(c){
+        child = c;
+        assertTrue( child instanceof synthjs.window.Child );
         
-    })
+    }).addCallback(function(){
+        child.dispose();
+        asyncTestCase.continueTesting();
+    });
+
+    asyncTestCase.waitForAsync();
+    loadD.callback();
 
 
 }

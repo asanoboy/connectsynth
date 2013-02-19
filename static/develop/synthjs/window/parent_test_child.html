@@ -14,13 +14,13 @@
 
 (function(){
     var Parent = synthjs.window.Parent;
-    var instance = Parent.getInstance();
+    var parentWindow = Parent.getInstance();
     var handler = new goog.events.EventHandler();
 
     handler.listen(
-        instance,
-        Parent.EventType.MESSAGE,
-        function(){
+        parentWindow,
+        synthjs.window.EventType.MESSAGE,
+        function(e){
             
         });
 })();
