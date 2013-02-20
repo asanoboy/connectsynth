@@ -32,11 +32,17 @@ function test() {
     loadD.addCallback(function(c){
         child = c;
         assertTrue( child instanceof synthjs.window.Child );
-        
-    }).addCallback(function(){
-        child.dispose();
-        asyncTestCase.continueTesting();
+        handler.listen(
+            child,
+            synthjs.window.EventType.MESSAGE,
+            function(event){
+                assertTrue( event.target == message );
+                child.dispose();
+                asyncTestCase.continueTesting();
+            })
+        child.postMessage(message);
     });
+    var handler = new goog.events.EventHandler();
 
     asyncTestCase.waitForAsync();
     loadD.callback();

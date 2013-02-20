@@ -79,8 +79,8 @@ goog.addDependency('../../../synthjs/utility/twitteruri.js', ['synthjs.utility.T
 goog.addDependency('../../../synthjs/utility/uuid.js', ['synthjs.utility.UUID'], []);
 goog.addDependency('../../../synthjs/utility/worker_deferred.js', ['synthjs.utility.WorkerDeferred'], ['synthjs.utility.Deferred']);
 goog.addDependency('../../../synthjs/utility/worker_deferred_manager.js', ['synthjs.utility.WorkerDeferredManager'], ['synthjs.utility.Deferred', 'synthjs.utility.UUID']);
-goog.addDependency('../../../synthjs/window/child.js', ['synthjs.window.Child'], ['synthjs.utility.Deferred', 'synthjs.utility.EventTarget', 'synthjs.window.MessageType']);
+goog.addDependency('../../../synthjs/window/child.js', ['synthjs.window.Child'], ['synthjs.utility.Deferred', 'synthjs.window.MessageType', 'synthjs.window.Target']);
 goog.addDependency('../../../synthjs/window/eventtype.js', ['synthjs.window.EventType', 'synthjs.window.MessageType'], []);
 goog.addDependency('../../../synthjs/window/messagemanager.js', ['synthjs.window.MessageManager'], ['synthjs.utility.EventTarget', 'synthjs.window.Target']);
-goog.addDependency('../../../synthjs/window/parent.js', ['synthjs.window.Parent'], ['synthjs.utility.EventTarget', 'synthjs.window.MessageType']);
+goog.addDependency('../../../synthjs/window/parent.js', ['synthjs.window.Parent'], ['synthjs.window.MessageType', 'synthjs.window.Target']);
 goog.addDependency('../../../synthjs/window/target.js', ['synthjs.window.Target'], ['synthjs.utility.EventTarget', 'synthjs.utility.UUID']);

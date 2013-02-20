@@ -14,15 +14,17 @@
 
 (function(){
     var Parent = synthjs.window.Parent;
-    var parentWindow = Parent.getInstance();
     var handler = new goog.events.EventHandler();
 
-    handler.listen(
-        parentWindow,
-        synthjs.window.EventType.MESSAGE,
-        function(e){
-            
-        });
+    Parent.loadDeferred().addCallbacks(function(parent){
+        var handler = new goog.events.EventHandler();
+        handler.listen(  // echo listener
+            parent,
+            synthjs.window.EventType.MESSAGE,
+            function(event){
+                parent.postMessage(event.target);
+            });
+    }).callback();
 })();
 </script>
 </body>
