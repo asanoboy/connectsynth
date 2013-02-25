@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../../closurelibrary/closure/goog/base.js"></script>
+<script src="../../../deps.js"></script>
+<script>
+    goog.require("goog.testing.jsunit");
+    goog.require("goog.testing.AsyncTestCase");
+    
+    goog.require("synthjs.application.api.Plugin");
+    goog.require("synthjs.testing.AjaxDeferred");
+</script>
+</head>
+<body>
+<script>
+
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
+var pluginCode = 'hogehoge';
+var Ajax = synthjs.testing.AjaxDeferred;
+var api;
+
+function setUp() {
+    api = new synthjs.application.api.Plugin(pluginCode);
+}
+
+function tearDown() {
+    delete api;
+}
+
+function testPublish() {
+    var next = "fugafuga";
+    var d = api.publishDeferred('foo', 'bar', Ajax).addCallbacks(function(rt){
+        assertEquals(rt['status'], synthjs.application.api.Plugin.StatusType.OK);
+        assertEquals(rt['data'], next);
+        asyncTestCase.continueTesting();
+    });
+    assertTrue(d instanceof Ajax);
+
+    asyncTestCase.waitForAsync();
+    d.callback();
+    d.simulateResponse(
+        200,
+        '{"status":"ok","next":"'+next+'"}'
+    );
+}
+
+function test
+
+</script>
+</body>
+</html>
+

@@ -241,7 +241,7 @@ synthjs.application.PublicOscillator.prototype.onShowEmbed = function(){
 		height = module.getHeight();
 	
 	
-	var iframe = "<iframe src='"+document.location.origin + this.getApi().embedUri().toString()+"' width='"+width+"' height='"+height+"'></iframe>",
+	var iframe = "<iframe src='"+document.location.origin + this.getApi().getEmbedUri().toString()+"' width='"+width+"' height='"+height+"'></iframe>",
 		input = "<input value="+goog.string.quote(iframe)+" style='width:"+width+"px;'></input>",
 		html = iframe + "<br/>" + input;
 		

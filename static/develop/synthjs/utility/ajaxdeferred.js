@@ -47,7 +47,8 @@ synthjs.utility.AjaxDeferred = function(url, settings, opt_context){
 		this._headers['Content-Type'] = settings.contentType;
 	} 
 	
-	this._xhr = new XhrIo();
+	// this._xhr = new XhrIo();
+	this._xhr = this.createXhrIo();//new XhrIo();
 	
 	this._eventHandler.listen( 
 		this._xhr, 
@@ -103,6 +104,10 @@ synthjs.utility.AjaxDeferred.prototype.callback = function(r){
 	//this.addCallback(synthjs.utility.AjaxDeferred.defaultPostsend);
 	goog.base(this, 'callback', r);
 }
+
+synthjs.utility.AjaxDeferred.prototype.createXhrIo = function(){
+	return new XhrIo();
+};
 
 /**
  * Called before send ajax request. (ex. show ajax loader.) 
