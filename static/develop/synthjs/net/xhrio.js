@@ -31,7 +31,7 @@ synthjs.net.XhrIo.guessFileType = function(path){
 		}
 	}
 	
-	return goog.net.XhrIo.ResponseType.DEFAULT;
+	return goog.net.XhrIo.ResponseType.TEXT;//DEFAULT;
 }
 	
 /**

@@ -10,6 +10,7 @@
     
     goog.require("synthjs.application.api.Plugin");
     goog.require("synthjs.testing.AjaxDeferred");
+    goog.require("synthjs.utility.BlobBuilder");
 </script>
 </head>
 <body>
@@ -45,9 +46,82 @@ function testPublish() {
     );
 }
 
-function test
+function testDelete(){
+    var d = api.deleteDeferred(Ajax).addCallbacks(function(rt){
+        assertEquals(rt['status'], synthjs.application.api.Plugin.StatusType.OK);
+        asyncTestCase.continueTesting();
+    });
+
+    assertTrue(d instanceof Ajax);
+    asyncTestCase.waitForAsync();
+    d.callback();
+    d.simulateResponse(
+        200,
+        '{"status":"ok"}'
+    );
+}
+
+function testGetTextfile(){
+    var content = 'Hello world!';
+    var d = api.getFileDeferred("hoge.js", Ajax).addCallbacks(function(rt){
+        assertEquals(rt['status'], synthjs.application.api.Plugin.StatusType.OK);
+        assertEquals(rt['data'], content);
+        asyncTestCase.continueTesting();
+    });
+        
+    asyncTestCase.waitForAsync();
+    d.callback();
+    d.simulateResponse(
+        200,
+        content,
+        {
+            "Content-Type": 'test/plain'
+        });
+}
+
+function testGetPathList(){
+    var paths = ['hoge', 'fuga/piyo'];
+    var d = api.getPathListDeferred(Ajax).addCallbacks(function(rt){
+        assertEquals(rt['status'], synthjs.application.api.Plugin.StatusType.OK);
+        assertTrue(rt['data'] instanceof Array);
+        goog.array.forEach(rt['data'], function(path, i){
+            assertEquals(path, paths[i]);
+        });
+        asyncTestCase.continueTesting();
+    });
+
+    asyncTestCase.waitForAsync();
+    d.callback();
+    d.simulateResponse(
+        200,
+        '["hoge","fuga/piyo"]');
+}
+
+function getBlob(content, mimetype){
+    var bb = new synthjs.utility.BlobBuilder();
+    return bb.getBlob(mimetype);
+}
+
+function testSavePlugin(){
+    var content = "Hello world!",
+        filepath = "dir/hoge.js";
+
+    files = {
+        filepath: getBlob(content, "text/plain")
+    };
+    var d = api.saveDeferred(files, Ajax).addCallbacks(function(rt){
+        assertEquals(rt['status'], synthjs.application.api.Plugin.StatusType.OK);
+        asyncTestCase.continueTesting();
+    });
+
+    asyncTestCase.waitForAsync();
+    d.callback();
+    d.simulateResponse(
+        200,
+        'ok'
+    );
+}
 
 </script>
 </body>
 </html>
-
