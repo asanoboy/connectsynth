@@ -47,7 +47,7 @@ importScripts("main.js");
 				return;
 		}
 	
-		delete rt.callback;	
+		// delete rt.callback;	
 	
 		postMessage(rt);
 	});
