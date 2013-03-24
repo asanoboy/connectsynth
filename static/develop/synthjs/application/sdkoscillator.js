@@ -10,7 +10,6 @@ goog.require("synthjs.model.FileSystem");
 goog.require("synthjs.model.TextFile");
 goog.require("synthjs.net.PluginPoster");
 goog.require("synthjs.utility.BlobBuilder");
-goog.require("synthjs.utility.AjaxDeferred");
 goog.require("synthjs.ui.TextPrompt");
 goog.require("goog.ui.Prompt");
 goog.require("goog.ui.Dialog");
@@ -84,16 +83,14 @@ synthjs.application.SDKOscillator.prototype._showPublishPrompt = function(){
 			return;
 		}
 		
-		// var ajaxLoader = new synthjs.ui.AjaxLoader();
-		// ajaxLoader.setVisible(true);
-		//new synthjs.utility.AjaxDeferred(this._publishUri.toString(), {
-		new synthjs.utility.AjaxDeferred(this.getApi().publishPlugin().toString(), {
-			data: {'name': name, "description": description},
-			method: 'post',
-			responseType: goog.net.XhrIo.ResponseType.TEXT,
-			success: function(r){
-				var rt = r.getResponseJson();
-				if( rt['status']=='ok' && rt['next'] ){
+
+
+		this.getApi().publishDeferred(
+				name,
+				description
+			)
+			.addCallbacks(function(r){
+				if( r.isSuccess() ){
 					var dialog = new goog.ui.Dialog(null, false);
 					dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK);
 					self.getHandler()
@@ -101,24 +98,19 @@ synthjs.application.SDKOscillator.prototype._showPublishPrompt = function(){
 							dialog,
 							goog.ui.Dialog.EventType.SELECT,
 							function(){
-								document.location = rt['next'];
+								document.location = r.data;
 							}
-						)
+						);
 					dialog.setTitle("Success");
 					dialog.setContent("Move the page created now.");
 					dialog.setVisible(true);
-					
 				}
-				else{
+				else {
 					alert("Error Occurred!");
-					//ajaxLoader.dispose();
 				}
-			},
-			error: function(e){
-				alert("Error Ocurred!");
-				//ajaxLoader.dispose();
-			}
-		}).callback();
+			})
+			.callback();
+
 		return false;
 	}, this));
 	
@@ -194,23 +186,24 @@ synthjs.application.SDKOscillator.prototype.onPressKey = function(e){
 synthjs.application.SDKOscillator.prototype.postAllDeferred = function(){
 	
 	//var pluginPoster = new synthjs.net.PluginPoster(this._apiUri);
-	var pluginPoster = new synthjs.net.PluginPoster(this.getApi().postFile());
-	goog.array.forEach(this._fileSystem.getAllFiles(), function(file){
-		switch(file.get("type")){
-			case synthjs.model.FileType.TEXT:
-				var bb = new synthjs.utility.BlobBuilder();
-				bb.append(file.get('content'));
-				pluginPoster.addFile(this._fileSystem.getPath(file).join("/"), bb.getBlob("text/plain"));
-				break;
-			case synthjs.model.FileType.IMAGE:
+	return this.getApi().postPluginFilesDeferred(this._fileSystem);
+	// var pluginPoster = new synthjs.net.PluginPoster(this.getApi().postFile());
+	// goog.array.forEach(this._fileSystem.getAllFiles(), function(file){
+	// 	switch(file.get("type")){
+	// 		case synthjs.model.FileType.TEXT:
+	// 			var bb = new synthjs.utility.BlobBuilder();
+	// 			bb.append(file.get('content'));
+	// 			pluginPoster.addFile(this._fileSystem.getPath(file).join("/"), bb.getBlob("text/plain"));
+	// 			break;
+	// 		case synthjs.model.FileType.IMAGE:
 				
-				pluginPoster.addFile(this._fileSystem.getPath(file).join("/"), file.get("content"));
-				break;
-		}
+	// 			pluginPoster.addFile(this._fileSystem.getPath(file).join("/"), file.get("content"));
+	// 			break;
+	// 	}
 		
-	}, this);
+	// }, this);
 	
-	return pluginPoster.getRequestDeferred();
+	// return pluginPoster.getRequestDeferred();
 }
 
 
@@ -218,38 +211,35 @@ synthjs.application.SDKOscillator.prototype.postAllDeferred = function(){
  * post a specific file to server 
  * @param {synthjs.model.File} file
  */
-synthjs.application.SDKOscillator.prototype.saveDeferred = function(file){
-	//var pluginPoster = new synthjs.net.PluginPoster(this._apiUri);
-	var pluginPoster = new synthjs.net.PluginPoster(this.getApi().postFile());
-	var bb = new synthjs.utility.BlobBuilder();
-	bb.append(file.get('content'));
-	pluginPoster.addFile(file.get('filename'), bb.getBlob("text/plain"));
-	return pluginPoster.getRequestDeferred();
-};
+// synthjs.application.SDKOscillator.prototype.saveDeferred = function(file){
+// 	//var pluginPoster = new synthjs.net.PluginPoster(this._apiUri);
+// 	var pluginPoster = new synthjs.net.PluginPoster(this.getApi().postFile());
+// 	var bb = new synthjs.utility.BlobBuilder();
+// 	bb.append(file.get('content'));
+// 	pluginPoster.addFile(file.get('filename'), bb.getBlob("text/plain"));
+// 	return pluginPoster.getRequestDeferred();
+// };
 
 
 synthjs.application.SDKOscillator.prototype.onPostAll = function(){
 	this.postAllDeferred().callback();
-}
+};
 
 
 /**
  *  @override
  */
 synthjs.application.SDKOscillator.prototype.onDebugRun = function(){
-	// var ajaxLoader = new synthjs.ui.AjaxLoader();
-	// ajaxLoader.setVisible(true);
 	this.closeOscillator();
 	this.postAllDeferred()
 		.addCallback(goog.bind(this.launchOscillator, this))
-		// .addCallback(function(){ajaxLoader.dispose();})
 		.callback();
 
-}
+};
 
 synthjs.application.SDKOscillator.prototype.launchOscillator = function(){
 	goog.base(this, 'launchOscillator');
-}
+};
 
 /**
  * @override
@@ -257,21 +247,21 @@ synthjs.application.SDKOscillator.prototype.launchOscillator = function(){
 synthjs.application.SDKOscillator.prototype._onOscillatorError = function(e){
 	goog.base(this, "_onOscillatorError", e);
 	this._publishStatus = synthjs.application.SDKOscillator.StatusType.ERROR;
-}
+};
 
 /**
  * @override
  */
 synthjs.application.SDKOscillator.prototype._onOscillatorInit = function(e){
-	goog.base(this, "_onOscillatorInit", e);	
+	goog.base(this, "_onOscillatorInit", e);
 	this._publishStatus = synthjs.application.SDKOscillator.StatusType.SUCCESS;
-}
+};
 
 synthjs.application.SDKOscillator.StatusType = {
 	INITIAL: 'initial',
 	SUCCESS: 'success',
 	ERROR: 'error'
-}
+};
 
 window['SDKOscillator'] = synthjs.application.SDKOscillator;
 

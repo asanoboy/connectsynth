@@ -2,7 +2,6 @@ goog.provide("synthjs.application.PublicOscillator");
 
 goog.require("synthjs.application.SDKOscillatorBase");
 goog.require("synthjs.ui.DirectoryControl");
-goog.require("synthjs.utility.AjaxDeferred");
 goog.require("synthjs.ui.Dialog");
 goog.require("synthjs.utility.TwitterUri");
 goog.require("goog.string");
@@ -65,18 +64,16 @@ synthjs.application.PublicOscillator.prototype._getMenuComponent = function(){
  */
 synthjs.application.PublicOscillator.prototype.onEditDescription = function(){
 	
-	
-	new synthjs.utility.AjaxDeferred(this.getApi().getDescription().toString(), {
-		responseType: goog.net.XhrIo.ResponseType.TEXT,
-		success: function(r){
-			var rt = r.getResponseJson();
-			if( rt['status']=='ok' ){
+	this.getApi()
+		.getDescriptionDeferred()
+		.addCallbacks(goog.bind(function(rt){
+			if( rt.isSuccess() ){
 				var dialog = new synthjs.ui.Dialog(null, false);
 				dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
 				dialog.setTitle("Edit Description");
 				
 				var dom = goog.dom;
-				var hoge = dom.createDom("textarea", {"rows":10, "cols":80}, rt['description']);
+				var hoge = dom.createDom("textarea", {"rows":10, "cols":80}, rt.data);
 				
 				dialog.setContentElement(hoge);
 						
@@ -90,30 +87,33 @@ synthjs.application.PublicOscillator.prototype.onEditDescription = function(){
 							}
 							this.getHandler().unlisten(dialog);
 						}
-					)
+					);
 				dialog.setVisible(true);
 			}
 			else {
 				alert("Error occurred");
 			}
-		}
-	}, this).callback();
-	
-	
+		}, this))
+		.callback();
+
+	return;	
 }
 
 /**
  * @param {string} description
  */
 synthjs.application.PublicOscillator.prototype.updateDescription = function(description){
-	new synthjs.utility.AjaxDeferred(this.getApi().updateDescription().toString(), {
-		data: {'description': description},
-		method: 'post',
-		success: function(e){
-			synthjs.ui.Dialog.alertOK("Success", "Description was updated.");
-		}
-	},this).callback();
 	
+	this.getApi()
+		.updateDescriptionDeferred(description)
+		.addCallbacks(function(rt){
+			if( rt.isSuccess() ){
+				synthjs.ui.Dialog.alertOK("Success", "Description was updated.");
+			}
+		})
+		.callback();
+	return;
+
 }
 
 
@@ -141,13 +141,10 @@ synthjs.application.PublicOscillator.prototype.onDeletePlugin = function(){
 }
 
 synthjs.application.PublicOscillator.prototype.deletePlugin = function(){
-	new synthjs.utility.AjaxDeferred(this.getApi().deletePlugin().toString(), {
-		responseType: goog.net.XhrIo.ResponseType.TEXT,
-		method: 'delete',
-		success: function(r){
-			// TODO: Error handling
-			var rt = r.getResponseJson();
-			if( rt['status']=='ok' ){
+
+	this.getApi().deleteDeferred()
+		.addCallbacks(goog.bind(function(r){
+			if( r.isSuccess() ){
 				var dialog = new goog.ui.Dialog(null, false);
 				dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK);
 				dialog.setTitle("Success to delete plugin.");
@@ -156,7 +153,7 @@ synthjs.application.PublicOscillator.prototype.deletePlugin = function(){
 					dialog,
 					goog.ui.Dialog.EventType.SELECT,
 					function(e){
-						document.location = "/"; 
+						document.location = "/";
 					}
 				);
 				dialog.setVisible(true);
@@ -164,8 +161,9 @@ synthjs.application.PublicOscillator.prototype.deletePlugin = function(){
 			else {
 				alert("Error occurred.");
 			}
-		}
-	}, this).callback();
+		}, this))
+		.callback();
+	return;
 };
 
 
@@ -191,13 +189,11 @@ synthjs.application.PublicOscillator.prototype.onExtendOscillator = function(){
 }
 
 synthjs.application.PublicOscillator.prototype.postExtendOscillator = function(){
-	//new synthjs.utility.AjaxDeferred(this._extendUri.toString(), {
-	new synthjs.utility.AjaxDeferred(this.getApi().copyPlugin().toString(), {
-		responseType: goog.net.XhrIo.ResponseType.TEXT,
-		success: function(r){
-			var rt = r.getResponseJson();
-			if( rt['status']=='ok' ){
-				var dialog = new goog.ui.Dialog(null, false);
+	this.getApi().fetchDeferred()
+		.addCallbacks(goog.bind(function(r){
+			var dialog;
+			if( r.isSuccess() ){
+				dialog = new goog.ui.Dialog(null, false);
 				dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
 				dialog.setTitle("Success to copy plugin.");
 				dialog.setContent("Do you move to your workspace?");
@@ -206,15 +202,15 @@ synthjs.application.PublicOscillator.prototype.postExtendOscillator = function()
 					goog.ui.Dialog.EventType.SELECT,
 					function(e){
 						if( e.key == goog.ui.Dialog.DefaultButtonKeys.OK ){
-							document.location = rt['next']; 
+							document.location = r.data.next;
 						}
 						this.getHandler().unlisten(dialog);
 					}
 				);
 				dialog.setVisible(true);
 			}
-			else if( rt['status']=='signout' ){
-				var dialog = new goog.ui.Dialog(null, false);
+			else if( r.data.status=='signout' ){
+				dialog = new goog.ui.Dialog(null, false);
 				dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
 				dialog.setTitle("Required to sign in.");
 				dialog.setContent("Do you sign in using Twitter account?");
@@ -223,55 +219,54 @@ synthjs.application.PublicOscillator.prototype.postExtendOscillator = function()
 					goog.ui.Dialog.EventType.SELECT,
 					function(e){
 						if( e.key == goog.ui.Dialog.DefaultButtonKeys.OK ){
-							document.location = rt['next']+"?next="+escape(document.location+""); 
+							document.location = r.data.next+"?next="+escape(document.location+"");
 						}
 						this.getHandler().unlisten(dialog);
 					}
 				);
 				dialog.setVisible(true);
 			}
-		}
-	}, this).callback();
-	//document.location = this._extendUri.toString();
-}
+			else {
+				alert("error ocurred.");
+			}
+		}, this))
+		.callback();
+	return;
+};
 
 synthjs.application.PublicOscillator.prototype.onShowEmbed = function(){
 	var module = this.getOscillatorModule(),
 		width = module.getWidth() + 117, // A width of the vertical keyboard is 117px.
 		height = module.getHeight();
-	
-	
+
 	var iframe = "<iframe src='"+document.location.origin + this.getApi().getEmbedUri().toString()+"' width='"+width+"' height='"+height+"'></iframe>",
 		input = "<input value="+goog.string.quote(iframe)+" style='width:"+width+"px;'></input>",
 		html = iframe + "<br/>" + input;
-		
+
 	synthjs.ui.Dialog.alertOK("Embed", html);
-}
+};
 
 synthjs.application.PublicOscillator.prototype.onShowInformation = function(){
-	new synthjs.utility.AjaxDeferred(this.getApi().getInformation().toString(), {
-		responseType: goog.net.XhrIo.ResponseType.TEXT,
-		success: function(r){
-			// TODO: Error handling
-			var rt = r.getResponseJson();
-			
-			var desc = goog.string.htmlEscape(rt['description']);
-			
-			desc = desc.split("\n").join("<br/>");
-			var contentHtml = "<p>"+desc+"</p><br/><br/>";
-			//contentHtml += "<div style='float:right;'>";
-			contentHtml += "<div>";
-			
-			// if( rt['parent'] && rt['parent']['name'] && rt['parent']['url'] ){
-				// contentHtml += "<p style='text-align: right;'>extended from <a href='"+rt['parent']['url']+"' target='_blank'>"+goog.string.htmlEscape(rt['parent']['name'])+"</a></p>";
-			// }
-			
-			contentHtml += "<p style='text-align: right;'>created by <a href='"+synthjs.utility.TwitterUri.createByScreenName(rt['screen_name'])+"' target='_blank'>"+rt['screen_name']+"</a></p>"
-			contentHtml += "</div>";
-			
-			synthjs.ui.Dialog.alertOK("Information", contentHtml);
-		}
-	}).callback();
+	this.getApi().getPublicInformationDeferred()
+		.addCallbacks(function(r){
+			if( r.isSuccess() ){
+
+				var desc = goog.string.htmlEscape(r.data.description);
+				desc = desc.split("\n").join("<br/>");
+				var contentHtml = "<p>"+desc+"</p><br/><br/>";
+				contentHtml += "<div>";
+				contentHtml += "<p style='text-align: right;'>created by <a href='"+
+					synthjs.utility.TwitterUri.createByScreenName(r.data.screen_name)+
+					"' target='_blank'>"+r.data.screen_name+"</a></p>";
+				contentHtml += "</div>";
+				synthjs.ui.Dialog.alertOK("Information", contentHtml);
+			}
+			else {
+				alert("error");
+			}
+		})
+		.callback();
+	return;
 }
 
 /**

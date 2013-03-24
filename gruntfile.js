@@ -14,7 +14,7 @@ module.exports = function(grunt){
         },
         exec: {
             writedeps: {
-                command: 'writedeps.sh'
+                command: 'source writedeps.sh'
             },
             compile_js: {
                 command: 'compileclosure.sh'

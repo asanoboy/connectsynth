@@ -27,7 +27,6 @@ goog.require("synthjs.audiocore.WavePlugin");
 goog.require("synthjs.audiocore.DynamicGenerator");
 
 goog.require("synthjs.application.module.Oscillator");
-goog.require("synthjs.utility.AjaxDeferred");
 goog.require("goog.ui.Dialog");
 goog.require("goog.ui.Dialog.ButtonSet");
 goog.require("goog.ui.Dialog.DefaultButtonKeys");
@@ -110,42 +109,42 @@ synthjs.application.OscillatorPlayer.prototype._debugWindow = null;
  * @override
  */
 synthjs.application.OscillatorPlayer.prototype._getMenuComponent = function(){
-	return synthjs.ui.MenuBar.createFromSetting(
-		[
-			{label:"Control", sublist: [
-				{label:'Copy To Workspace', callback: goog.bind(this.onExtendOscillator, this)},
-				{label:'About', callback: goog.bind(this.onShowInformation, this)}
-			]}
-		]
-	); 
+	// return synthjs.ui.MenuBar.createFromSetting(
+	// 	[
+	// 		{label:"Control", sublist: [
+	// 			{label:'Copy To Workspace', callback: goog.bind(this.onExtendOscillator, this)},
+	// 			{label:'About', callback: goog.bind(this.onShowInformation, this)}
+	// 		]}
+	// 	]
+	// );
 }
 
 
-synthjs.application.OscillatorPlayer.prototype.onExtendOscillator = function(){
-	var dialog = new goog.ui.Dialog(null, false);
-	dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
-	dialog.setTitle("Attention");
-	//dialog.setContent("This intends to copy this plugin to your workspace. If your plugin exists in the workspace, it will be deleted.");
-	dialog.setContent("This action requires you to sign in. Have you already signed in?");
-			
-	this.getHandler()
-		.listen(
-			dialog,
-			goog.ui.Dialog.EventType.SELECT,
-			function(e){
-				if( e.key == goog.ui.Dialog.DefaultButtonKeys.OK ){
-					document.location = this.getApi().copyPlugin().toString();//this._extendUri.toString();
-				}
-				this.getHandler().unlisten(dialog);
-			}
-		)
-	dialog.setVisible(true);
-}
+// synthjs.application.OscillatorPlayer.prototype.onExtendOscillator = function(){
+// 	var dialog = new goog.ui.Dialog(null, false);
+// 	dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
+// 	dialog.setTitle("Attention");
+// 	//dialog.setContent("This intends to copy this plugin to your workspace. If your plugin exists in the workspace, it will be deleted.");
+// 	dialog.setContent("This action requires you to sign in. Have you already signed in?");
+
+// 	this.getHandler()
+// 		.listen(
+// 			dialog,
+// 			goog.ui.Dialog.EventType.SELECT,
+// 			function(e){
+// 				if( e.key == goog.ui.Dialog.DefaultButtonKeys.OK ){
+// 					document.location = this.getApi().copyPlugin().toString();//this._extendUri.toString();
+// 				}
+// 				this.getHandler().unlisten(dialog);
+// 			}
+// 		);
+// 	dialog.setVisible(true);
+// }
 
 
-synthjs.application.OscillatorPlayer.prototype.onShowInformation = function(){
+// synthjs.application.OscillatorPlayer.prototype.onShowInformation = function(){
 	
-}
+// }
 
 /**
  * @override

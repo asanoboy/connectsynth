@@ -44,23 +44,24 @@ synthjs.application.SDKOscillatorBase = function(id, params){
 	// ajaxLoader.setVisible(true);
 	
 	var self = this;
-	//new synthjs.utility.AjaxDeferred(this._infoapiUri.toString(), {
-	new synthjs.utility.AjaxDeferred(this.getApi().getFileList().toString(), {
-		success: function(e){
-			var rt = e.getResponseJson(); // TODO: not json format
+	this.getApi()
+		.getPathListDeferred()
+		.addCallbacks(goog.bind(function(rt){
+			if( rt.isSuccess() ){
 
-			var d = new synthjs.utility.Deferred();
-			goog.array.forEach(rt, function(path){
-				d.assocChainDeferred(this.addFileDeferred(path));
-			}, this);
-			
-			d.addCallback(function(){
-				//this.init();
-				// ajaxLoader.dispose();
-			}, this).callback();
-		}
-	}, this).callback();
-}
+				var d = new synthjs.utility.Deferred();
+				goog.array.forEach(rt.data, function(path){
+					d.assocChainDeferred(this.addFileDeferred(path));
+				}, this);
+				
+				d.callback();
+			}
+
+		}, this))
+		.callback();
+
+	return;
+};
 
 goog.inherits(synthjs.application.SDKOscillatorBase, synthjs.application.OscillatorPlayer);
 
@@ -136,55 +137,42 @@ synthjs.application.SDKOscillatorBase.prototype._attachEvents = function(){
 synthjs.application.SDKOscillatorBase.prototype.addFileDeferred = function(path){
 	var resType = synthjs.net.XhrIo.guessFileType(path);
 	
-	//return new synthjs.utility.AjaxDeferred(this._apiUri.toString()+path, {
-	return new synthjs.utility.AjaxDeferred(this.getApi().getFile(path).toString(), {
-		responseType: resType,
-		success: function(e){
-			var rt = e.getResponseText();
-			var mimeType = e.getResponseHeader(goog.net.XhrIo.CONTENT_TYPE_HEADER);
-			var paths = path.split('/');
-			var filename = paths.pop();
-			
-			switch( resType ){
-				case goog.net.XhrIo.ResponseType.BLOB:
-					if( mimeType.match("image.*") ){
-						var file = new synthjs.model.ImageFile(filename, e.getResponse());//bb.getBlob(mimeType));
+	var paths = path.split('/');
+	var filename = paths.pop();
+
+	return this.getApi()
+		.getFileDeferred(path)
+		.addCallback(goog.bind(function(rt){
+			if( rt.isSuccess() ){
+				var file;
+				if( typeof(rt.data)==="string" ){
+					file = new synthjs.model.TextFile(filename, rt.data);
+				}
+				else if( rt.data instanceof Blob ){
+					file = new synthjs.model.ImageFile(filename, rt.data);//.getResponse());//bb.getBlob(mimeType));
+				}
+			// create DIRECTORY recursive
+				var parent = this._fileSystem.getRootDirectory(), directory;
+				while( paths.length ){
+					var directoryName = paths.shift();
+					directory = new synthjs.model.Directory(directoryName);
+					if( this._fileSystem.isDuplicate(directory, parent) ){
+						parent = goog.array.find(
+							this._fileSystem.getChildren(parent),
+							function(child){
+								return child.get("filename")==directoryName;
+							});
+						goog.asserts.assert(!!parent);
 					}
 					else {
-						goog.asserts.assert(false, "Mimetype '%s' file is not supported. Path: '%s', GuessMimetype: '%s'.", mimeType, path, resType);
+						this._fileSystem.add(directory, parent);
+						parent = directory;
 					}
-					
-					break;
-				default:
-					var file = new synthjs.model.TextFile(filename, rt);
-					break;
-			}
-			
-			
-			// create DIRECTORY recursive
-			var parent = this._fileSystem.getRootDirectory(), directory;
-			while( paths.length ){
-				var directoryName = paths.shift();
-				directory = new synthjs.model.Directory(directoryName);
-				
-				if( this._fileSystem.isDuplicate(directory, parent) ){
-					parent = goog.array.find( 
-						this._fileSystem.getChildren(parent),
-						function(child){
-							return child.get("filename")==directoryName;
-						});
-					goog.asserts.assert(!!parent);
 				}
-				else {
-					this._fileSystem.add(directory, parent);
-					parent = directory;
-				}
+				this._fileSystem.add(file, parent);
 			}
-			
-			this._fileSystem.add(file, parent);
-			//this.addFile(file);
-		}
-	}, this);
+		}, this));
+
 }
 
 
@@ -199,7 +187,6 @@ synthjs.application.SDKOscillatorBase.prototype.onDirectoryNodeSelect = function
 		case synthjs.model.FileType.IMAGE:
 			this._windowHolder.addWindow( new synthjs.ui.window.Image(e.target) );
 			break;
-		
 	}
 }
 

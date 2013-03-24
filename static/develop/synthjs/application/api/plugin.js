@@ -21,7 +21,7 @@ goog.scope(function(){
 			return this.getFilePath("bootstrap.js?bootstrap=1");
 		},
 		getFilePath: function(path){
-			return "plugin/"+this._pluginCode+"/"+path;
+			return "/app/plugin/"+this._pluginCode+"/"+path;
 		},
 		getFileDeferred: function(path, opt_ajaxCtor){
 			var dWait = new synthjs.utility.Deferred();
@@ -63,7 +63,7 @@ goog.scope(function(){
 			var dWait = new synthjs.utility.Deferred();
 			var Ctor = this._getCtor(opt_ajaxCtor);
 			var rt = new Ctor(
-				"plugin/filelist/"+this._pluginCode+"/",
+				"/app/plugin/filelist/"+this._pluginCode+"/",
 				{
 					success: function(r){
 						var rt = r.getResponseJson();
@@ -81,7 +81,7 @@ goog.scope(function(){
 			var dWait = new synthjs.utility.Deferred();
 			var Ctor = this._getCtor(opt_ajaxCtor);
 			var rt =  new Ctor(
-				"workspace/publish/"+this._pluginCode+"/",
+				"/app/workspace/publish/"+this._pluginCode+"/",
 				{
 					data: {'name': name, 'description':description},
 					method: 'post',
@@ -107,7 +107,7 @@ goog.scope(function(){
 			var dWait = new synthjs.utility.Deferred(),
 				Ctor = this._getCtor(opt_ajaxCtor);
 			return new Ctor(
-				"plugin/delete/"+this._pluginCode+"/",
+				"/app/plugin/delete/"+this._pluginCode+"/",
 				{
 					method: 'delete',
 					responseType: goog.net.XhrIo.ResponseType.TEXT,
@@ -135,7 +135,7 @@ goog.scope(function(){
 				fd.append(name, blob, name);
 			});
 			return new Ctor(
-				"plugin/"+this._pluginCode+"/",
+				"/app/plugin/"+this._pluginCode+"/",
 				{
 					data: fd,
 					method: 'post',
@@ -155,11 +155,44 @@ goog.scope(function(){
 				this
 			).awaitDeferred(dWait);
 		},
-		getDescription: function(opt_ajaxCtor){
+		fetchDeferred: function(opt_ajaxCtor){
+			var dWait = new synthjs.utility.Deferred(),
+				Ctor = this._getCtor(opt_ajaxCtor);
+
+			return new Ctor(
+				"/app/workspace/extend_instrument/"+this._pluginCode+"/",
+				{
+					responseType: goog.net.XhrIo.ResponseType.TEXT,
+					success: function(r){
+						var rt = r.getResponseJson();
+						if( rt['status']=='ok' && rt['next'] ){
+							dWait.callback(this.createOk({
+								next: rt['next']
+							}));
+						}
+						else if( rt['status']=='signout' && rt['next'] ){
+							dWait.callback(this.createError({
+								next : rt['next'],
+								status: 'signout'
+							}));
+						}
+						else {
+							dWait.callback(this.createError(r));
+						}
+					},
+					error: function(rt){
+						dWait.callback(this.createError(rt));
+					}
+				},
+				this
+			).awaitDeferred(dWait);
+
+		},
+		getDescriptionDeferred: function(opt_ajaxCtor){
 			var dWait = new synthjs.utility.Deferred(),
 				Ctor = this._getCtor(opt_ajaxCtor);
 			return new Ctor(
-				"plugin/description/"+this._pluginCode+"/",
+				"/app/plugin/description/"+this._pluginCode+"/",
 				{
 					success: function(r){
 						var rt = r.getResponseJson();
@@ -181,8 +214,9 @@ goog.scope(function(){
 			var dWait = new synthjs.utility.Deferred(),
 				Ctor = this._getCtor(opt_ajaxCtor);
 			return new Ctor(
-				"plugin/description/"+this._pluginCode+"/",
+				"/app/plugin/description/"+this._pluginCode+"/",
 				{
+					data: {'description': description},
 					method: 'post',
 					success: function(r){
 						var rt = r.getResponseJson();
@@ -200,52 +234,164 @@ goog.scope(function(){
 				this
 			).awaitDeferred(dWait);
 		},
+		postPresetDeferred: function(name, value, opt_ajaxCtor){
+			var dWait = new synthjs.utility.Deferred(),
+				Ctor = this._getCtor(opt_ajaxCtor);
+
+			return new Ctor(
+				"/app/preset/post/"+this._pluginCode+"/",
+				{
+					data: {"name":name, "value":value},
+					method: "POST",
+					success: function(r){
+						var rt = r.getResponseJson();
+						if( rt['status'] == 'ok' ){
+							dWait.callback(this.createOk(rt['code']));
+						}
+						else {
+							dWait.callback(this.createError(rt));
+						}
+					},
+					error: function(rt){
+						dWait.callback(this.createError(rt));
+					}
+				},
+				this
+			).awaitDeferred(dWait);
+		},
+		getPresetsDeferred: function(opt_ajaxCtor){
+			var dWait = new synthjs.utility.Deferred(),
+				Ctor = this._getCtor(opt_ajaxCtor);
+
+			return new Ctor(
+				"/app/preset/list/"+this._pluginCode+"/",
+				{
+					method: "GET",
+					success: function(r){
+						var rt = r.getResponseJson();
+						if( goog.isArray(rt) ){
+							var isValid = true;
+							goog.array.forEach(rt, function(e){
+								if( goog.isDef(e['name']) &&
+									goog.isDef(e['value']) &&
+									goog.isDef(e['code']) )
+								{}
+								else {
+									isValid = false;
+								}
+							});
+
+							if( isValid ){
+								dWait.callback(this.createOk(rt));
+								return;
+							}
+						}
+						dWait.callback(this.createError(rt));
+					},
+					error: function(rt){
+						dWait.callback(this.createError(rt));
+					}
+
+				},
+				this
+			).awaitDeferred(dWait);
+		},
+		deletePresetDeferred: function(code, opt_ajaxCtor){
+			var dWait = new synthjs.utility.Deferred(),
+				Ctor = this._getCtor(opt_ajaxCtor);
+
+			return new Ctor(
+				"/app/preset/delete/"+this._pluginCode+"/",
+				{
+					data: {"preset_code": code},
+					method: "POST",
+					success: function(r){
+						var rs = r.getResponse();
+						if( rs == "ok" ){
+							dWait.callback(this.createOk());
+						}
+						else {
+							dWait.callback(this.createError(rs));
+						}
+					},
+					error: function(rt){
+						dWait.callback(this.createError(rt));
+					}
+				},
+				this
+			).awaitDeferred(dWait);
+		},
+		getPublicInformationDeferred: function(opt_ajaxCtor){
+			var dWait = new synthjs.utility.Deferred(),
+				Ctor = this._getCtor(opt_ajaxCtor);
+
+			return new Ctor(
+				"/app/plugin/information/"+this._pluginCode+"/",
+				{
+					method: "GET",
+					success: function(r){
+						var rt = r.getResponseJson();
+						if( goog.isDef(rt['description']) &&
+							goog.isDef(rt['screen_name'])
+						)
+						{
+							dWait.callback(this.createOk(rt));
+						}
+						else {
+							dWait.callback(this.createError(rt));
+						}
+					},
+					error: function(rt){
+						dWait.callback(this.createError(rt));
+					}
+				},
+				this
+			).awaitDeferred(dWait);
+		},
+		/**
+		 * [postPluginFiles description]
+		 * @param  {synthjs.model.FileSystem]} fileSystem [description]
+		 */
+		postPluginFilesDeferred: function(fileSystem, opt_ajaxCtor){
+			var dWait = new synthjs.utility.Deferred(),
+				Ctor = this._getCtor(opt_ajaxCtor);
+
+			var pluginPoster = new synthjs.net.PluginPoster(
+				"/app/plugin/"+this._pluginCode+"/");
+			goog.array.forEach(fileSystem.getAllFiles(), function(file){
+				switch(file.get("type")){
+					case synthjs.model.FileType.TEXT:
+						var bb = new synthjs.utility.BlobBuilder();
+						bb.append(file.get('content'));
+						pluginPoster.addFile(fileSystem.getPath(file).join("/"), bb.getBlob("text/plain"));
+						break;
+					case synthjs.model.FileType.IMAGE:
+						pluginPoster.addFile(fileSystem.getPath(file).join("/"), file.get("content"));
+						break;
+				}
+			}, this);
+			return pluginPoster.getRequestDeferred();
+		},
 		_getCtor: function(opt_ajaxCtor){
 			return opt_ajaxCtor || synthjs.utility.AjaxDeferred;
 		},
 		createOk: function(opt_data){
 			return {
-				status: Plugin.StatusType.OK,
+				isSuccess: function(){return true;},
 				data: opt_data ? opt_data : null
 			};
 		},
 		createError: function(opt_data){
 			return {
-				status: Plugin.StatusType.ERROR,
+				isSuccess: function(){return false;},
 				data: opt_data ? opt_data : null
 			};
 		}
 	});
 
-	// synthjs.application.api.Plugin.prototype.embedUri = function(path){
-	// 	return this._baseUri.resolve(new goog.Uri("instrument/"+this._pluginCode+"/embed/"));
+	// synthjs.application.api.Plugin.prototype.copyPlugin = function(){
+	// 	return this._baseUri.resolve(new goog.Uri("workspace/extend_instrument/"+this._pluginCode+"/"));
 	// }
-
-	Plugin.StatusType = {
-		OK: 'status-ok',
-		ERROR: 'status-err'
-	}
-
-	synthjs.application.api.Plugin.prototype.copyPlugin = function(){
-		return this._baseUri.resolve(new goog.Uri("workspace/extend_instrument/"+this._pluginCode+"/"));
-	}
-
-	// Made publishDeferred
-	synthjs.application.api.Plugin.prototype.publishPlugin = function(){
-		return this._baseUri.resolve(new goog.Uri("workspace/publish/"+this._pluginCode+"/"));
-	}
-
-	// Made deleteDeferred
-	synthjs.application.api.Plugin.prototype.deletePlugin = function(){
-		return this._baseUri.resolve(new goog.Uri("plugin/delete/"+this._pluginCode+"/"));
-	}
-
-	// Made updateDesciptionDeferred
-	synthjs.application.api.Plugin.prototype.updateDescription = function(){
-		return this._baseUri.resolve(new goog.Uri("plugin/description/"+this._pluginCode+"/"));
-	}
-
-
 	/**
 	 * Made getFileDeferred
 	 * @param {string} name
@@ -253,40 +399,6 @@ goog.scope(function(){
 	 */
 	synthjs.application.api.Plugin.prototype.getFile = function(path){
 		return this._baseUri.resolve(new goog.Uri("plugin/"+this._pluginCode+"/"+path));
-	}
-
-	// Made getPathListDeferred
-	synthjs.application.api.Plugin.prototype.getFileList = function(){
-		return this._baseUri.resolve(new goog.Uri("plugin/filelist/"+this._pluginCode+"/"));	
-	}
-
-	// Made saveDeferred
-	synthjs.application.api.Plugin.prototype.postFile = function(){
-		return this._baseUri.resolve(new goog.Uri("plugin/"+this._pluginCode+"/"));
-	}
-	// Never be used
-	// synthjs.application.api.Plugin.prototype.deleteFile = function(){
-	// 	return this.postFile();
-	// }
-
-
-	// Made getDescriptionDeferred
-	synthjs.application.api.Plugin.prototype.getDescription = function(){
-		return this.updateDescription();
-	}
-	synthjs.application.api.Plugin.prototype.getInformation = function(){
-		return this._baseUri.resolve(new goog.Uri("plugin/information/"+this._pluginCode+"/"));
-	}
-
-
-	synthjs.application.api.Plugin.prototype.postPreset = function(){
-		return this._baseUri.resolve(new goog.Uri("preset/post/"+this._pluginCode+"/"));
-	}
-	synthjs.application.api.Plugin.prototype.deletePreset = function(){
-		return this._baseUri.resolve(new goog.Uri("preset/delete/"+this._pluginCode+"/"));
-	}
-	synthjs.application.api.Plugin.prototype.getPresetList = function(){
-		return this._baseUri.resolve(new goog.Uri("preset/list/"+this._pluginCode+"/"));
 	}
 
 
