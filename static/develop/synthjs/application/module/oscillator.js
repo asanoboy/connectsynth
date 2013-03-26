@@ -22,7 +22,7 @@ goog.require("synthjs.ui.Keyboard");
 goog.require("synthjs.ui.VerticalKeyboardRenderer");
 goog.require("synthjs.audiocore.Note");
 goog.require("synthjs.audiocore.Player");
-goog.require("synthjs.audiocore.WavePlugin");
+// goog.require("synthjs.audiocore.WavePlugin");
 goog.require("synthjs.audiocore.DynamicGenerator");
 goog.require("synthjs.audiocore.MidiInterface");
 

@@ -1,32 +1,34 @@
 goog.provide("synthjs.application.PublicOscillator");
 
-goog.require("synthjs.application.SDKOscillatorBase");
+goog.require("synthjs.application.OscillatorBase");
+
 goog.require("synthjs.ui.DirectoryControl");
 goog.require("synthjs.ui.Dialog");
 goog.require("synthjs.utility.TwitterUri");
 goog.require("goog.string");
+
 /**
  * @constructor
- * @extends {synthjs.application.SDKOscillatorBase}
+ * @extends {synthjs.application.OscillatorBase}
  */
 synthjs.application.PublicOscillator = function(id, params){
-	
-	this._extendUri = new goog.Uri(params['extendapi']);
-	this._isOwner = goog.isNull(params['isOwner']) ? false : !!params['isOwner']; 
+
+	// this._extendUri = new goog.Uri(params['extendapi']);
+	this._isOwner = goog.isNull(params['isOwner']) ? false : !!params['isOwner'];
 	goog.base(this, id, params);
-	
+
 	this.launchOscillator();
 	this._setIsOscillatorEditable(false);
-}
+};
 
-goog.inherits(synthjs.application.PublicOscillator, synthjs.application.SDKOscillatorBase);
+goog.inherits(synthjs.application.PublicOscillator, synthjs.application.OscillatorBase);
 
 /**
  * @override
  */
 synthjs.application.PublicOscillator.prototype._getDirectoryControl = function(){
 	return new synthjs.ui.DirectoryControl(this._fileSystem, editable=false);
-}
+};
 
 /**
  * @override
@@ -55,15 +57,15 @@ synthjs.application.PublicOscillator.prototype._getMenuComponent = function(){
 			]}
 		);
 	}
-	
+
 	return synthjs.ui.MenuBar.createFromSetting(arr);
-}
+};
 
 /**
  * Assume the caller is the owner of plugin.  
  */
 synthjs.application.PublicOscillator.prototype.onEditDescription = function(){
-	
+
 	this.getApi()
 		.getDescriptionDeferred()
 		.addCallbacks(goog.bind(function(rt){
@@ -71,12 +73,9 @@ synthjs.application.PublicOscillator.prototype.onEditDescription = function(){
 				var dialog = new synthjs.ui.Dialog(null, false);
 				dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
 				dialog.setTitle("Edit Description");
-				
 				var dom = goog.dom;
 				var hoge = dom.createDom("textarea", {"rows":10, "cols":80}, rt.data);
-				
 				dialog.setContentElement(hoge);
-						
 				this.getHandler()
 					.listen(
 						dialog,
@@ -96,14 +95,14 @@ synthjs.application.PublicOscillator.prototype.onEditDescription = function(){
 		}, this))
 		.callback();
 
-	return;	
-}
+	return;
+};
 
 /**
  * @param {string} description
  */
 synthjs.application.PublicOscillator.prototype.updateDescription = function(description){
-	
+
 	this.getApi()
 		.updateDescriptionDeferred(description)
 		.addCallbacks(function(rt){
@@ -114,7 +113,7 @@ synthjs.application.PublicOscillator.prototype.updateDescription = function(desc
 		.callback();
 	return;
 
-}
+};
 
 
 /**
@@ -125,7 +124,7 @@ synthjs.application.PublicOscillator.prototype.onDeletePlugin = function(){
 	dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
 	dialog.setTitle("Attention");
 	dialog.setContent("Do you delete this plugin?");
-			
+
 	this.getHandler()
 		.listen(
 			dialog,
@@ -136,9 +135,9 @@ synthjs.application.PublicOscillator.prototype.onDeletePlugin = function(){
 				}
 				this.getHandler().unlisten(dialog);
 			}
-		)
+		);
 	dialog.setVisible(true);
-}
+};
 
 synthjs.application.PublicOscillator.prototype.deletePlugin = function(){
 
@@ -173,7 +172,7 @@ synthjs.application.PublicOscillator.prototype.onExtendOscillator = function(){
 	dialog.setTitle("Attention");
 	dialog.setContent("Do you overwrite your workspace with this instrument?");
 	//dialog.setContent("This action requires you to sign in. Have you already signed in?");
-			
+
 	this.getHandler()
 		.listen(
 			dialog,
@@ -184,9 +183,9 @@ synthjs.application.PublicOscillator.prototype.onExtendOscillator = function(){
 				}
 				this.getHandler().unlisten(dialog);
 			}
-		)
+		);
 	dialog.setVisible(true);
-}
+};
 
 synthjs.application.PublicOscillator.prototype.postExtendOscillator = function(){
 	this.getApi().fetchDeferred()
@@ -267,7 +266,7 @@ synthjs.application.PublicOscillator.prototype.onShowInformation = function(){
 		})
 		.callback();
 	return;
-}
+};
 
 /**
  * @override
@@ -280,8 +279,8 @@ synthjs.application.PublicOscillator.prototype.onDirectoryNodeSelect = function(
 		case synthjs.model.FileType.IMAGE:
 			this._windowHolder.addWindow( new synthjs.ui.window.Image(e.target) );
 			break;
-		
+
 	}
-}
+};
 
 window['PublicOscillator'] = synthjs.application.PublicOscillator;

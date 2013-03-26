@@ -1,37 +1,39 @@
 goog.provide("synthjs.application.SDKOscillator");
 
-goog.require("synthjs.application.SDKOscillatorBase");
-
-goog.require("synthjs.application.OscillatorPlayer");
-goog.require("synthjs.ui.DirectoryControl");
-
-goog.require("synthjs.model.Collection");
-goog.require("synthjs.model.FileSystem");
-goog.require("synthjs.model.TextFile");
-goog.require("synthjs.net.PluginPoster");
-goog.require("synthjs.utility.BlobBuilder");
-goog.require("synthjs.ui.TextPrompt");
 goog.require("goog.ui.Prompt");
 goog.require("goog.ui.Dialog");
 goog.require("goog.ui.Dialog.ButtonSet");
 
+goog.require("synthjs.application.OscillatorBase");
+
+goog.require("synthjs.ui.DirectoryControl");
+goog.require("synthjs.ui.TextPrompt");
+
+goog.require("synthjs.net.PluginPoster");
+
+goog.require("synthjs.utility.BlobBuilder");
+
+// goog.require("synthjs.model.Collection");
+// goog.require("synthjs.model.FileSystem");
+// goog.require("synthjs.model.TextFile");
+
 /**
  * @constructor
- * @extends {synthjs.application.SDKOscillatorBase}
+ * @extends {synthjs.application.OscillatorBase}
  */
 synthjs.application.SDKOscillator = function(id, params){
-	
+
 	goog.base(this, id, params);
-	
+
 	this._publishStatus = synthjs.application.SDKOscillator.StatusType.INITIAL;
-	this._publishUri = new goog.Uri(params['publishapi']);
+	// this._publishUri = new goog.Uri(params['publishapi']);
 	// this._presetPostUri = new goog.Uri(params['presetpostapi']);
 	// this._presetDeleteUri = new goog.Uri(params['presetdeleteapi']);
 	// this._presetListUri = new goog.Uri(params['presetlistapi']);
 	this._setIsOscillatorEditable(true);
-}
+};
 
-goog.inherits(synthjs.application.SDKOscillator, synthjs.application.SDKOscillatorBase);
+goog.inherits(synthjs.application.SDKOscillator, synthjs.application.OscillatorBase);
 
 /**
  * @override
@@ -44,8 +46,8 @@ synthjs.application.SDKOscillator.prototype._getMenuComponent = function(){
 				{label:'Publish', callback: goog.bind(this.onPublish, this)}
 			]}
 		]
-	); 
-}
+	);
+};
 
 synthjs.application.SDKOscillator.prototype.onPublish = function(){
 	switch( this._publishStatus ){
@@ -56,7 +58,7 @@ synthjs.application.SDKOscillator.prototype.onPublish = function(){
 			this._showPublishAlertPrompt();
 			break;
 	}
-}
+};
 
 synthjs.application.SDKOscillator.prototype._showPublishPrompt = function(){
 	var self = this;
@@ -65,7 +67,7 @@ synthjs.application.SDKOscillator.prototype._showPublishPrompt = function(){
 		if( goog.isNull(name) ){
 			return;
 		}
-		
+
 		if( !name || !description ){
 			var dialog = new goog.ui.Dialog(null, false);
 			dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK);
@@ -76,13 +78,13 @@ synthjs.application.SDKOscillator.prototype._showPublishPrompt = function(){
 					function(e){
 						self.getHandler().unlisten(dialog);
 					}
-				)
+				);
 			dialog.setTitle("Abort");
 			dialog.setContent("Fill both forms.");
 			dialog.setVisible(true);
 			return;
 		}
-		
+
 
 
 		this.getApi().publishDeferred(
@@ -113,17 +115,17 @@ synthjs.application.SDKOscillator.prototype._showPublishPrompt = function(){
 
 		return false;
 	}, this));
-	
+
 	prompt.setCols(70);
 	prompt.setTextRows(10);
 	prompt.setVisible(true);
-}
+};
 
 synthjs.application.SDKOscillator.prototype._showPublishAlertPrompt = function(){
-	
+
 	var dialog = new goog.ui.Dialog(null, false);
 	dialog.setButtonSet(goog.ui.Dialog.ButtonSet.OK);
-	
+
 	switch( this._publishStatus ){
 		case synthjs.application.SDKOscillator.StatusType.INITIAL:
 			dialog.setTitle("Attention");
@@ -136,7 +138,7 @@ synthjs.application.SDKOscillator.prototype._showPublishAlertPrompt = function()
 		default:
 			goog.asserts.assertTrue(falsej, 'Invalid publish status');
 	}
-	
+
 	this.getHandler()
 		.listen(
 			dialog,
@@ -144,16 +146,16 @@ synthjs.application.SDKOscillator.prototype._showPublishAlertPrompt = function()
 			function(e){
 				this.getHandler().unlisten(dialog);
 			}
-		)
+		);
 	dialog.setVisible(true);
-}
+};
 
 /**
  * @override
  */
 synthjs.application.SDKOscillator.prototype._getDirectoryControl = function(){
 	return new synthjs.ui.DirectoryControl(this._fileSystem);
-}
+};
 
 
 /**
@@ -165,9 +167,8 @@ synthjs.application.SDKOscillator.prototype.saveActiveWindow = function(){
 		var newContent = win.getEditedCode();
 		var file = win.getFile();
 		file.set("content", newContent);
-		
 	}
-}
+};
 
 /**
  * Set keyboard shortcut
@@ -178,47 +179,15 @@ synthjs.application.SDKOscillator.prototype.onPressKey = function(e){
 		e.preventDefault();
 		this.saveActiveWindow();
 	}
-}
+};
 
 /**
  * post all file to server
  */
 synthjs.application.SDKOscillator.prototype.postAllDeferred = function(){
-	
-	//var pluginPoster = new synthjs.net.PluginPoster(this._apiUri);
 	return this.getApi().postPluginFilesDeferred(this._fileSystem);
-	// var pluginPoster = new synthjs.net.PluginPoster(this.getApi().postFile());
-	// goog.array.forEach(this._fileSystem.getAllFiles(), function(file){
-	// 	switch(file.get("type")){
-	// 		case synthjs.model.FileType.TEXT:
-	// 			var bb = new synthjs.utility.BlobBuilder();
-	// 			bb.append(file.get('content'));
-	// 			pluginPoster.addFile(this._fileSystem.getPath(file).join("/"), bb.getBlob("text/plain"));
-	// 			break;
-	// 		case synthjs.model.FileType.IMAGE:
-				
-	// 			pluginPoster.addFile(this._fileSystem.getPath(file).join("/"), file.get("content"));
-	// 			break;
-	// 	}
-		
-	// }, this);
-	
-	// return pluginPoster.getRequestDeferred();
-}
+};
 
-
-/**
- * post a specific file to server 
- * @param {synthjs.model.File} file
- */
-// synthjs.application.SDKOscillator.prototype.saveDeferred = function(file){
-// 	//var pluginPoster = new synthjs.net.PluginPoster(this._apiUri);
-// 	var pluginPoster = new synthjs.net.PluginPoster(this.getApi().postFile());
-// 	var bb = new synthjs.utility.BlobBuilder();
-// 	bb.append(file.get('content'));
-// 	pluginPoster.addFile(file.get('filename'), bb.getBlob("text/plain"));
-// 	return pluginPoster.getRequestDeferred();
-// };
 
 
 synthjs.application.SDKOscillator.prototype.onPostAll = function(){
