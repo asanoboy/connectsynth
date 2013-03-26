@@ -21,6 +21,9 @@ module.exports = function(grunt){
             },
             compile_less: {
                 command: 'compileless.sh'
+            },
+            notify_ok: {
+                command: 'growlnotify -t "grunt.js" -m "OK"'
             }
         }
     });

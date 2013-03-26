@@ -1,0 +1,30 @@
+{% extends "app.html" %}
+
+{% block cssfile %}
+{{ block.super }}
+{% if debug %}
+<link rel="stylesheet/less" type="text/css" href="{{ STATIC_URL }}less/app.less">
+{% else %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/app.css">
+{% endif %}
+{% endblock %}
+
+{% block scriptfile %}
+{{ block.super }}
+
+{% if debug %}
+<script src="{{ STATIC_URL }}develop/closurelibrary/closure/goog/base.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}develop/deps.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}develop/synthjs/sequencer.js" type="text/javascript"></script>
+{% else %}
+<script src="{{ STATIC_URL }}js/optimized_sequencer.js" type="text/javascript"></script>
+{% endif %}
+
+<script type="text/javascript">
+    //var app = new synthjs.application.SDKOscillator(
+    var app = new synthjs.application.Sequencer(
+        "application", 
+        {
+        });
+</script>
+{% endblock %}

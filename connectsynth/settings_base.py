@@ -124,6 +124,7 @@ INSTALLED_APPS = (
     'sdk',
     'autho',
     'public',
+    'sequencer',
 )
 
 # A sample logging configuration. The only tangible logging

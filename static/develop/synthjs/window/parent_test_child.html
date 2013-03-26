@@ -1,0 +1,31 @@
+<!DOCTYPE>
+<html>
+<head>
+<title></title>
+<script src="../../closurelibrary/closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+    goog.require("synthjs.window.Parent");
+    goog.require("goog.events.EventHandler");
+</script>
+</head>
+<body>
+<script>
+
+(function(){
+    var Parent = synthjs.window.Parent;
+    var handler = new goog.events.EventHandler();
+
+    Parent.loadDeferred().addCallbacks(function(parent){
+        var handler = new goog.events.EventHandler();
+        handler.listen(  // echo listener
+            parent,
+            synthjs.window.EventType.MESSAGE,
+            function(event){
+                parent.postMessage(event.target);
+            });
+    }).callback();
+})();
+</script>
+</body>
+</html>

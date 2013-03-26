@@ -4,6 +4,9 @@ goog.require("synthjs.audiocore.Player");
 goog.require("synthjs.ui.MenuAndBody");
 
 goog.require("synthjs.ui.AjaxLoader");
+goog.require("synthjs.utility.AjaxDeferred");
+
+goog.require("synthjs.ui.MenuBar");
 
 /**
  * @constructor
@@ -17,7 +20,6 @@ synthjs.application.Base = function(id){
 	this._rootComponent = new synthjs.ui.MenuAndBody(
 		this._getMenuComponent(),
 		this._getBodyComponent());
-	
 	this._ajaxLoader = new synthjs.ui.AjaxLoader();
 	synthjs.utility.AjaxDeferred.defaultPresend = goog.bind(function(){
 		this._ajaxLoader.setVisible(true);
