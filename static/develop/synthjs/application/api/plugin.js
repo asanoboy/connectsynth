@@ -348,6 +348,7 @@ goog.scope(function(){
 				this
 			).awaitDeferred(dWait);
 		},
+
 		/**
 		 * [postPluginFiles description]
 		 * @param  {synthjs.model.FileSystem]} fileSystem [description]
@@ -356,21 +357,44 @@ goog.scope(function(){
 			var dWait = new synthjs.utility.Deferred(),
 				Ctor = this._getCtor(opt_ajaxCtor);
 
-			var pluginPoster = new synthjs.net.PluginPoster(
-				"/app/plugin/"+this._pluginCode+"/");
+			var fd = new FormData(), name, content;
 			goog.array.forEach(fileSystem.getAllFiles(), function(file){
 				switch(file.get("type")){
 					case synthjs.model.FileType.TEXT:
 						var bb = new synthjs.utility.BlobBuilder();
 						bb.append(file.get('content'));
-						pluginPoster.addFile(fileSystem.getPath(file).join("/"), bb.getBlob("text/plain"));
+						content = bb.getBlob("text/plain");
 						break;
 					case synthjs.model.FileType.IMAGE:
-						pluginPoster.addFile(fileSystem.getPath(file).join("/"), file.get("content"));
+						content = file.get("content");
+						break;
+					default:
+						goog.asserts.fail();
 						break;
 				}
+				name = fileSystem.getPath(file).join("/");
+				fd.append(name, content, name);
 			}, this);
-			return pluginPoster.getRequestDeferred();
+			return new Ctor(
+				"/app/plugin/"+this._pluginCode+"/",
+				{
+					data: fd,
+					method: 'POST',
+					_contentType: null,
+					success: function(rt){
+						if( rt.getResponseText()=='ok' ){
+							dWait.callback(this.createOk());
+						}
+						else {
+							dWait.callback(this.createError(rt));
+						}
+					},
+					error: function(rt){
+						dWait.callback(this.createError(rt));
+					}
+				},
+				this
+			).awaitDeferred(dWait);
 		},
 		_getCtor: function(opt_ajaxCtor){
 			return opt_ajaxCtor || synthjs.utility.AjaxDeferred;

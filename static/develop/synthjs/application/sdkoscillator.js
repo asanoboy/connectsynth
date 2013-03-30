@@ -9,7 +9,7 @@ goog.require("synthjs.application.OscillatorBase");
 goog.require("synthjs.ui.DirectoryControl");
 goog.require("synthjs.ui.TextPrompt");
 
-goog.require("synthjs.net.PluginPoster");
+// goog.require("synthjs.net.PluginPoster");
 
 goog.require("synthjs.utility.BlobBuilder");
 
