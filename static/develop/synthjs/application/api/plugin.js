@@ -14,7 +14,7 @@ goog.scope(function(){
 	};
 
 	goog.object.extend(Plugin.prototype, {
-		getEnbedUri: function(){
+		getEmbedUri: function(){
 			return this._baseUri.resolve(new goog.Uri("instrument/"+this._pluginCode+"/embed/"));
 		},
 		getBootstrapPath: function(){
