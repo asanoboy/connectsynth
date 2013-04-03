@@ -1,4 +1,5 @@
 goog.provide("synthjs.model.Midi");
+goog.provide("synthjs.model.Midi.EventType");
 
 goog.require("goog.asserts");
 goog.require("synthjs.model.MidiTrack");
@@ -12,10 +13,12 @@ goog.require("synthjs.model.Collection");
 synthjs.model.Midi = function(delta){
 	goog.base(this, {
 		"delta": delta,
-		"tracks": new synthjs.model.MidiTrackCollection(),
+		"tracks": new synthjs.model.Collection(synthjs.model.MidiTrack),
 		"tempoTrack": new synthjs.model.MidiTrack()
 	});
-}
+
+	this._initializeListener();
+};
 goog.inherits(synthjs.model.Midi, synthjs.model.Base);
 
 /**
@@ -23,7 +26,11 @@ goog.inherits(synthjs.model.Midi, synthjs.model.Base);
  */
 synthjs.model.Midi.prototype.addTrack = function(track){
 	this.get("tracks").add(track);
-}
+};
+
+synthjs.model.Midi.prototype.removeTrack = function(track){
+	this.get("tracks").remove(track);
+};
 
 /**
  * @param {synthjs.encode.MidiFile}
@@ -33,7 +40,7 @@ synthjs.model.Midi.createByMidiFile = function(midifile){
 	var buffer = midifile.getHeader();
 	var midi = new synthjs.model.Midi(midifile.getHeaderDelta()),
 		track, trackdata, delta, eventdata, event;
-	
+
 	for( var i=0; i<midifile.getTrackNum(); i++ ){
 		track = new synthjs.model.MidiTrack();
 		trackdata = midifile.getTrack(i);
@@ -47,7 +54,6 @@ synthjs.model.Midi.createByMidiFile = function(midifile){
 
 			event = synthjs.model.Midi.createEventByBuffer(eventdata, lastStatus);
 			goog.asserts.assert(event instanceof synthjs.model.MidiEventBase);
-			
 
 			offset += delta;
 			event.set("offset", offset);
@@ -68,7 +74,7 @@ synthjs.model.Midi.createByMidiFile = function(midifile){
 		midi.get("tempoTrack").addEvent(tempoEvents);
 		midi.addTrack(track);
 	}
-	
+
 	//TODO:
 	return midi;
 };
@@ -108,12 +114,67 @@ synthjs.model.Midi.createEventByBuffer = function(buffer, opt_prevStatus){
 		}
 	}
 };
+
+synthjs.model.Midi.prototype._initializeListener = function(){
+	var EventType = synthjs.model.Midi.EventType;
+
+	this.getHandler().listen(
+		this.get("tracks"),
+		synthjs.model.Collection.EventType.ADD,
+		function(e){
+			this.dispatchEvent(
+				new goog.events.Event(EventType.ADD_TRACK, e.target)
+			);
+		},
+		this)
+	.listen(
+		this.get("tracks"),
+		synthjs.model.Collection.EventType.REMOVE,
+		function(e){
+			this.dispatchEvent(
+				new goog.events.Event(EventType.REMOVE_TRACK, e.target)
+			);
+		},
+		this)
+	.listen(
+		this.get("tempoTrack"),
+		synthjs.model.MidiTrack.EventType.ADD_EVENT,
+		function(e){
+			this.dispatchEvent(
+				new goog.events.Event(EventType.ADD_TEMPOEVENT, e.target)
+			);
+		},
+		this)
+	.listen(
+		this.get("tempoTrack"),
+		synthjs.model.MidiTrack.EventType.REMOVE_EVENT,
+		function(e){
+			this.dispatchEvent(
+				new goog.events.Event(EventType.REMOVE_TEMPOEVENT, e.target)
+			);
+		},
+		this);
+};
+
+synthjs.model.Midi.EventType = {
+	ADD_TRACK: "add-track",
+	REMOVE_TRACK: "remove-track",
+
+	ADD_MIDIEVENT: "add-midievent",
+	REMOVE_MIDIEVENT: "remove-midievent",
+	CHANGE_MIDIEVENT: "change-midievent",
+
+	ADD_TEMPOEVENT: "add-tempoevent",
+	REMOVE_TEMPOEVENT: "remove-tempoeevent",
+	CHANGE_TEMPOEVENT: "change-tempoevent"
+};
+
 /**
  * @constructor
  * @extends {synthjs.model.MidiTrackCollection}
  */
-synthjs.model.MidiTrackCollection = function(){
-	goog.base(this, synthjs.model.MidiTrack);
-};
+// synthjs.model.MidiTrackCollection = function(){
+// 	goog.base(this, synthjs.model.MidiTrack);
+// };
 
-goog.inherits(synthjs.model.MidiTrackCollection, synthjs.model.Collection);
+// goog.inherits(synthjs.model.MidiTrackCollection, synthjs.model.Collection);

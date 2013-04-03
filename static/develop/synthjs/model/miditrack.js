@@ -13,8 +13,40 @@ synthjs.model.MidiTrack = function(){
 		"offset": 0,
 		"eventcollection":  new synthjs.model.Collection(synthjs.model.MidiEventBase)
 	});
+
+	this._initializeListener();
 };
 goog.inherits(synthjs.model.MidiTrack, synthjs.model.Base);
+
+synthjs.model.MidiTrack.prototype._initializeListener = function(){
+	var EventType = synthjs.model.MidiTrack.EventType;
+	this.getHandler().listen(
+		this.get("eventcollection"),
+		synthjs.model.Collection.EventType.ADD,
+		function(e){
+			this.dispatchEvent(
+				new goog.events.Event(EventType.ADD_EVENT, e.target)
+			);
+		},
+		this)
+	.listen(
+		this.get("eventcollection"),
+		synthjs.model.Collection.EventType.REMOVE,
+		function(e){
+			this.dispatchEvent(
+				new goog.events.Event(EventType.REMOVE_EVENT, e.target)
+			);
+		},
+		this);
+};
+
+synthjs.model.MidiTrack.EventType = {
+	ADD_EVENT: 'add-event',
+	REMOVE_EVENT: 'remove-event',
+	CHANGE_EVENT: 'change-event'
+};
+
+
 
 /**
  * @param {synthjs.model.MidiEventBase} event
@@ -32,7 +64,29 @@ synthjs.model.MidiTrack.prototype.addEvent = function(event) {
 	this.get("eventcollection").sort(function(a, b){
 		return a.get('offset') - b.get('offset');
 	});
+
+	this.getHandler().listen(
+		event,
+		synthjs.model.EventType.CHANGE,
+		this.onChangeEvent,
+		this);
 };
+
+synthjs.model.MidiTrack.prototype.onChangeEvent = function(e){
+	this.dispatchEvent(
+		new goog.events.Event(syntjs.model.MidiTrack.EventType.CHANGE_EVENT, e.target)
+	);
+};
+
+synthjs.model.MidiTrack.prototype.removeEvent = function(event){
+	this.get("eventcollection").remove(event);
+	this.getHandler().unlisten(
+		event,
+		synthjs.model.EventType.CHANGE,
+		this.onChangeEvent,
+		this);
+};
+
 
 synthjs.model.MidiTrack.prototype.hasKeyEvent = function(){
 	var events = this.get("eventcollection").getAll();

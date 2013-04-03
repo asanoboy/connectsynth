@@ -5,9 +5,10 @@ goog.addDependency('../../../synthjs/application/bareoscillator.js', ['synthjs.a
 goog.addDependency('../../../synthjs/application/base.js', ['synthjs.application.Base'], ['synthjs.audiocore.Player', 'synthjs.ui.AjaxLoader', 'synthjs.ui.MenuAndBody', 'synthjs.ui.MenuBar', 'synthjs.utility.AjaxDeferred']);
 goog.addDependency('../../../synthjs/application/module/oscillator.js', ['synthjs.application.module.Oscillator', 'synthjs.application.module.OscillatorEventType'], ['goog.events.EventTarget', 'goog.json', 'goog.ui.Dialog', 'goog.ui.Dialog.ButtonSet', 'goog.ui.Prompt', 'synthjs.audiocore.DynamicGenerator', 'synthjs.audiocore.MidiInterface', 'synthjs.audiocore.Note', 'synthjs.audiocore.Player', 'synthjs.audiocore.WavePluginEventType', 'synthjs.model.Collection', 'synthjs.model.PluginControlParam', 'synthjs.model.PluginPreset', 'synthjs.model.PluginRadioParam', 'synthjs.model.PluginToggleParam', 'synthjs.ui.Keyboard', 'synthjs.ui.PluginControlPanel', 'synthjs.ui.PluginControlPanelContainer', 'synthjs.ui.VerticalKeyboardRenderer', 'synthjs.ui.window.Oscillator', 'synthjs.utility.EventTarget']);
 goog.addDependency('../../../synthjs/application/oscillatorbase.js', ['synthjs.application.OscillatorBase'], ['goog.dom', 'goog.events.EventHandler', 'goog.ui.Dialog', 'goog.ui.Dialog.ButtonSet', 'goog.ui.Dialog.DefaultButtonKeys', 'synthjs.application.Base', 'synthjs.application.api.Plugin', 'synthjs.application.module.Oscillator', 'synthjs.audiocore.WavePlugin', 'synthjs.model.Collection', 'synthjs.model.FileSystem', 'synthjs.model.TextFile', 'synthjs.ui.SDKOscillator', 'synthjs.ui.window.Code', 'synthjs.ui.window.Image', 'synthjs.ui.window.Oscillator', 'synthjs.ui.window.WindowHolder']);
+goog.addDependency('../../../synthjs/application/oscillatorwindow.js', ['synthjs.application.OscillatorWindow'], []);
 goog.addDependency('../../../synthjs/application/publicoscillator.js', ['synthjs.application.PublicOscillator'], ['goog.string', 'synthjs.application.OscillatorBase', 'synthjs.ui.Dialog', 'synthjs.ui.DirectoryControl', 'synthjs.utility.TwitterUri']);
 goog.addDependency('../../../synthjs/application/sdkoscillator.js', ['synthjs.application.SDKOscillator'], ['goog.ui.Dialog', 'goog.ui.Dialog.ButtonSet', 'goog.ui.Prompt', 'synthjs.application.OscillatorBase', 'synthjs.ui.DirectoryControl', 'synthjs.ui.TextPrompt', 'synthjs.utility.BlobBuilder']);
-goog.addDependency('../../../synthjs/application/sequencer.js', ['synthjs.application.Sequencer'], ['synthjs.application.Base', 'synthjs.ui.SequencerContainer']);
+goog.addDependency('../../../synthjs/application/sequencer.js', ['synthjs.application.Sequencer'], ['synthjs.application.Base', 'synthjs.model.Midi', 'synthjs.ui.sequencer.Container']);
 goog.addDependency('../../../synthjs/audiocore/composer.js', ['synthjs.audiocore.Composer'], ['synthjs.audiocore.Performer', 'synthjs.audiocore.PerformerBase']);
 goog.addDependency('../../../synthjs/audiocore/dynamicgenerator.js', ['synthjs.audiocore.DynamicGenerator'], ['goog.async.Deferred', 'goog.async.DeferredList', 'goog.debug.Logger', 'synthjs.audiocore.Generator', 'synthjs.audiocore.Note', 'synthjs.audiocore.Wave', 'synthjs.utility.Deferred', 'synthjs.utility.DeferredList']);
 goog.addDependency('../../../synthjs/audiocore/filter.js', ['synthjs.audiocore.Filter'], []);
@@ -25,14 +26,14 @@ goog.addDependency('../../../synthjs/bridge/template.js', ['synthjs.Template'], 
 goog.addDependency('../../../synthjs/encode/midifile.js', ['synthjs.encode.MidiFile', 'synthjs.encode.MidiParser'], ['goog.asserts']);
 goog.addDependency('../../../synthjs/encode/utility.js', ['synthjs.encode.Utility'], ['goog.array']);
 goog.addDependency('../../../synthjs/encode/wav.js', ['synthjs.encode.Wav'], []);
-goog.addDependency('../../../synthjs/model/base.js', ['synthjs.model.Base'], ['goog.events.EventTarget', 'goog.object', 'synthjs.model.EventType']);
+goog.addDependency('../../../synthjs/model/base.js', ['synthjs.model.Base'], ['goog.object', 'synthjs.model.EventType', 'synthjs.utility.EventTarget']);
 goog.addDependency('../../../synthjs/model/collection.js', ['synthjs.model.Collection', 'synthjs.model.Collection.EventType'], ['synthjs.utility.EventTarget']);
 goog.addDependency('../../../synthjs/model/directory.js', ['synthjs.model.Directory'], ['synthjs.model.FileBase']);
 goog.addDependency('../../../synthjs/model/eventtype.js', ['synthjs.model.EventType'], []);
 goog.addDependency('../../../synthjs/model/filebase.js', ['synthjs.model.FileBase', 'synthjs.model.FileType'], ['synthjs.model.Base']);
 goog.addDependency('../../../synthjs/model/filesystem.js', ['synthjs.model.FileSystem'], ['goog.events.EventHandler', 'goog.ui.Dialog', 'synthjs.model.Collection', 'synthjs.model.Directory', 'synthjs.model.FileBase']);
 goog.addDependency('../../../synthjs/model/imagefile.js', ['synthjs.model.ImageFile'], ['goog.asserts', 'synthjs.model.FileBase', 'synthjs.model.FileType']);
-goog.addDependency('../../../synthjs/model/midi.js', ['synthjs.model.Midi'], ['goog.asserts', 'synthjs.model.Base', 'synthjs.model.Collection', 'synthjs.model.MidiTrack']);
+goog.addDependency('../../../synthjs/model/midi.js', ['synthjs.model.Midi', 'synthjs.model.Midi.EventType'], ['goog.asserts', 'synthjs.model.Base', 'synthjs.model.Collection', 'synthjs.model.MidiTrack']);
 goog.addDependency('../../../synthjs/model/miditrack.js', ['synthjs.model.MidiEvent', 'synthjs.model.MidiTrack'], ['synthjs.model.Collection', 'synthjs.model.MidiTrack']);
 goog.addDependency('../../../synthjs/model/plugincontrolparam.js', ['synthjs.model.PluginControlParam'], ['synthjs.model.Base']);
 goog.addDependency('../../../synthjs/model/pluginparam.js', ['synthjs.model.PluginParam'], ['synthjs.model.Base']);
@@ -58,7 +59,8 @@ goog.addDependency('../../../synthjs/ui/menubar.js', ['synthjs.ui.MenuBar'], ['g
 goog.addDependency('../../../synthjs/ui/plugincontrolpanel.js', ['synthjs.ui.PluginControlPanel', 'synthjs.ui.PluginControlPanelEventType'], ['goog.graphics', 'goog.ui.Component', 'synthjs.ui.graphics.ControlButton', 'synthjs.ui.graphics.RadioButton', 'synthjs.ui.graphics.ToggleButton']);
 goog.addDependency('../../../synthjs/ui/plugincontrolpanelcontainer.js', ['synthjs.ui.PluginControlPanelContainer'], ['goog.ui.ComboBox', 'goog.ui.ComboBoxItem', 'goog.ui.Component', 'synthjs.ui.PluginControlPanel']);
 goog.addDependency('../../../synthjs/ui/sdkoscillator.js', ['synthjs.ui.SDKOscillator'], ['goog.dom.ViewportSizeMonitor', 'goog.events.EventHandler', 'goog.events.EventType', 'goog.math.Size', 'goog.object', 'goog.style', 'goog.ui.Component', 'goog.ui.SplitPane.Orientation', 'synthjs.ui.SplitPane']);
-goog.addDependency('../../../synthjs/ui/sequencercontainer.js', ['synthjs.ui.SequencerContainer'], ['goog.fx', 'goog.fx.AnimationQueue', 'goog.fx.dom', 'goog.object', 'goog.ui.Component']);
+goog.addDependency('../../../synthjs/ui/sequencer/container.js', ['synthjs.ui.sequencer.Container'], ['goog.fx', 'goog.fx.AnimationQueue', 'goog.fx.dom', 'goog.object', 'goog.ui.Component']);
+goog.addDependency('../../../synthjs/ui/sequencer/track.js', ['synthjs.ui.sequencer.Track'], []);
 goog.addDependency('../../../synthjs/ui/splitpane.js', ['synthjs.ui.SplitPane'], ['goog.style', 'goog.ui.SplitPane']);
 goog.addDependency('../../../synthjs/ui/textprompt.js', ['synthjs.ui.TextPrompt'], ['goog.ui.Prompt']);
 goog.addDependency('../../../synthjs/ui/verticalkeyboardrenderer.js', ['synthjs.ui.VerticalKeyboardRenderer'], ['goog.dom.classes', 'goog.style']);
