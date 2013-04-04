@@ -6,6 +6,7 @@ goog.require('goog.fx.AnimationQueue');
 goog.require('goog.fx.dom');
 goog.require("goog.fx");
 
+goog.require("synthjs.model.Midi.EventType");
 
 goog.scope(function(){
 
@@ -62,6 +63,57 @@ goog.scope(function(){
         },
         changeTempoEvent: function(){
 
+        },
+        /**
+         * Litens midi
+         * @param  {synthjs.model.Midi} midi [description]
+         * @return {[type]}      [description]
+         */
+        listenMidi: function(midi){
+            var EventType = synthjs.model.Midi.EventType;
+
+            goog.array.forEach([
+                    [
+                        EventType.ADD_TRACK,
+                        this.addTrack
+                    ],
+                    [
+                        EventType.REMOVE_TRACK,
+                        this.removeTrack
+                    ],
+                    [
+                        EventType.ADD_MIDIEVENT,
+                        this.addMidiEvent
+                    ],
+                    [
+                        EventType.REMOVE_MIDIEVENT,
+                        this.removeMidiEvent
+                    ],
+                    [
+                        EventType.CHANGE_MIDIEVENT,
+                        this.changeMidiEvent
+                    ],
+                    [
+                        EventType.ADD_TEMPOEVENT,
+                        this.addTempoEvent
+                    ],
+                    [
+                        EventType.REMOVE_TEMPOEVENT,
+                        this.removeTempoEvent
+                    ],
+                    [
+                        EventType.CHANGE_TEMPOEVENT,
+                        this.changeTempoEvent
+                    ]
+                ],
+                function(e){
+                    this.getHandler().listen(
+                        this,
+                        e[0],
+                        e[1]);
+                },
+                this
+            );
         },
         createDom: function(){
             var elem = createDom('div', Container.WRAPPER_CLASSNAME);

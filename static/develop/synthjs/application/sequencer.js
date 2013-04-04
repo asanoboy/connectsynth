@@ -19,7 +19,7 @@ var Sequencer = synthjs.application.Sequencer = function(id){
 goog.inherits(Sequencer, synthjs.application.Base);
 
 Sequencer.prototype._init = function(){
-    this._bindMidiToContainer();
+    this._getBodyComponent().listenMidi(this._midi);
     this._listenContainer();
 };
 
@@ -38,55 +38,6 @@ Sequencer.prototype._getMenuComponent = function(){
 Sequencer.prototype._getBodyComponent = function(){
     return this._bodyComponent ||
         ( this._bodyComponent=new synthjs.ui.sequencer.Container());
-};
-
-Sequencer.prototype._bindMidiToContainer = function(){
-    var EventType = synthjs.model.Midi.EventType;
-    var container = this._getBodyComponent();
-
-    goog.array.forEach([
-            [
-                EventType.ADD_TRACK,
-                container.addTrack
-            ],
-            [
-                EventType.REMOVE_TRACK,
-                container.removeTrack
-            ],
-            [
-                EventType.ADD_MIDIEVENT,
-                container.addMidiEvent
-            ],
-            [
-                EventType.REMOVE_MIDIEVENT,
-                container.removeMidiEvent
-            ],
-            [
-                EventType.CHANGE_MIDIEVENT,
-                container.changeMidiEvent
-            ],
-            [
-                EventType.ADD_TEMPOEVENT,
-                container.addTempoEvent
-            ],
-            [
-                EventType.REMOVE_TEMPOEVENT,
-                container.removeTempoEvent
-            ],
-            [
-                EventType.CHANGE_TEMPOEVENT,
-                container.changeTempoEvent
-            ]
-        ],
-        function(e){
-            this.getHandler().listen(
-                container,
-                e[0],
-                e[1],
-                container);
-        },
-        this
-    );
 };
 
 Sequencer.prototype._listenContainer = function(){

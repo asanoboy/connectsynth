@@ -59,7 +59,7 @@ goog.addDependency('../../../synthjs/ui/menubar.js', ['synthjs.ui.MenuBar'], ['g
 goog.addDependency('../../../synthjs/ui/plugincontrolpanel.js', ['synthjs.ui.PluginControlPanel', 'synthjs.ui.PluginControlPanelEventType'], ['goog.graphics', 'goog.ui.Component', 'synthjs.ui.graphics.ControlButton', 'synthjs.ui.graphics.RadioButton', 'synthjs.ui.graphics.ToggleButton']);
 goog.addDependency('../../../synthjs/ui/plugincontrolpanelcontainer.js', ['synthjs.ui.PluginControlPanelContainer'], ['goog.ui.ComboBox', 'goog.ui.ComboBoxItem', 'goog.ui.Component', 'synthjs.ui.PluginControlPanel']);
 goog.addDependency('../../../synthjs/ui/sdkoscillator.js', ['synthjs.ui.SDKOscillator'], ['goog.dom.ViewportSizeMonitor', 'goog.events.EventHandler', 'goog.events.EventType', 'goog.math.Size', 'goog.object', 'goog.style', 'goog.ui.Component', 'goog.ui.SplitPane.Orientation', 'synthjs.ui.SplitPane']);
-goog.addDependency('../../../synthjs/ui/sequencer/container.js', ['synthjs.ui.sequencer.Container'], ['goog.fx', 'goog.fx.AnimationQueue', 'goog.fx.dom', 'goog.object', 'goog.ui.Component']);
+goog.addDependency('../../../synthjs/ui/sequencer/container.js', ['synthjs.ui.sequencer.Container'], ['goog.fx', 'goog.fx.AnimationQueue', 'goog.fx.dom', 'goog.object', 'goog.ui.Component', 'synthjs.model.Midi.EventType']);
 goog.addDependency('../../../synthjs/ui/sequencer/track.js', ['synthjs.ui.sequencer.Track'], []);
 goog.addDependency('../../../synthjs/ui/splitpane.js', ['synthjs.ui.SplitPane'], ['goog.style', 'goog.ui.SplitPane']);
 goog.addDependency('../../../synthjs/ui/textprompt.js', ['synthjs.ui.TextPrompt'], ['goog.ui.Prompt']);

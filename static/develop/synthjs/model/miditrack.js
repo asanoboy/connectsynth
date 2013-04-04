@@ -55,26 +55,31 @@ synthjs.model.MidiTrack.prototype.addEvent = function(event) {
 	if( goog.isArray(event) ){
 		goog.array.forEach(event, function(e){
 			this.get("eventcollection").add(e);
+			this.getHandler().listen(
+				e,
+				synthjs.model.EventType.CHANGE,
+				this.onChangeEvent,
+				this);
 		}, this);
 	}
 	else {
 		this.get("eventcollection").add(event);
+		this.getHandler().listen(
+			event,
+			synthjs.model.EventType.CHANGE,
+			this.onChangeEvent,
+			this);
 	}
 
 	this.get("eventcollection").sort(function(a, b){
 		return a.get('offset') - b.get('offset');
 	});
 
-	this.getHandler().listen(
-		event,
-		synthjs.model.EventType.CHANGE,
-		this.onChangeEvent,
-		this);
 };
 
 synthjs.model.MidiTrack.prototype.onChangeEvent = function(e){
 	this.dispatchEvent(
-		new goog.events.Event(syntjs.model.MidiTrack.EventType.CHANGE_EVENT, e.target)
+		new goog.events.Event(synthjs.model.MidiTrack.EventType.CHANGE_EVENT, e.target)
 	);
 };
 

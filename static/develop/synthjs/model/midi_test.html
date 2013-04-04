@@ -117,7 +117,143 @@ function testSort(){
 		assertTrue(prev <= e.get("offset"));
 		prev = e.get("offset");
 	})
-};
+}
+
+function testTrackEvent(){
+	var midi = new Midi(100),
+		handler = new goog.events.EventHandler(),
+		track = new synthjs.model.MidiTrack(),
+		track2 = new synthjs.model.MidiTrack(),
+		cnt=0;
+
+	handler.listen(
+		midi,
+		Midi.EventType.ADD_TRACK,
+		function(event){
+			assertTrue(event.target instanceof synthjs.model.MidiTrack);
+			assertTrue(track.equals(event.target));
+			assertFalse(track2.equals(event.target));
+			cnt++;
+		}
+	)
+	.listen(
+		midi,
+		Midi.EventType.REMOVE_TRACK,
+		function(event){
+			assertTrue(track.equals(event.target));
+			assertFalse(track2.equals(event.target));
+			cnt++;
+			assertEquals(cnt, 2);
+			asyncTestCase.continueTesting();
+		});
+	asyncTestCase.waitForAsync();
+
+	midi.addTrack(track);
+	midi.removeTrack(track);
+}
+
+function testMidiEvent(){
+	var midi = new Midi(100),
+		handler = new goog.events.EventHandler(),
+		track = new synthjs.model.MidiTrack(),
+		keyevent = new synthjs.model.MidiKeyEvent(0x89, 1000, 100, 0.1);
+		keyevent2 = new synthjs.model.MidiKeyEvent(0x89, 1000, 100, 0.1);
+		cnt = 0;
+
+	handler.listen(
+		midi,
+		Midi.EventType.ADD_MIDIEVENT,
+		function(event){
+			assertTrue(keyevent.equals(event.target));
+			assertFalse(keyevent2.equals(event.target));
+			cnt++;
+		}
+	)
+	.listen(
+		midi,
+		Midi.EventType.CHANGE_MIDIEVENT,
+		function(event){
+			assertEquals(event.target.attr, 'note');
+			assertEquals(event.target.before, 100);
+			assertEquals(event.target.after, 50);
+
+			assertTrue(keyevent.equals(event.target.model));
+			assertFalse(keyevent2.equals(event.target.model));
+			cnt++;
+		}
+	)
+	.listen(
+		midi,
+		Midi.EventType.REMOVE_MIDIEVENT,
+		function(event){
+
+			assertTrue(keyevent.equals(event.target));
+			assertFalse(keyevent2.equals(event.target));
+			cnt++;
+			assertEquals(cnt, 3);
+			asyncTestCase.continueTesting();
+		}
+	);
+
+	asyncTestCase.waitForAsync();
+
+	midi.addTrack(track);
+	track.addEvent(keyevent);
+	keyevent.set("note", 50);
+	track.removeEvent(keyevent);
+
+}
+
+function testTempoEvent(){
+	var midi = new Midi(100),
+		handler = new goog.events.EventHandler(),
+		track = new synthjs.model.MidiTrack(),
+		keyevent = new synthjs.model.MidiKeyEvent(0x89, 1000, 100, 0.1);
+		keyevent2 = new synthjs.model.MidiKeyEvent(0x89, 1000, 100, 0.1);
+		cnt = 0;
+
+	handler.listen(
+		midi,
+		Midi.EventType.ADD_TEMPOEVENT,
+		function(event){
+			assertTrue(keyevent.equals(event.target));
+			assertFalse(keyevent2.equals(event.target));
+			cnt++;
+		}
+	)
+	.listen(
+		midi,
+		Midi.EventType.CHANGE_TEMPOEVENT,
+		function(event){
+			assertEquals(event.target.attr, 'note');
+			assertEquals(event.target.before, 100);
+			assertEquals(event.target.after, 50);
+
+			assertTrue(keyevent.equals(event.target.model));
+			assertFalse(keyevent2.equals(event.target.model));
+			cnt++;
+		}
+	)
+	.listen(
+		midi,
+		Midi.EventType.REMOVE_TEMPOEVENT,
+		function(event){
+
+			assertTrue(keyevent.equals(event.target));
+			assertFalse(keyevent2.equals(event.target));
+			cnt++;
+			assertEquals(cnt, 3);
+			asyncTestCase.continueTesting();
+		}
+	);
+
+	asyncTestCase.waitForAsync();
+
+	midi.get("tempoTrack").addEvent(keyevent);
+	keyevent.set("note", 50);
+	midi.get("tempoTrack").removeEvent(keyevent);
+
+}
 
 </script>
 </body>
