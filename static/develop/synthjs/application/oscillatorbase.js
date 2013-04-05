@@ -11,7 +11,8 @@ goog.require("synthjs.application.Base");
 goog.require("synthjs.application.module.Oscillator");
 goog.require("synthjs.application.api.Plugin");
 
-goog.require("synthjs.ui.SDKOscillator");
+// goog.require("synthjs.ui.SDKOscillator");
+goog.require("synthjs.ui.SplitPane");
 goog.require("synthjs.ui.window.Code");
 goog.require("synthjs.ui.window.Image");
 goog.require("synthjs.ui.window.WindowHolder");

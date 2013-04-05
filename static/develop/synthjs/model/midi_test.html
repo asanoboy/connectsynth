@@ -164,8 +164,9 @@ function testMidiEvent(){
 		midi,
 		Midi.EventType.ADD_MIDIEVENT,
 		function(event){
-			assertTrue(keyevent.equals(event.target));
-			assertFalse(keyevent2.equals(event.target));
+			assertTrue(keyevent.equals(event.target.event));
+			assertFalse(keyevent2.equals(event.target.event));
+			assertTrue(track.equals(event.target.track));
 			cnt++;
 		}
 	)
@@ -179,6 +180,8 @@ function testMidiEvent(){
 
 			assertTrue(keyevent.equals(event.target.model));
 			assertFalse(keyevent2.equals(event.target.model));
+
+			assertTrue(track.equals(event.target.track));
 			cnt++;
 		}
 	)
@@ -187,8 +190,10 @@ function testMidiEvent(){
 		Midi.EventType.REMOVE_MIDIEVENT,
 		function(event){
 
-			assertTrue(keyevent.equals(event.target));
-			assertFalse(keyevent2.equals(event.target));
+			assertTrue(keyevent.equals(event.target.event));
+			assertFalse(keyevent2.equals(event.target.event));
+
+			assertTrue(track.equals(event.target.track));
 			cnt++;
 			assertEquals(cnt, 3);
 			asyncTestCase.continueTesting();

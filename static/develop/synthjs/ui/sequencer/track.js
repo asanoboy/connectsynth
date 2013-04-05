@@ -1,12 +1,17 @@
 goog.provide("synthjs.ui.sequencer.Track");
 
+goog.require("synthjs.utility.EventTarget");
+
 goog.scope(function(){
 
-    var Track = synthjs.ui.sequencer.Track = function(){
+var Track = synthjs.ui.sequencer.Track = function(){
 
-    };
+};
 
-    goog.object.extend(Track, {
+goog.inherits(Track, synthjs.utility.EventTarget);
 
-    });
-});s
+goog.object.extend(Track, {
+    render: function(){
+    }
+});
+});

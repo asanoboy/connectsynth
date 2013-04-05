@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../closurelibrary/closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+    goog.require("goog.testing.jsunit");
+    goog.require("goog.testing.AsyncTestCase");
+    goog.require("goog.events");
+
+    goog.require("goog.testing.MockClassFactory");
+    goog.require("synthjs.application.Sequencer");
+</script>
+</head>
+<body>
+    <div id="application"></div>
+<script>
+var appid = "application",
+    sequencer,
+    containerFactory = new goog.testing.MockClassFactory(),
+    contianerMock
+    ;
+
+function setUp() {
+    // containerMock = containerFactory.getLooseMockClass(
+    //     synthjs.ui.sequencer,
+    //     synthjs.ui.sequencer.Container
+    //     );
+
+    // containerMock.getElement().$returns( goog.dom.createDom("div") ).$anyTimes();
+    // containerMock.enterDocument().$anyTimes();
+    // var vsm = new goog.dom.ViewportSizeMonitor();
+    // containerMock.onResize(vsm.getSize()).$setIgnoreUnexpectedCalls(true).$anyTimes();
+
+    // console.log(containerMock);
+}
+
+function tearDown() {
+    // goog.dom.removeChildren( goog.dom.getElement(appid) );
+    // containerFactory.reset();
+}
+
+function testEvent() {
+
+    // containerMock.addTrack().$returns('hoge');
+    // containerMock.$replay();
+
+
+    // sequencer = new synthjs.application.Sequencer(appid);
+    // alert(sequencer._getBodyComponent().addTrack());
+    // sequencer.addTrack('hoge');
+
+    // container.dispatchEvent(
+    //     new goog.events.Event(Container.EventType.ADD_TRACK)
+    // );
+
+    // mock.$verify();
+}
+
+</script>
+</body>
+</html>

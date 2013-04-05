@@ -68,19 +68,33 @@ synthjs.model.Midi.prototype.removeTrack = function(track){
 
 synthjs.model.Midi.prototype.onAddEvent = function(event){
 	this.dispatchEvent(
-		new goog.events.Event(synthjs.model.Midi.EventType.ADD_MIDIEVENT, event.target)
+		new goog.events.Event(
+			synthjs.model.Midi.EventType.ADD_MIDIEVENT,
+			{
+				event: event.target,
+				track: event.currentTarget
+			}
+		)
 	);
 };
 
 synthjs.model.Midi.prototype.onRemoveEvent = function(event){
 	this.dispatchEvent(
-		new goog.events.Event(synthjs.model.Midi.EventType.REMOVE_MIDIEVENT, event.target)
+		new goog.events.Event(synthjs.model.Midi.EventType.REMOVE_MIDIEVENT,
+			{
+				event: event.target,
+				track: event.currentTarget
+			}
+		)
 	);
 };
 
 synthjs.model.Midi.prototype.onChangeEvent = function(event){
+	var param = event.target;
+	param.track = event.currentTarget;
 	this.dispatchEvent(
-		new goog.events.Event(synthjs.model.Midi.EventType.CHANGE_MIDIEVENT, event.target)
+		new goog.events.Event(synthjs.model.Midi.EventType.CHANGE_MIDIEVENT,
+			param)
 	);
 };
 

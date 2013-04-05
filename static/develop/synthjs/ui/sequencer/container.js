@@ -2,9 +2,9 @@ goog.provide("synthjs.ui.sequencer.Container");
 
 goog.require("goog.ui.Component");
 goog.require("goog.object");
-goog.require('goog.fx.AnimationQueue');
-goog.require('goog.fx.dom');
-goog.require("goog.fx");
+// goog.require('goog.fx.AnimationQueue');
+// goog.require('goog.fx.dom');
+// goog.require("goog.fx");
 
 goog.require("synthjs.model.Midi.EventType");
 
@@ -12,13 +12,11 @@ goog.scope(function(){
 
     var createDom = goog.dom.createDom,
         style = goog.style,
-        classes = goog.dom.classes,
-        AnimationParallelQueue = goog.fx.AnimationParallelQueue;
+        classes = goog.dom.classes;
 
     var Container = synthjs.ui.sequencer.Container = function(opt_domHelper){
         goog.base(this, opt_domHelper);
         this._slideWidth = 150;
-        // this._slideDuration = 1000;
 
         this._bottomHeight = 50;
 
@@ -164,9 +162,9 @@ goog.scope(function(){
             // }, this), 1000) ;
         },
 
-        disposeInternal: function(){
-
-        },
+        // disposeInternal: function(){
+        //     goog.base(this, "disposeInternal");
+        // },
 
         setLeftPane: function(component){
             var dom = this.getDomHelper();
@@ -217,37 +215,6 @@ goog.scope(function(){
                 0,
                 size.height - this._bottomHeight);
         }
-        // open: function(){
-        //     this.slide(true);
-        // },
-        // close: function(){
-        //     this.slide(false);
-        // },
-        // slide: function(isOpen){
-        //     var animation = new AnimationParallelQueue();
-        //     var pos = style.getPosition(this._body);
-        //     var bodyBoxSize = style.getBorderBoxSize(this._body);
-
-        //     var posClosed = [pos.x, pos.y],
-        //         posOpened = [pos.x = this._slideWidth, pos.y],
-        //         sizeClosed = [bodyBoxSize.width, bodyBoxSize.height],
-        //         sizeOpened = [bodyBoxSize.width-this._slideWidth, bodyBoxSize.height];
-
-
-        //     animation.add(new goog.fx.dom.Slide(this._body,
-        //         isOpen ? posClosed : posOpened,
-        //         isOpen ? posOpened : posClosed,
-        //         this._slideDuration,
-        //         goog.fx.easing.easeOut));
-
-        //     animation.add(new goog.fx.dom.Resize(this._body,
-        //         isOpen ? sizeClosed : sizeOpened,
-        //         isOpen ? sizeOpened : sizeClosed,
-        //         this._slideDuration,
-        //         goog.fx.easing.easeOut
-        //         ));
-        //     animation.play();
-        // },
     });
 
 

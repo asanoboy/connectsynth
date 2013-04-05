@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests</title>
+<script src="../../../closurelibrary/closure/goog/base.js"></script>
+<script src="../../../deps.js"></script>
+<script>
+    goog.require("goog.testing.jsunit");
+    goog.require("goog.testing.AsyncTestCase");
+    goog.require("goog.events");
+
+    goog.require("synthjs.ui.sequencer.TimelineHolder");
+    goog.require("synthjs.ui.sequencer.TimelineBase");
+</script>
+<style>
+#application {
+    width: 100%;
+    height: 300px;
+}
+</style>
+</head>
+<body>
+    <div id="application"></div>
+<script>
+var appid = "application", holder;
+
+function setUp() {
+    holder = new synthjs.ui.sequencer.TimelineHolder();
+    holder.render(goog.dom.getElement(appid));
+}
+
+function tearDown() {
+    holder.dispose();
+}
+
+function testEvent() {
+    
+}
+
+</script>
+</body>
+</html>

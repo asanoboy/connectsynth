@@ -43,7 +43,6 @@ Sequencer.prototype._getBodyComponent = function(){
 Sequencer.prototype._listenContainer = function(){
     var EventType = synthjs.ui.sequencer.Container.EventType;
     var container = this._getBodyComponent();
-
     goog.array.forEach([
         // Track Events
             [
@@ -116,6 +115,8 @@ Sequencer.prototype._listenContainer = function(){
 };
 
 Sequencer.prototype.addTrack = function(event){
+    var newTrack = new synthjs.model.MidiTrack();
+    this._midi.addTrack(newTrack);
 };
 
 Sequencer.prototype.removeTrack = function(event){
