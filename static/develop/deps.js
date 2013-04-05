@@ -22,6 +22,7 @@ goog.addDependency('../../../synthjs/audiocore/player.js', ['synthjs.audiocore.P
 goog.addDependency('../../../synthjs/audiocore/wave.js', ['synthjs.audiocore.Wave'], ['goog.async.Deferred', 'goog.async.DeferredList']);
 goog.addDependency('../../../synthjs/audiocore/wave_plugin.js', ['synthjs.audiocore.WaveEvent', 'synthjs.audiocore.WavePlugin', 'synthjs.audiocore.WavePluginEventType'], ['synthjs.utility.EventTarget', 'synthjs.utility.WorkerDeferredManager']);
 goog.addDependency('../../../synthjs/bridge/codemirror.js', ['synthjs.CodeMirror'], []);
+goog.addDependency('../../../synthjs/bridge/pnglib.js', ['synthjs.bridge.PNGlib'], []);
 goog.addDependency('../../../synthjs/bridge/template.js', ['synthjs.Template'], ['goog.net.XhrIo', 'synthjs.utility.Deferred']);
 goog.addDependency('../../../synthjs/encode/midifile.js', ['synthjs.encode.MidiFile', 'synthjs.encode.MidiParser'], ['goog.asserts']);
 goog.addDependency('../../../synthjs/encode/utility.js', ['synthjs.encode.Utility'], ['goog.array']);
@@ -60,7 +61,7 @@ goog.addDependency('../../../synthjs/ui/plugincontrolpanel.js', ['synthjs.ui.Plu
 goog.addDependency('../../../synthjs/ui/plugincontrolpanelcontainer.js', ['synthjs.ui.PluginControlPanelContainer'], ['goog.ui.ComboBox', 'goog.ui.ComboBoxItem', 'goog.ui.Component', 'synthjs.ui.PluginControlPanel']);
 goog.addDependency('../../../synthjs/ui/sequencer/container.js', ['synthjs.ui.sequencer.Container'], ['goog.object', 'goog.ui.Component', 'synthjs.model.Midi.EventType']);
 goog.addDependency('../../../synthjs/ui/sequencer/timelinebase.js', ['synthjs.ui.sequencer.TimelineBase'], ['goog.ui.Component']);
-goog.addDependency('../../../synthjs/ui/sequencer/timelineholder.js', ['synthjs.ui.sequencer.TimelineHolder'], ['goog.ui.Component']);
+goog.addDependency('../../../synthjs/ui/sequencer/timelineholder.js', ['synthjs.ui.sequencer.TimelineHolder'], ['goog.ui.Component', 'synthjs.bridge.PNGlib']);
 goog.addDependency('../../../synthjs/ui/sequencer/track.js', ['synthjs.ui.sequencer.Track'], ['synthjs.utility.EventTarget']);
 goog.addDependency('../../../synthjs/ui/sequencer/trackline.js', ['synthjs.ui.sequencer.Trackline'], ['synthjs.ui.sequencer.TimelineBase']);
 goog.addDependency('../../../synthjs/ui/splitpane.js', ['synthjs.ui.SplitPane'], ['goog.style', 'goog.ui.SplitPane']);

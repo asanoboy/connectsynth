@@ -3,6 +3,7 @@
 <head>
 <title>synthjs Unit Tests</title>
 <script src="../../../closurelibrary/closure/goog/base.js"></script>
+<script src="../../../../js/extern/pnglib.js"></script>
 <script src="../../../deps.js"></script>
 <script>
     goog.require("goog.testing.jsunit");
@@ -17,12 +18,40 @@
     width: 100%;
     height: 300px;
 }
+
+.timeline-holder-header {
+    background-image: url('http://g-ec2.images-amazon.com/images/G/09/2013/student/roto/student_point15_roto_300x75._V372361474_.gif');
+    background-size: 100 200;
+    /*background-color: red;*/
+}
+.timeline-holder-holder {
+    /*background-color: blue;*/
+}
+.timeline-root {
+    background-image: url('http://g-ec2.images-amazon.com/images/G/09/2013/student/roto/student_point15_roto_300x75._V372361474_.gif');
+}
 </style>
 </head>
 <body>
     <div id="application"></div>
 <script>
+
+var Timeline = function(opt_domHelper){
+    goog.base(this, opt_domHelper);
+}
+goog.inherits(Timeline, synthjs.ui.sequencer.TimelineBase);
+// goog.object.extend(Timeline, {
+// });
+goog.object.extend(Timeline.prototype, {
+    createDom: function(){
+        goog.base(this, "createDom");
+        goog.style.setWidth(this.getElement(), 10000);
+        goog.style.setHeight(this.getElement(), 100)    ;
+    }
+});
+
 var appid = "application", holder;
+
 
 function setUp() {
     holder = new synthjs.ui.sequencer.TimelineHolder();
@@ -30,11 +59,18 @@ function setUp() {
 }
 
 function tearDown() {
-    holder.dispose();
+    // holder.dispose();
 }
 
 function testEvent() {
-    
+    var timeline0 = new Timeline();
+    var timeline1 = new Timeline();
+    var timeline2 = new Timeline();
+    holder.appendLine(timeline0);
+    holder.appendLine(timeline1);
+    holder.appendLine(timeline2);
+    var lines = goog.dom.getElementsByClass( synthjs.ui.sequencer.TimelineBase._ROOT_CLASSNAME);
+    assertEquals(lines.length,  3);
 }
 
 </script>
