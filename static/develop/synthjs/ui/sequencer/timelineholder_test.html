@@ -10,25 +10,26 @@
     goog.require("goog.testing.AsyncTestCase");
     goog.require("goog.events");
 
+    goog.require("goog.net.XhrIo.ResponseType");
+    goog.require("goog.fs.FileReader");
+    goog.require("goog.events.EventHandler");
+    
+    goog.require("synthjs.utility.Deferred");
+    goog.require("synthjs.utility.AjaxDeferred");
+    goog.require("synthjs.encode.MidiFile");
+    goog.require("synthjs.model.Midi");
     goog.require("synthjs.ui.sequencer.TimelineHolder");
+    goog.require("synthjs.ui.sequencer.Trackline");
     goog.require("synthjs.ui.sequencer.TimelineBase");
 </script>
 <style>
 #application {
     width: 100%;
-    height: 300px;
+    height: 500px;
 }
 
 .timeline-holder-header {
-    background-image: url('http://g-ec2.images-amazon.com/images/G/09/2013/student/roto/student_point15_roto_300x75._V372361474_.gif');
     background-size: 100 200;
-    /*background-color: red;*/
-}
-.timeline-holder-holder {
-    /*background-color: blue;*/
-}
-.timeline-root {
-    background-image: url('http://g-ec2.images-amazon.com/images/G/09/2013/student/roto/student_point15_roto_300x75._V372361474_.gif');
 }
 </style>
 </head>
@@ -36,41 +37,110 @@
     <div id="application"></div>
 <script>
 
-var Timeline = function(opt_domHelper){
-    goog.base(this, opt_domHelper);
-}
-goog.inherits(Timeline, synthjs.ui.sequencer.TimelineBase);
-// goog.object.extend(Timeline, {
-// });
-goog.object.extend(Timeline.prototype, {
-    createDom: function(){
-        goog.base(this, "createDom");
-        goog.style.setWidth(this.getElement(), 10000);
-        goog.style.setHeight(this.getElement(), 100)    ;
-    }
-});
-
-var appid = "application", holder;
-
+var Trackline = synthjs.ui.sequencer.Trackline,
+    MidiFile = synthjs.encode.MidiFile,
+    Midi = synthjs.model.Midi,
+    asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall(),
+    Ajax = synthjs.utility.AjaxDeferred,
+    midipath = "../../model/midi_test.mid",
+    appid = "application", 
+    holder, midi;
 
 function setUp() {
     holder = new synthjs.ui.sequencer.TimelineHolder();
     holder.render(goog.dom.getElement(appid));
+
+    if( !midi ){
+        asyncTestCase.waitForAsync();
+        loadMidiDeferred()
+        .addCallback(function(r){
+            midi = r;
+            asyncTestCase.continueTesting();
+        })
+        .callback();
+    }
+}
+
+function loadMidiDeferred(){
+
+    var reader = new goog.fs.FileReader();
+    var handler = new goog.events.EventHandler();
+    var dWait = new synthjs.utility.Deferred();
+    return new Ajax(midipath, {
+        responseType: goog.net.XhrIo.ResponseType.BLOB,
+        success: function(e){
+            return e.getResponse();
+        }
+    })
+    .assocChainDeferred(
+        new synthjs.utility.Deferred()
+        .addCallback(function(file){
+            handler.listen(reader,
+                goog.fs.FileReader.EventType.LOAD,
+                function(e){
+                    handler.dispose();
+                    handler = null;
+                                        
+                    dWait.callback(
+                        e.target.getResult()
+                    );
+                });
+            reader.readAsArrayBuffer(file);     
+        })
+        .awaitDeferred(dWait)
+    )
+    .addCallback(function(buffer){
+        var parser = new synthjs.encode.MidiParser(buffer);
+        var midifile = parser.createMidi();
+        return Midi.createByMidiFile(midifile);
+    }) 
 }
 
 function tearDown() {
     // holder.dispose();
+    // midi = null;
 }
 
-function testEvent() {
-    var timeline0 = new Timeline();
-    var timeline1 = new Timeline();
-    var timeline2 = new Timeline();
-    holder.appendLine(timeline0);
-    holder.appendLine(timeline1);
-    holder.appendLine(timeline2);
+function testMidi(){
+    var miditrack = new synthjs.model.MidiTrack();
+    miditrack.addEvent( synthjs.model.MidiKeyEvent.createOnEvent(
+        0,
+        60,
+        10));
+    miditrack.addEvent( synthjs.model.MidiKeyEvent.createOnEvent(
+        midi.get("delta"),
+        60,
+        0));
+    holder.appendLine( new Trackline(midi.get("delta"), miditrack));
+    goog.array.forEach(midi.get('tracks').getAll(), function(track){
+        if( track.hasKeyEvent() ){
+            holder.appendLine(new Trackline(midi.get("delta"), track));
+        }
+    });
+    var offset = 0;
+    setInterval(function(){
+        holder.setNeedleOffset(offset);
+        offset += 10;
+        console.log(offset);
+    }, 100);
+}
+
+function _testLaunch() {
+    var delta = 1000;
+    var track0 = new Trackline(delta, new synthjs.model.MidiTrack());
+    var track1 = new Trackline(delta, new synthjs.model.MidiTrack());
+    var track2 = new Trackline(delta, new synthjs.model.MidiTrack());
+    holder.appendLine(track0);
+    holder.appendLine(track1);
+    holder.appendLine(track2);
     var lines = goog.dom.getElementsByClass( synthjs.ui.sequencer.TimelineBase._ROOT_CLASSNAME);
+    assertEquals(lines.length,  4);
+
+    holder.removeLine(track2);
+    lines = goog.dom.getElementsByClass( synthjs.ui.sequencer.TimelineBase._ROOT_CLASSNAME);
     assertEquals(lines.length,  3);
+
+    // holder.dispose();
 }
 
 </script>

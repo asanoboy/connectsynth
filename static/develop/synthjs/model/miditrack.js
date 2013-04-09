@@ -4,6 +4,8 @@ goog.provide("synthjs.model.MidiEvent");
 goog.require("synthjs.model.Collection");
 goog.require("synthjs.model.MidiTrack");
 
+goog.scope(function(){
+
 /**
  * @constructor
  * @extends {synthjs.model.Base}
@@ -72,7 +74,7 @@ synthjs.model.MidiTrack.prototype.addEvent = function(event) {
 	}
 
 	this.get("eventcollection").sort(function(a, b){
-		return a.get('offset') - b.get('offset');
+		return a.get('offset') - b.get('offset') || a.get("_index") - b.get("_index");
 	});
 
 };
@@ -109,12 +111,14 @@ synthjs.model.MidiTrack.prototype.getEvent = function(index){
 	return this.get("eventcollection").getByIndex(index);
 };
 
+var midiEventCurrentIndex = 0;
 /**
  * @constructor
  * @extends {synthjs.model.Base}
  */
-synthjs.model.MidiEventBase = function(){
-	goog.base(this, arguments[0]);
+synthjs.model.MidiEventBase = function(opt_params){
+	opt_params['_index'] = midiEventCurrentIndex++;
+	goog.base(this, opt_params);return;
 };
 goog.inherits(synthjs.model.MidiEventBase, synthjs.model.Base);
 
@@ -141,9 +145,25 @@ synthjs.model.MidiKeyEvent = function(status, offset, note, velocity){
 };
 goog.inherits(synthjs.model.MidiKeyEvent, synthjs.model.MidiEventBase);
 
+synthjs.model.MidiKeyEvent.createOnEvent = function(offset, note, velocity){
+	return new synthjs.model.MidiKeyEvent(
+		synthjs.model.MidiKeyEventType.ON,
+		offset,
+		note,
+		velocity);
+};
+
 synthjs.model.MidiKeyEventType = {
 	ON: 0x90,
 	OFF: 0x80
+};
+
+synthjs.model.MidiKeyEvent.prototype.isOn = function(){
+	return this.get("type")==synthjs.model.MidiKeyEventType.ON && this.get("velocity")>0;
+};
+
+synthjs.model.MidiKeyEvent.prototype.isOff = function(){
+	return !this.isOn();
 };
 
 /**
@@ -191,3 +211,5 @@ synthjs.model.MidiSysExEvent = function(data){
 	});
 };
 goog.inherits(synthjs.model.MidiSysExEvent, synthjs.model.MidiEventBase);
+
+});
