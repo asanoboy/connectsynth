@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests dynamicgenerator</title>
+<script src="../../closurelibrary/closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+    goog.require("goog.testing.jsunit");
+    goog.require("goog.testing.AsyncTestCase");
+    
+    goog.require("goog.net.XhrIo.ResponseType");
+    goog.require("goog.fs.FileReader");
+    goog.require("goog.events.EventHandler");
+
+    goog.require("synthjs.utility.Deferred");
+    goog.require("synthjs.utility.AjaxDeferred");
+    goog.require("synthjs.audiocore.Player");
+    goog.require("synthjs.audiocore.WavePlugin");
+    goog.require("synthjs.audiocore.Composer");
+    goog.require("synthjs.audiocore.Performer");
+    goog.require("synthjs.audiocore.Note");
+    goog.require("synthjs.encode.MidiFile");
+    goog.require("synthjs.model.Midi");
+
+
+    goog.require("synthjs.audiocore.ComposerWorker");
+    goog.require("synthjs.model.MidiTrack");
+</script>
+</head>
+<body>
+<script>
+
+var MidiFile = synthjs.encode.MidiFile,
+    Midi = synthjs.model.Midi,
+    Ajax = synthjs.utility.AjaxDeferred,
+    D = synthjs.utility.Deferred,
+    asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall(),
+    midipath = "test.mid",
+    workerpath = "composer_worker.js",
+    wavepath = "bootstrap.js",
+    worker;
+
+function setUp() {
+
+}
+
+function tearDown() {
+
+}
+
+function setSingleTrack(composer){
+    var performer = new synthjs.audiocore.Performer(),
+        wave = new synthjs.audiocore.WavePlugin(wavepath, {sampleRate: 48000}),
+        track = new synthjs.model.MidiTrack(),
+        tempoTrack = new synthjs.model.MidiTrack();
+
+    track.addEvent( synthjs.model.MidiKeyEvent.createOnEvent(0, 60, 100) );
+    tempoTrack.addEvent( synthjs.model.MidiMetaEvent.createTempoEventByBPM(120) );
+
+
+    performer.setWave(wave);
+    performer.setSampleRate(48000);
+    performer.setDelta(1000);
+    performer.setTrack(track);
+    composer.addPerformer(performer);
+    composer.setSampleRate(48000);
+    composer.setDelta(1000);
+    composer.setTrack(tempoTrack);
+    return composer;
+}
+
+function testSingleTrack() {
+    var composer = setSingleTrack(new synthjs.audiocore.Composer()),
+        worker = setSingleTrack(new synthjs.audiocore.Composer()),
+        // worker = setSingleTrack(new synthjs.audiocore.ComposerWorker(workerpath)),
+        length = 1 << 16;
+
+    (function matchBuffers(){
+        var dList = [];
+        dList.push(composer.getBufferDeferred(length));
+        dList.push(worker.getBufferDeferred(length));
+
+        var d = new goog.async.DeferredList(dList)
+            .addCallback(function(buffers){
+                assertEquals(buffers.length, 2);
+                var composerBuffer = buffers[0][1],
+                    workerBuffer = buffers[1][1];
+
+                var composerLeftBuffer = composerBuffer.leftBuffer,
+                    workerLeftBuffer = workerBuffer.leftBuffer;
+
+
+                assertEquals(composerLeftBuffer.length, workerLeftBuffer.length);
+                assertEquals(composerLeftBuffer.length, length);
+
+                for( var i=0; i<composerLeftBuffer.length; i+=1<<10 ){
+                    console.log('hoge');
+                    assertEquals( composerLeftBuffer[i], workerLeftBuffer[i] );
+                }
+                asyncTestCase.continueTesting();
+            });
+        for( var i=0; i<dList.length; i++){
+            dList[i].callback();
+        }
+    })();
+    asyncTestCase.waitForAsync();
+}
+
+///////////
+function createReadArrayBufferDeferred(){
+    var reader = new goog.fs.FileReader();
+    var handler = new goog.events.EventHandler();
+    var dWait = new synthjs.utility.Deferred();
+    return  new synthjs.utility.Deferred()
+        .addCallback(function(file){
+            handler.listen(reader,
+                goog.fs.FileReader.EventType.LOAD,
+                function(e){
+                    handler.dispose();
+                    handler = null;
+                                        
+                    dWait.callback(
+                        e.target.getResult()
+                    );
+                });
+            
+            reader.readAsArrayBuffer(file);     
+        })
+        .awaitDeferred(dWait)
+}
+
+function createGetMidifileDeferred(){
+    return new Ajax(midipath, {
+        responseType: goog.net.XhrIo.ResponseType.BLOB,
+        success: function(e){
+            return e.getResponse();
+        }
+    });
+}
+
+function getMidiDeferred() {
+    return createGetMidifileDeferred()
+    .assocChainDeferred(
+        createReadArrayBufferDeferred()
+    )
+    .addCallback(function(buffer){
+        var parser = new synthjs.encode.MidiParser(buffer);
+        var midifile = parser.createMidi();
+        return Midi.createByMidiFile(midifile);
+    });
+}
+
+
+function _testbeep() {
+    var sampleRate = 48000,
+        composer = new synthjs.audiocore.Composer();
+        // player = synthjs.audiocore.Player.getInstance();
+
+
+    // player.addGenerator(composer);
+    // player.setLatencyTimer(true);
+    // var handler = new goog.events.EventHandler();
+    // handler.listen(player, 
+    //     synthjs.audiocore.PlayerEventType.PUT_LATENCY, 
+    //     function(e){
+    //         var msec = Math.round(e.target*1000);
+    //         var str = '';
+    //         while(msec--){
+    //             str += "#";
+    //         }
+    //         console.log(str);
+    //     });
+
+    var d = getMidiDeferred().addCallback(function(midi){
+        assert(midi instanceof synthjs.model.Midi);
+        var tracks = midi.get('tracks').getAll();
+        var cnt = 0;
+        goog.array.forEach(tracks, function(track){
+            if( !track.hasKeyEvent() ) return;
+
+            cnt++;
+            if( cnt!=20 && cnt!=30 && cnt!=9){
+                // return;
+            }
+            var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", {sampleRate: 48000}),
+                performer = new synthjs.audiocore.Performer();
+            performer.setWave(wave);
+            performer.setSampleRate(48000);
+            performer.setDelta(midi.get("delta"));
+            // performer.setTempo(250000);
+            // performer.setTempo(500000);
+            performer.setTrack(track);
+            composer.addPerformer(performer);
+
+        });
+        composer.setDelta(midi.get("delta"));
+        composer.setTrack(midi.get("tempoTrack"));
+        d.addCallback(function(){
+            composer.rewind();
+            // player.play();
+            asyncTestCase.continueTesting();
+        });
+    });
+    
+    asyncTestCase.waitForAsync();
+    d.callback();
+}
+
+
+</script>
+</body>
+</html>

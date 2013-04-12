@@ -199,6 +199,12 @@ synthjs.model.MidiMetaEvent.prototype.isTempo = function(){
 	return this.get("data")[0]==0x51;
 };
 
+synthjs.model.MidiMetaEvent.createTempoEventByBPM = function(bpm){
+	var tmp = parseInt(60 * 1000000 / bpm, 10);
+	var buffer = new Uint8Array([0x51, 0x03, tmp&0xff0000, tmp&0x00ff00, tmp&0x0000ff]);
+	return new synthjs.model.MidiMetaEvent(0xff, buffer);
+};
+
 /**
  * @constructor
  * @param {Uint8Array} data fuga
