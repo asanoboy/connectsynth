@@ -39,6 +39,10 @@ synthjs.audiocore.PerformerBase.prototype.setDelta = function(delta){
 	this._updateDeltaPerSample();
 };
 
+synthjs.audiocore.PerformerBase.prototype.getOffset = function(){
+	return this._currentOffset;
+};
+
 synthjs.audiocore.PerformerBase.prototype._updateDeltaPerSample = function() {
 	if( !this._tempo || !this._sampleRate || !this._delta) return;
 	var deltaPerSec = this._delta / (this._tempo / 1000000);

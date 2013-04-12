@@ -5,20 +5,32 @@ goog.require("goog.ui.Component");
 
 goog.scope(function(){
 
-    var TimelineHolder = synthjs.ui.sequencer.TimelineHolder = function(opt_domHelper){
+    var TimelineHolder = synthjs.ui.sequencer.TimelineHolder = function(delta, opt_domHelper){
         goog.base(this, opt_domHelper);
         this._headerHeight = null;
         this._headerScrollbarMargin = 30;
-        this._currentWidth = null;
+        this._innerWidth = null;
+        this._width = null;
         this._timelines = [];
         this._headerComponent = null;
         this._needle = null;
         this._needleOffset = 0;
+        this._scrollLeft = 0;
+        this._delta = delta;
+        this._tick = 50;
+        this._scrollMargin = 500;
+
+        /**
+         * Unit of pixel
+         * @type {Number}
+         */
+        this._offsetDisplayFrom = 0;
+        this._offsetDisplayTo = 0;
+        this._marginDisplay = 2000;
     };
 
     goog.inherits(TimelineHolder, goog.ui.Component);
 
-    var crcTable = null;
     goog.object.extend(TimelineHolder, {
         _ROOT_CLASSNAME: "timeline-holder",
         _HEADER_CLASSNAME: "timeline-holder-header",
@@ -28,43 +40,12 @@ goog.scope(function(){
     });
 
     goog.object.extend(TimelineHolder.prototype, {
-
-        onResize: function(){
-            var style = goog.style;
-            style.setHeight(this._holderElement,
-                style.getBorderBoxSize(this.getElement()).height - this._headerHeight
-            );
-        },
-        // onChangeContentWidth: function(){
-        orderWidth: function(){
-            var style = goog.style,
-                width = style.getBorderBoxSize(this.getElement()).width,
-                size;
-
-            goog.array.forEach(this._timelines, function(timeline){
-                size = style.getBorderBoxSize(timeline.component.getElement());
-                if( width < timeline.component.getWidth() ){ //size.width ){
-                    width = timeline.component.getWidth();//size.width;
-                }
-            });
-            this._currentWidth = width;
-            this._headerComponent.setWidth( width );
-            goog.array.forEach(this._timelines, function(e){
-                e.component.setWidth(width, true);
-            });
-        },
         createDom: function(){
             this.setElementInternal(
                 this.getDomHelper().createDom(
                     'div',
                     TimelineHolder._ROOT_CLASSNAME));
             this.decorateInternal(this.getElement());
-        },
-        setNeedleOffset: function(offset){
-            this._needleOffset = offset;
-            goog.style.setStyle(this._needle, {
-                left: offset + 'px'
-            });
         },
         decorateInternal: function(element){
             goog.base(this, "decorateInternal", element);
@@ -127,6 +108,7 @@ goog.scope(function(){
             this.setNeedleOffset(this._needleOffset);
             this.onResize();
             this.orderWidth();
+            this._setTimelineDisplay();
             this.getHandler().listen(
                 this._holderElement,
                 goog.events.EventType.SCROLL,
@@ -138,13 +120,116 @@ goog.scope(function(){
                 this.onHeaderScroll,
                 this);
         },
+        onResize: function(){
+            var style = goog.style;
+            style.setHeight(this._holderElement,
+                style.getBorderBoxSize(this.getElement()).height - this._headerHeight
+            );
+        },
+        orderWidth: function(){
+            var style = goog.style,
+                size,
+                width = this._width = style.getBorderBoxSize(this.getElement()).width;
 
+            goog.array.forEach(this._timelines, function(timeline){
+                size = style.getBorderBoxSize(timeline.component.getElement());
+                if( width < timeline.component.getWidth() ){ //size.width ){
+                    width = timeline.component.getWidth();//size.width;
+                }
+            });
+            this._innerWidth = width;
+            this._headerComponent.setWidth( width );
+            goog.array.forEach(this._timelines, function(e){
+                e.component.setWidth(width, true);
+            });
+        },
+        setNeedleOffset: function(offset){
+            this._needleOffset = offset / this._delta * this._tick;
+            this.drawNeedle();
+        },
+        drawNeedle: function(){
+            var margin = Math.min(this._width/2, this._scrollMargin);
+            if( this._needleOffset < this._scrollLeft ){
+                // this._scrollLeft = this._needleOffse - margin;
+                if( this.setScroll(this._needleOffse - margin) ){
+                    this.scrollHeader();
+                    this.scrollHolder();
+                }
+            }
+            else if( this._scrollLeft + this._width < this._needleOffset ) {
+                if( this.setScroll(this._needleOffset + margin - this._width) ){
+                    this.scrollHeader();
+                    this.scrollHolder();
+                }
+                // this._scrollLeft = this._needleOffset + margin - this._width;
+                // this.scrollHeader();
+                // this.scrollHolder();
+            }
+            goog.style.setStyle(this._needle, {
+                left: (this._needleOffset - this._scrollLeft) + 'px'
+            });
+        },
+
+        setScroll: function(scroll){
+            scroll = parseInt(scroll, 10);
+            if( this._scrollLeft != scroll ){
+                this._scrollLeft = scroll;
+                this._setTimelineDisplay();
+
+                return true;
+            }
+            return false;
+        },
+        _setTimelineDisplay: function(){
+            // console.log('======');
+            // console.log("scrollLeft="+this._scrollLeft+"; typeof="+typeof(this._scrollLeft));
+            // console.log("offsetDisplayFrom="+this._offsetDisplayFrom+"; typeof="+typeof(this._offsetDisplayFrom));
+            // console.log("offsetDisplayTo="+this._offsetDisplayTo+"; typeof="+typeof(this._offsetDisplayTo));
+            // console.log("width="+this._width+"; typeof="+typeof(this._width));
+            // console.log(this._scrollLeft <= this._offsetDisplayFrom ||
+            //     this._offsetDisplayTo <= this._scrollLeft + this._width);
+            if( this._scrollLeft <= this._offsetDisplayFrom ||
+                this._offsetDisplayTo <= this._scrollLeft + this._width )
+            {
+                console.log('setTimelineDisplay');
+                this._offsetDisplayFrom = this._scrollLeft - this._marginDisplay;
+                this._offsetDisplayTo = this._scrollLeft + this._width + this._marginDisplay;
+
+                goog.array.forEach(this._timelines, function(timeline){
+                    timeline.component.showEvents(this._offsetDisplayFrom, this._offsetDisplayTo);
+                },this);
+
+            }
+        },
         onHeaderScroll: function(event){
-            this._holderElement.scrollLeft = event.target.scrollLeft;
+            // if( this._scrollLeft != event.target.scrollLeft ){
+            //     this._scrollLeft = event.target.scrollLeft;
+            if( this.setScroll(event.target.scrollLeft) ){
+                this.scrollHolder();
+            }
+        },
+        scrollHeader: function(){
+            if( this._headerInnerWrapper ){
+                this._headerInnerWrapper.scrollLeft = this._scrollLeft;
+            }
+            // this.onScroll();
         },
         onHolderScroll: function(event){
-            var style = goog.style;
-            this._headerInnerWrapper.scrollLeft = event.target.scrollLeft;
+            // if( this._scrollLeft != event.target.scrollLeft ){
+            //     this._scrollLeft = event.target.scrollLeft;
+            if( this.setScroll(event.target.scrollLeft) ){
+                this.scrollHeader();
+            }
+        },
+        scrollHolder: function(){
+            if( this._holderElement ){
+                this._holderElement.scrollLeft = this._scrollLeft;
+            }
+            // this.onScroll();
+        },
+        onScroll: function(){
+            console.trace();
+            console.log('hoge');
         },
 
         /**
@@ -167,7 +252,8 @@ goog.scope(function(){
                 component: timeline
             });
             this.orderWidth();//onChangeContentWidth();
-
+            timeline.showEvents(this._offsetDisplayFrom, this._offsetDisplayTo);
+            // this._setTimelineDisplay();
         },
 
         removeLine: function(timeline){

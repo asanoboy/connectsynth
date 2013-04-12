@@ -11,6 +11,7 @@
     goog.require("goog.events");
 
     goog.require("goog.net.XhrIo.ResponseType");
+    goog.require('goog.async.AnimationDelay');
     goog.require("goog.fs.FileReader");
     goog.require("goog.events.EventHandler");
     
@@ -21,6 +22,11 @@
     goog.require("synthjs.ui.sequencer.TimelineHolder");
     goog.require("synthjs.ui.sequencer.Trackline");
     goog.require("synthjs.ui.sequencer.TimelineBase");
+
+    goog.require("synthjs.audiocore.Player");
+    goog.require("synthjs.audiocore.WavePlugin");
+    goog.require("synthjs.audiocore.Composer");
+    goog.require("synthjs.audiocore.Performer");
 </script>
 <style>
 #application {
@@ -42,24 +48,32 @@ var Trackline = synthjs.ui.sequencer.Trackline,
     Midi = synthjs.model.Midi,
     asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall(),
     Ajax = synthjs.utility.AjaxDeferred,
-    midipath = "../../model/midi_test.mid",
+    midipath = "../../audiocore/test.mid",
+    _midipath = "../../model/midi_test.mid",
+    pluginpath = "../../audiocore/bootstrap.js",
     appid = "application", 
-    holder, midi;
+    holder, midi, composer, player;
 
 function setUp() {
-    holder = new synthjs.ui.sequencer.TimelineHolder();
-    holder.render(goog.dom.getElement(appid));
 
     if( !midi ){
         asyncTestCase.waitForAsync();
         loadMidiDeferred()
         .addCallback(function(r){
             midi = r;
+            holder = new synthjs.ui.sequencer.TimelineHolder(midi.get("delta"));
+            holder.render(goog.dom.getElement(appid));
+            loadComposer();
             asyncTestCase.continueTesting();
         })
         .callback();
     }
+    else {
+        holder = new synthjs.ui.sequencer.TimelineHolder(midi.get("delta"));
+        holder.render(goog.dom.getElement(appid));
+    }
 }
+
 
 function loadMidiDeferred(){
 
@@ -91,9 +105,35 @@ function loadMidiDeferred(){
     )
     .addCallback(function(buffer){
         var parser = new synthjs.encode.MidiParser(buffer);
-        var midifile = parser.createMidi();
+        var midifile = parser.createMidi()
         return Midi.createByMidiFile(midifile);
     }) 
+}
+
+function loadComposer(){
+    if( midi ){
+        composer = new synthjs.audiocore.Composer();
+        player = synthjs.audiocore.Player.getInstance();
+        player.addGenerator(composer);
+        goog.array.forEach(midi.get("tracks").getAll(), function(track){
+            if( !track.hasKeyEvent() ){
+                return;
+            }
+
+            var wave = new synthjs.audiocore.WavePlugin(pluginpath, {sampleRate: 48000}),
+                performer = new synthjs.audiocore.Performer();
+
+            performer.setWave(wave);
+            performer.setSampleRate(48000);
+            performer.setDelta(midi.get("delta"));
+            performer.setTrack(track);
+            composer.addPerformer(performer);
+        });
+
+        composer.setDelta(midi.get("delta"));
+        composer.setTrack(midi.get("tempoTrack"));
+        composer.rewind();
+    }
 }
 
 function tearDown() {
@@ -118,11 +158,14 @@ function testMidi(){
         }
     });
     var offset = 0;
-    setInterval(function(){
-        holder.setNeedleOffset(offset);
-        offset += 10;
-        console.log(offset);
-    }, 100);
+    var delay = new goog.async.AnimationDelay(function(end){
+        holder.setNeedleOffset(composer.getOffset());
+        offset += 5;
+        delay.start();
+    });
+    delay.start();
+
+    player.play();
 }
 
 function _testLaunch() {

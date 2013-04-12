@@ -22,8 +22,15 @@ var Trackline = synthjs.ui.sequencer.Trackline = function(delta, miditrack, opt_
     this._margin = 5;
     this._delta = delta;
     this._tick = 50;
-    this._scaleElements = [];
     this._noteElements = [];
+
+    /**
+     * The Range where the events dom element shows.
+     * Unit of delta.
+     * @type {Number}
+     */
+    // this._offsetDisplayFrom = 0;
+    // this._offsetDisplayTo = 0;
 };
 
 goog.inherits(Trackline, synthjs.ui.sequencer.TimelineBase);
@@ -61,7 +68,8 @@ goog.object.extend(Trackline.prototype, {
     },
     enterDocument: function(){
         this.drawScale();
-        this.drawEvent();
+        this._initMidiTrack();
+        // this.drawEvent();
     },
     onResize: function(){
 
@@ -78,7 +86,8 @@ goog.object.extend(Trackline.prototype, {
         this.drawScale();
         goog.base(this, 'setWidth', largerWidth, opt_silent);
     },
-    drawEvent: function(){
+    _initMidiTrack: function(){
+    // drawEvent: function(){
         var onEvents = {},
             validNotes = [],
             note;
@@ -86,13 +95,8 @@ goog.object.extend(Trackline.prototype, {
             this._miditrack.get("eventcollection").getAll(),
             function(event){
                 if( !(event instanceof synthjs.model.MidiKeyEvent) ){
-                    // console.log("OTHER EVENT");
-                    // console.log(event);
                     return;
                 }
-                // console.log(event);
-                // console.log(event.get("offset")+"; note="+event.get("note") +"; vel="+event.get("velocity"));
-                // try{
                 note = event.get("note");
                 if( event.isOn() ){
                     if( note in onEvents ){
@@ -111,12 +115,6 @@ goog.object.extend(Trackline.prototype, {
                         goog.asserts.fail("Invalid Midi track");
                     }
                 }
-                // }
-                // catch(e){
-                //     console.log("ERROR");
-                //     console.log(onEvents);
-                //     throw e;
-                // }
             }
         );
 
@@ -127,16 +125,47 @@ goog.object.extend(Trackline.prototype, {
             left, width;
         goog.array.forEach(validNotes, function(e){
             elem = this._createEventElement(e[0], e[1]);
+            style.setStyle(elem, {
+                display: 'none'
+            });
             dom.appendChild(this._wrapperElement, elem);
             width = parseInt(style.getStyle(elem, "width"), 10);
             left = parseInt(style.getStyle(elem, "left"), 10);
             if( maxWidth < width+left ){
                 maxWidth = width+left;
             }
+
+            this._noteElements.push({
+                elem: elem,
+                offset: left,
+                visible: false
+            });
+            // dom.removeNode(elem);
         },
         this);
 
+        goog.array.sort(this._noteElements, function(a, b){
+            return a.offset - b.offset;
+        });
         this.setWidth(maxWidth);
+    },
+    showEvents: function(offsetFrom, offsetTo){
+        var style = goog.style;
+        goog.array.forEach(this._noteElements, function(e){
+            if( offsetFrom<=e.offset && e.offset<=offsetTo ){
+                if( !e.visible ){
+                    style.setStyle(e.elem, {display: ""});
+                    e.visible = true;
+                }
+            }
+            else {
+                if( e.visible ){
+                    style.setStyle(e.elem, {display: "none"});
+                    e.visible = false;
+                }
+            }
+
+        });
     },
     /**
      * Assumes 

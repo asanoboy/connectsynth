@@ -67,7 +67,6 @@ goog.object.extend(TimelineHeader.prototype, {
         this._scaleElements = [];
         var elem, size = style.getBorderBoxSize(this._wrapperElement);
         while( current*this._tick < size.width ){
-            console.log("while");
             elem = dom.createDom("span");
             dom.setTextContent(elem, current+1);
             style.setStyle(elem, {
