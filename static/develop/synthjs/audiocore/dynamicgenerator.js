@@ -2,7 +2,7 @@ goog.provide("synthjs.audiocore.DynamicGenerator");
 
 goog.require("synthjs.audiocore.Generator");
 goog.require("synthjs.audiocore.Note");
-goog.require("synthjs.audiocore.Wave");
+// goog.require("synthjs.audiocore.Wave");
 goog.require('goog.debug.Logger');
 goog.require('goog.async.Deferred');
 goog.require('goog.async.DeferredList');
