@@ -27,7 +27,7 @@ function tearDown() {
 }
 
 function testDynamicGenerator1() {
-	var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", {sampleRate: 48000}), 
+	var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", 48000), 
 		len = 21,
 		sampleRate = 48000,
 		cnt = 0,
@@ -55,7 +55,7 @@ function testDynamicGenerator1() {
 }
 
 function testSequencially(){
-	var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", {sampleRate: 48000}), 
+	var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", 48000), 
 		len = 21,
 		sampleRate = 48000,
 		cnt = 0,
@@ -83,7 +83,7 @@ function testSequencially(){
 }
 
 function testLargesize(){
-	var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", {sampleRate: 48000}), 
+	var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", 48000), 
 		len = 2048,
 		sampleRate = 48000,
 		cnt = 0,

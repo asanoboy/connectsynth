@@ -120,7 +120,7 @@ function loadComposer(){
                 return;
             }
 
-            var wave = new synthjs.audiocore.WavePlugin(pluginpath, {sampleRate: 48000}),
+            var wave = new synthjs.audiocore.WavePlugin(pluginpath, 48000),
                 performer = new synthjs.audiocore.Performer();
 
             performer.setWave(wave);

@@ -116,7 +116,7 @@ function testbeep() {
 			if( cnt!=20 && cnt!=30 && cnt!=9){
 				// return;
 			}
-			var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", {sampleRate: 48000}),
+			var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", 48000);//{sampleRate: 48000}),
 				performer = new synthjs.audiocore.Performer();
 			performer.setWave(wave);
 			performer.setSampleRate(48000);

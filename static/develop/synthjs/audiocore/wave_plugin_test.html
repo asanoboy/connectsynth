@@ -26,7 +26,7 @@ function tearDown() {
 }
 
 function testWavePlugin1() {
-	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), len = 21;
+	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", 48000), len = 21;
 	
 	var d = wave.getBufferDeferred(len).addCallback(function(buffers1){
 		console.log(buffers1);
@@ -80,7 +80,7 @@ function testWavePlugin1() {
 }
 
 function _testContinuous() {
-	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}), len = 21;
+	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", 48000), len = 21;
 	
 	setInterval(function(){
 		wave.getBufferDeferred(2048).callback();

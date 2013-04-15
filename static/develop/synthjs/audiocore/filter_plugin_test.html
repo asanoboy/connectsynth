@@ -63,7 +63,7 @@ function testInsideDynamicGenerator() {
 		sampleRate = 48000,
 		len = 10,
 		cnt = 0,
-		wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000});
+		wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", 48000);
 	
 	filter.setSampleRate(sampleRate);
 	
@@ -83,7 +83,7 @@ function testInsideDynamicGenerator() {
 
 // chain test
 function testFilterPlugin1() {
-	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}),
+	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", 48000),
 		filter = new synthjs.audiocore.FilterPlugin("test_filter_worker.js"),
 		len = 21,
 		sampleRate = 48000,

@@ -26,7 +26,7 @@ function tearDown() {
 }
 
 function testNote() {
-	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", {sampleRate: 48000}),
+	var wave = new synthjs.audiocore.WavePlugin("test_wave_worker.js", 48000),
 		note = synthjs.audiocore.Note.create('c', 0),
 		gen = new synthjs.audiocore.DynamicGenerator(wave),
 		player = synthjs.audiocore.Player.getInstance();

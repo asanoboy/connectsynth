@@ -50,7 +50,7 @@ function tearDown() {
 
 function setSingleTrack(composer){
     var performer = new synthjs.audiocore.Performer(),
-        wave = new synthjs.audiocore.WavePlugin(wavepath, {sampleRate: 48000}),
+        wave = new synthjs.audiocore.WavePlugin(wavepath, 48000),//{sampleRate: 48000}),
         track = new synthjs.model.MidiTrack(),
         tempoTrack = new synthjs.model.MidiTrack();
 
@@ -94,7 +94,6 @@ function testSingleTrack() {
                 assertEquals(composerLeftBuffer.length, length);
 
                 for( var i=0; i<composerLeftBuffer.length; i+=1<<10 ){
-                    console.log('hoge');
                     assertEquals( composerLeftBuffer[i], workerLeftBuffer[i] );
                 }
                 asyncTestCase.continueTesting();
@@ -182,7 +181,7 @@ function _testbeep() {
             if( cnt!=20 && cnt!=30 && cnt!=9){
                 // return;
             }
-            var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", {sampleRate: 48000}),
+            var wave = new synthjs.audiocore.WavePlugin("bootstrap.js", 48000),//{sampleRate: 48000}),
                 performer = new synthjs.audiocore.Performer();
             performer.setWave(wave);
             performer.setSampleRate(48000);
