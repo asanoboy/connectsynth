@@ -1,9 +1,10 @@
-goog.provide("synthjs.window.MessageManager");
+goog.provide("synthjs.process.MessageManager");
 
+goog.require("synthjs.utility.EventTarget");
 goog.require("goog.events.Event");
 
 goog.scope(function(){
-    var MessageManager = synthjs.window.MessageManager = function(){
+    var MessageManager = synthjs.process.MessageManager = function(){
         goog.base(this);
         this._targetHash = {};
         this._unknownTarget = new synthjs.utility.EventTarget();
@@ -19,11 +20,11 @@ goog.scope(function(){
         listener: function(e){
             if( e.data.hash && e.data.type){
                 switch(e.data.type){
-                    case synthjs.window.MessageType.SYNC:
+                    case synthjs.process.MessageType.SYNC:
                         if( this._targetHash[e.data.hash] ){
                             this._targetHash[e.data.hash].dispatchEvent(
                                 new goog.events.Event(
-                                    synthjs.window.EventType.SYNC,
+                                    synthjs.process.EventType.SYNC,
                                     e
                                 )
                             );
@@ -31,24 +32,24 @@ goog.scope(function(){
                         else {
                             this._unknownTarget.dispatchEvent(
                                 new goog.events.Event(
-                                    synthjs.window.EventType.SYNC,
+                                    synthjs.process.EventType.SYNC,
                                     e
                                 )
                             );
                         }
                         break;
-                    case synthjs.window.MessageType.MESSAGE:
+                    case synthjs.process.MessageType.MESSAGE:
                         if( this._targetHash[e.data.hash] ){
                             this._targetHash[e.data.hash].dispatchEvent(
                                 new goog.events.Event(
-                                    synthjs.window.EventType.MESSAGE,
+                                    synthjs.process.EventType.MESSAGE,
                                     e.data.data
                                 ));
                         }
                         else {
                             this.dispatchEvent(
                                 new goog.events.Event(
-                                    synthjs.window.EventType.UNKNOWN_MESSAGE,
+                                    synthjs.process.EventType.UNKNOWN_MESSAGE,
                                     e
                                 ));
                         }
@@ -56,7 +57,7 @@ goog.scope(function(){
                     default:
                         this.dispatchEvent(
                             new goog.events.Event(
-                                synthjs.window.EventType.UNKNOWN_MESSAGE,
+                                synthjs.process.EventType.UNKNOWN_MESSAGE,
                                 e
                             ));
                     break;
@@ -65,7 +66,7 @@ goog.scope(function(){
         },
         postMessage: function(target, data){
             target.getWindow().postMessage({
-                'type': synthjs.window.MessageType.MESSAGE,
+                'type': synthjs.process.MessageType.MESSAGE,
                 'hash': target.getHash(),
                 'data': data
             },
@@ -73,7 +74,7 @@ goog.scope(function(){
         },
         postSyncMessage: function(target){
             target.getWindow().postMessage({
-                'type': synthjs.window.MessageType.SYNC,
+                'type': synthjs.process.MessageType.SYNC,
                 'hash': target.getHash()
             },
             document.location.origin);

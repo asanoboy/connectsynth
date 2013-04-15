@@ -12,6 +12,7 @@ goog.addDependency('../../../synthjs/application/sequencer.js', ['synthjs.applic
 goog.addDependency('../../../synthjs/audiocore/composer.js', ['synthjs.audiocore.Composer'], ['synthjs.audiocore.Performer', 'synthjs.audiocore.PerformerBase']);
 goog.addDependency('../../../synthjs/audiocore/composerworker.js', ['synthjs.audiocore.ComposerWorker'], ['synthjs.utility.Deferred', 'synthjs.utility.WorkerDeferredManager']);
 goog.addDependency('../../../synthjs/audiocore/composerworkerreceiver.js', ['synthjs.audiocore.ComposerWorkerReceiver'], []);
+goog.addDependency('../../../synthjs/audiocore/dummyperformer.js', ['synthjs.audiocore.DummyPerformer'], []);
 goog.addDependency('../../../synthjs/audiocore/dynamicgenerator.js', ['synthjs.audiocore.DynamicGenerator'], ['goog.async.Deferred', 'goog.async.DeferredList', 'goog.debug.Logger', 'synthjs.audiocore.Generator', 'synthjs.audiocore.Note', 'synthjs.audiocore.Wave', 'synthjs.utility.Deferred', 'synthjs.utility.DeferredList']);
 goog.addDependency('../../../synthjs/audiocore/filter.js', ['synthjs.audiocore.Filter'], []);
 goog.addDependency('../../../synthjs/audiocore/filter_plugin.js', ['synthjs.audiocore.FilterPlugin'], ['synthjs.utility.WorkerDeferred']);
@@ -45,6 +46,11 @@ goog.addDependency('../../../synthjs/model/pluginradioparam.js', ['synthjs.model
 goog.addDependency('../../../synthjs/model/plugintoggleparam.js', ['synthjs.model.PluginToggleParam'], ['synthjs.model.Base']);
 goog.addDependency('../../../synthjs/model/textfile.js', ['synthjs.model.TextFile'], ['synthjs.model.FileBase', 'synthjs.model.FileType']);
 goog.addDependency('../../../synthjs/net/xhrio.js', ['synthjs.net.XhrIo'], ['goog.net.XhrIo']);
+goog.addDependency('../../../synthjs/process/child.js', ['synthjs.process.Child'], ['synthjs.process.MessageType', 'synthjs.process.Target', 'synthjs.utility.Deferred']);
+goog.addDependency('../../../synthjs/process/eventtype.js', ['synthjs.process.EventType', 'synthjs.process.MessageType'], []);
+goog.addDependency('../../../synthjs/process/messagemanager.js', ['synthjs.process.MessageManager'], ['goog.events.Event', 'synthjs.utility.EventTarget']);
+goog.addDependency('../../../synthjs/process/parent.js', ['synthjs.process.Parent'], ['synthjs.process.MessageType', 'synthjs.process.Target', 'synthjs.utility.Deferred']);
+goog.addDependency('../../../synthjs/process/target.js', ['synthjs.process.Target'], ['synthjs.process.MessageManager', 'synthjs.utility.EventTarget', 'synthjs.utility.UUID']);
 goog.addDependency('../../../synthjs/testing/ajaxdeferred.js', ['synthjs.testing.AjaxDeferred'], ['goog.testing.net.XhrIo', 'synthjs.utility.AjaxDeferred']);
 goog.addDependency('../../../synthjs/ui/ajaxdialog.js', ['synthjs.ui.AjaxDialog'], ['goog.ui.Dialog', 'goog.ui.Dialog.ButtonSet', 'synthjs.utility.AjaxDeferred']);
 goog.addDependency('../../../synthjs/ui/ajaxloader.js', ['synthjs.ui.AjaxLoader'], ['goog.ui.ModalPopup']);
@@ -86,8 +92,3 @@ goog.addDependency('../../../synthjs/utility/twitteruri.js', ['synthjs.utility.T
 goog.addDependency('../../../synthjs/utility/uuid.js', ['synthjs.utility.UUID'], []);
 goog.addDependency('../../../synthjs/utility/worker_deferred.js', ['synthjs.utility.WorkerDeferred'], ['synthjs.utility.Deferred']);
 goog.addDependency('../../../synthjs/utility/worker_deferred_manager.js', ['synthjs.utility.WorkerDeferredManager'], ['synthjs.utility.Deferred', 'synthjs.utility.UUID']);
-goog.addDependency('../../../synthjs/window/child.js', ['synthjs.window.Child'], ['synthjs.utility.Deferred', 'synthjs.window.MessageType', 'synthjs.window.Target']);
-goog.addDependency('../../../synthjs/window/eventtype.js', ['synthjs.window.EventType', 'synthjs.window.MessageType'], []);
-goog.addDependency('../../../synthjs/window/messagemanager.js', ['synthjs.window.MessageManager'], ['goog.events.Event']);
-goog.addDependency('../../../synthjs/window/parent.js', ['synthjs.window.Parent'], ['synthjs.utility.Deferred', 'synthjs.window.MessageType', 'synthjs.window.Target']);
-goog.addDependency('../../../synthjs/window/target.js', ['synthjs.window.Target'], ['synthjs.utility.EventTarget', 'synthjs.utility.UUID', 'synthjs.window.MessageManager']);

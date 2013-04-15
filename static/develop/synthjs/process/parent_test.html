@@ -8,7 +8,7 @@
     goog.require("goog.testing.jsunit");
     goog.require("goog.testing.AsyncTestCase");
     
-    goog.require("synthjs.window.Child");
+    goog.require("synthjs.process.Child");
 </script>
 </head>
 <body>
@@ -25,16 +25,16 @@ function tearDown() {
 }
 
 function test() {
-    var loadD = synthjs.window.Child.loadDeferred(childpath);
+    var loadD = synthjs.process.Child.loadDeferred(childpath);
 
     var message = "hello world.", child;
 
     loadD.addCallback(function(c){
         child = c;
-        assertTrue( child instanceof synthjs.window.Child );
+        assertTrue( child instanceof synthjs.process.Child );
         handler.listen(
             child,
-            synthjs.window.EventType.MESSAGE,
+            synthjs.process.EventType.MESSAGE,
             function(event){
                 assertTrue( event.target == message );
                 child.dispose();

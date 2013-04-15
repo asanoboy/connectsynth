@@ -1,16 +1,16 @@
-goog.provide("synthjs.window.Parent");
+goog.provide("synthjs.process.Parent");
 
-goog.require("synthjs.window.Target");
-goog.require("synthjs.window.MessageType");
+goog.require("synthjs.process.Target");
+goog.require("synthjs.process.MessageType");
 goog.require("synthjs.utility.Deferred");
 
 
 goog.scope(function(){
 
-    var Parent = synthjs.window.Parent = function(win){
+    var Parent = synthjs.process.Parent = function(win){
         goog.base(this, win);
     };
-    goog.inherits(Parent, synthjs.window.Target);
+    goog.inherits(Parent, synthjs.process.Target);
 
     goog.object.extend(Parent.prototype, {
     });
@@ -30,8 +30,8 @@ goog.scope(function(){
                     dWait.callback(parent);
                 };
                 handler.listen(
-                    synthjs.window.MessageManager.getInstance().getUnknownTarget(),
-                    synthjs.window.EventType.SYNC,
+                    synthjs.process.MessageManager.getInstance().getUnknownTarget(),
+                    synthjs.process.EventType.SYNC,
                     listener);
             }).awaitDeferred(dWait);
 

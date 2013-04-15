@@ -1,8 +1,8 @@
-goog.provide("synthjs.window.Target");
+goog.provide("synthjs.process.Target");
 
 goog.require("synthjs.utility.EventTarget");
 goog.require("synthjs.utility.UUID");
-goog.require("synthjs.window.MessageManager");
+goog.require("synthjs.process.MessageManager");
 
 goog.scope(function(){
 
@@ -10,10 +10,10 @@ goog.scope(function(){
      * @constructor
      * @param {Window} win Target window.
      */
-    var Target = synthjs.window.Target = function(win){
+    var Target = synthjs.process.Target = function(win){
         goog.base(this);
         this._window = win;
-        this._manager = synthjs.window.MessageManager.getInstance();
+        this._manager = synthjs.process.MessageManager.getInstance();
     };
     goog.inherits(Target, synthjs.utility.EventTarget);
 

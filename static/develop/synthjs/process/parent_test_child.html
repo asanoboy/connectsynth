@@ -5,7 +5,7 @@
 <script src="../../closurelibrary/closure/goog/base.js"></script>
 <script src="../../deps.js"></script>
 <script>
-    goog.require("synthjs.window.Parent");
+    goog.require("synthjs.process.Parent");
     goog.require("goog.events.EventHandler");
 </script>
 </head>
@@ -13,14 +13,14 @@
 <script>
 
 (function(){
-    var Parent = synthjs.window.Parent;
+    var Parent = synthjs.process.Parent;
     var handler = new goog.events.EventHandler();
 
     Parent.loadDeferred().addCallbacks(function(parent){
         var handler = new goog.events.EventHandler();
         handler.listen(  // echo listener
             parent,
-            synthjs.window.EventType.MESSAGE,
+            synthjs.process.EventType.MESSAGE,
             function(event){
                 parent.postMessage(event.target);
             });

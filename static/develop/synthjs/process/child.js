@@ -1,16 +1,16 @@
-goog.provide("synthjs.window.Child");
+goog.provide("synthjs.process.Child");
 
-goog.require("synthjs.window.Target");
+goog.require("synthjs.process.Target");
 goog.require("synthjs.utility.Deferred");
-goog.require("synthjs.window.MessageType");
+goog.require("synthjs.process.MessageType");
 
 
 goog.scope(function(){
 
-    var Child = synthjs.window.Child = function(win){
+    var Child = synthjs.process.Child = function(win){
         goog.base(this, win);
     };
-    goog.inherits(Child, synthjs.window.Target);
+    goog.inherits(Child, synthjs.process.Target);
 
     goog.object.extend(Child.prototype, {
         disposeInternal: function(){
@@ -40,7 +40,7 @@ goog.scope(function(){
                 };
                 handler.listen(
                     child,
-                    synthjs.window.EventType.SYNC,
+                    synthjs.process.EventType.SYNC,
                     listener);
 
             }).awaitDeferred(dWait);
