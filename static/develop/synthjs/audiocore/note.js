@@ -109,6 +109,3 @@ synthjs.audiocore.Note.dupnotes = {'d-':'c+', 'e-':'d+', 'g-':'f+', 'a-':'g+', '
 
 /** @const */
 synthjs.audiocore.Note.notes = ['c','c+','d','d+','e','f','f+','g','g+','a','a+','b'];
-
-/** @const */
-synthjs.audiocore.Note.defaultSampleRate = 48000;

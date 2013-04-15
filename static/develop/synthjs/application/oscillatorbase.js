@@ -280,7 +280,7 @@ synthjs.application.OscillatorBase.prototype.createOscillatorInternal = function
 	}
 	this._wavePlugin = new synthjs.audiocore.WavePlugin(
 		this.getApi().getFile("bootstrap.js?bootstrap=1").toString(),
-		{sampleRate: 48000}
+		synthjs.audiocore.Player.getInstance().getSampleRate()
 	);
 	return new synthjs.application.module.Oscillator(
 		this._wavePlugin,

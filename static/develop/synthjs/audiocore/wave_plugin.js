@@ -8,9 +8,9 @@ goog.require('synthjs.utility.EventTarget');
  * @constructor
  * @extends {synthjs.utility.EventTarget}
  * @param {string} url
- * @param {array} opt_params
+ * @param {Number} sampleRate
  */
-synthjs.audiocore.WavePlugin = function(url, opt_params){
+synthjs.audiocore.WavePlugin = function(url, sampleRate){  //opt_params){
 	goog.base(this);
 	/**
 	 * @private
@@ -25,9 +25,7 @@ synthjs.audiocore.WavePlugin = function(url, opt_params){
 	/**
 	 * @private
 	 */
-	this._sampleRate = opt_params && opt_params.sampleRate ? opt_params.sampleRate : 48000;
-	if( !(opt_params && opt_params.sampleRate) ){
-	}
+	this._sampleRate = sampleRate;
 	
 	/**
 	 * @private
