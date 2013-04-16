@@ -87,12 +87,12 @@ function getMidiDeferred() {
 
 function testbeep() {
 	var	sampleRate = 48000,
-		composer = new synthjs.audiocore.Composer(),
+		composer = new synthjs.audiocore.Composer(sampleRate),
 		player = synthjs.audiocore.Player.getInstance();
 
 
 	player.addGenerator(composer);
-	// player.setLatencyTimer(true);
+	player.setLatencyTimer(true);
 	var handler = new goog.events.EventHandler();
 	handler.listen(player, 
 		synthjs.audiocore.PlayerEventType.PUT_LATENCY, 
@@ -102,7 +102,8 @@ function testbeep() {
 			while(msec--){
 				str += "#";
 			}
-			console.log(str);
+			// console.log(str);
+			asyncTestCase.continueTesting();
 		});
 
 	var d = getMidiDeferred().addCallback(function(midi){
@@ -132,10 +133,11 @@ function testbeep() {
 		d.addCallback(function(){
 			composer.rewind();
 			player.play();
-			asyncTestCase.continueTesting();
+			// asyncTestCase.continueTesting();
 		});
 	});
 	
+	asyncTestCase.stepTimeout = 10*1000;
 	asyncTestCase.waitForAsync();
 	d.callback();
 }

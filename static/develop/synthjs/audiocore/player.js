@@ -54,7 +54,7 @@ synthjs.audiocore.Player.prototype.setLatencyTimer = function(flag){
  * @param {synthjs.audiocore.Generator}
  */
 synthjs.audiocore.Player.prototype.addGenerator = function(gen){
-	gen.setSampleRate(this._sampleRate);
+	gen.setSampleRate(this.getSampleRate());
 	var index = this._generatorCurrentIndex++;
 	this._generatorList.push(gen);
 	return index;

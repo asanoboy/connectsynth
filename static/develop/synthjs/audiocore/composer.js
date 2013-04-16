@@ -6,7 +6,7 @@ goog.require("synthjs.audiocore.PerformerBase");
  * Composes multi track with each performer.
  * @constructor
  */
-synthjs.audiocore.Composer = function(){
+synthjs.audiocore.Composer = function(sampleRate){
 	
 	goog.base(this);
 	// this._ = true;
@@ -15,6 +15,8 @@ synthjs.audiocore.Composer = function(){
 	 * @private
 	 */
 	this._performers = [];
+	goog.asserts.assertNumber(sampleRate);
+	this.setSampleRate(sampleRate);
 	
 };
 goog.inherits(synthjs.audiocore.Composer, synthjs.audiocore.PerformerBase);
@@ -127,7 +129,6 @@ synthjs.audiocore.Composer.prototype.getBufferDeferred = function(len){
  * @param {number}
  */
 synthjs.audiocore.Composer.prototype.setSampleRate = function(sampleRate){
-
 	goog.base(this, "setSampleRate", sampleRate);
 	for( var i=0; i<this._performers.length; i++){
 		rt = this._performers[i].setSampleRate(sampleRate);

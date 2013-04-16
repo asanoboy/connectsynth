@@ -112,7 +112,7 @@ function loadMidiDeferred(){
 
 function loadComposer(){
     if( midi ){
-        composer = new synthjs.audiocore.Composer();
+        composer = new synthjs.audiocore.Composer(48000);
         player = synthjs.audiocore.Player.getInstance();
         player.addGenerator(composer);
         goog.array.forEach(midi.get("tracks").getAll(), function(track){

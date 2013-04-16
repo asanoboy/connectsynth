@@ -70,8 +70,8 @@ function setSingleTrack(composer){
 }
 
 function testSingleTrack() {
-    var composer = setSingleTrack(new synthjs.audiocore.Composer()),
-        worker = setSingleTrack(new synthjs.audiocore.Composer()),
+    var composer = setSingleTrack(new synthjs.audiocore.Composer(48000)),
+        worker = setSingleTrack(new synthjs.audiocore.Composer(48000)),
         // worker = setSingleTrack(new synthjs.audiocore.ComposerWorker(workerpath)),
         length = 1 << 16;
 
