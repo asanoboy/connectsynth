@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests dynamicgenerator</title>
+<script src="../../closurelibrary/closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+    goog.require("goog.testing.jsunit");
+    goog.require("goog.testing.AsyncTestCase");
+    
+    goog.require("goog.events.EventHandler");
+
+    goog.require("synthjs.utility.Deferred");
+    goog.require("synthjs.audiocore.WavePlugin");
+    goog.require("synthjs.audiocore.DynamicGenerator");
+
+
+    goog.require("synthjs.audiocore.ComposerSequenceDispatcher");
+</script>
+</head>
+<body>
+<script>
+
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall(),
+    wavepath = "bootstrap.js";
+
+function setUp() {
+
+}
+
+function tearDown() {
+
+}
+
+
+function testSequence() {
+
+    var sequence = new synthjs.audiocore.ComposerSequence();
+
+    assert( 'id' in sequence.getDump() );
+    assert( 'sequence' in sequence.getDump() );
+    assertEquals( 0, sequence.getDump()['sequence'].length );
+
+    sequence.pushCreateWave(0, wavepath, 48000);
+    assertEquals( 1, sequence.getDump()['sequence'].length );
+
+}
+
+function testGetBuffer(){
+    var dispatcher = new synthjs.audiocore.ComposerSequenceDispatcher(),
+        waveid = 0,
+        length = 1000,
+        sequence = new synthjs.audiocore.ComposerSequence();
+
+    sequence.pushCreateWave(waveid, wavepath, 48000);
+    sequence.pushNoteOn(waveid, 60, 100);
+    sequence.pushGetBuffer(waveid, length);
+
+    var d = dispatcher.queryDeferred(sequence.getDump())
+        .addCallback(function(buffers){
+            assert('leftBuffer' in buffers);
+            assert('rightBuffer' in buffers);
+            assertEquals(length, buffers.leftBuffer.length);
+            assertEquals(length, buffers.rightBuffer.length);
+            var i=0;
+            while(i++<10){
+                // console.log(buffers.leftBuffer[i]);
+            }
+            asyncTestCase.continueTesting();
+        })
+        ;
+    asyncTestCase.stepTimeout = 2 * 1000;
+    asyncTestCase.waitForAsync();
+
+    d.callback();
+}
+
+function testCompareWithDynamicGenerator() {
+    var generator = new synthjs.audiocore.DynamicGenerator.createFromUrl(wavepath, 48000),
+        dispatcher = new synthjs.audiocore.ComposerSequenceDispatcher(),
+        length = 1 << 16,
+        gOnSequence = new synthjs.audiocore.DynamicGeneratorSequence(),
+        dOnSequence = new synthjs.audiocore.ComposerSequence(),
+        gOffSequence = new synthjs.audiocore.DynamicGeneratorSequence(),
+        dOffSequence = new synthjs.audiocore.ComposerSequence(),
+        waveid= 0;
+
+    gOnSequence.pushNoteOn(60, 100);
+    gOnSequence.pushGetBuffer(length);
+
+    gOffSequence.pushNoteOff(60, 100);
+    gOffSequence.pushGetBuffer(length);
+
+
+    dOnSequence.pushCreateWave(waveid, wavepath, 48000);
+    dOnSequence.pushNoteOn(waveid, 60, 100);
+    dOnSequence.pushGetBuffer(waveid, length);
+
+    dOffSequence.pushNoteOff(waveid, 60, 100);
+    dOffSequence.pushGetBuffer(waveid, length);
+
+    var dOnList = [
+        generator.querySequenceDeferred(gOnSequence),
+        dispatcher.queryDeferred(dOnSequence.getDump())
+    ];
+    var dOffList = [
+        generator.querySequenceDeferred(gOffSequence),
+        dispatcher.queryDeferred(dOffSequence.getDump())
+    ];
+
+    function compare(buffers){
+        var generatorBuffers = buffers[0][1],
+            dispatcherBuffers = buffers[1][1];
+
+        for( var i=0; i<generatorBuffers.leftBuffer.length; i+=1<<10 ){
+            assertEquals( generatorBuffers.leftBuffer[i], dispatcherBuffers.leftBuffer[i] );
+            assertEquals( generatorBuffers.rightBuffer[i], dispatcherBuffers.rightBuffer[i] );
+        }
+    }
+
+    new goog.async.DeferredList(dOnList)
+        .addCallback(compare)
+        .addCallback(function(){
+            for( var i=0; i<dOffList.length; i++){
+                dOffList[i].callback();
+            }
+        });
+
+    new goog.async.DeferredList(dOffList)
+        .addCallback(compare)
+        .addCallback(function(){
+            asyncTestCase.continueTesting();
+        });
+
+    for( var i=0; i<dOnList.length; i++){
+        dOnList[i].callback();
+    }
+
+    asyncTestCase.waitForAsync();
+}
+
+
+</script>
+</body>
+</html>

@@ -2,10 +2,12 @@ goog.provide("synthjs.audiocore.PerformerBase");
 goog.require("synthjs.utility.Deferred");
 goog.require("synthjs.utility.DeferredList");
 
+goog.require("synthjs.utility.EventTarget");
 var D = synthjs.utility.Deferred;
 var DL = synthjs.utility.DeferredList;
 synthjs.audiocore.PerformerBase = function(){
 
+	goog.base(this);
 	this._track = null;
 	this._tempo = null;
 	this._delta = null;
@@ -24,6 +26,7 @@ synthjs.audiocore.PerformerBase = function(){
 	 */
 	this._eof = false;
 };
+goog.inherits(synthjs.audiocore.PerformerBase, synthjs.utility.EventTarget);
 
 /**
  * Sets tempo in MIDI "FF 51 03" event format.

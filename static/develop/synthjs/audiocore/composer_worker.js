@@ -7,6 +7,6 @@ importScripts(bootstrappath);
 importScripts(basepath);
 importScripts(depspath);
 
-goog.require("synthjs.audiocore.ComposerWorkerReceiver");
+goog.require("synthjs.audiocore.ComposerSequenceDispatcher");
 
-var receiver = new synthjs.audiocore.ComposerWorkerReceiver();
+var dispatcher = new synthjs.audiocore.ComposerSequenceDispatcher();

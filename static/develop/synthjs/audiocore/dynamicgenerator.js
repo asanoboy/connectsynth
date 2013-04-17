@@ -2,6 +2,7 @@ goog.provide("synthjs.audiocore.DynamicGenerator");
 
 goog.require("synthjs.audiocore.Generator");
 goog.require("synthjs.audiocore.Note");
+goog.require("synthjs.audiocore.WavePlugin");
 // goog.require("synthjs.audiocore.Wave");
 goog.require('goog.debug.Logger');
 goog.require('goog.async.Deferred');
@@ -37,6 +38,13 @@ synthjs.audiocore.DynamicGenerator = function(wave){
 synthjs.audiocore.DynamicGenerator.logger = goog.debug.Logger.getLogger('synthjs.audiocore.DynamicGenerator');
 synthjs.audiocore.DynamicGenerator.logger.setLevel(goog.debug.Logger.Level.ALL);
 
+synthjs.audiocore.DynamicGenerator.createFromUrl = function(workerurl, sampleRate){
+	var gen = new synthjs.audiocore.DynamicGenerator(
+		new synthjs.audiocore.WavePlugin(workerurl, sampleRate)
+	);
+	gen.setSampleRate(sampleRate);
+	return gen;
+};
 /**
  * @param {synthjs.audiocore.Note|number} note
  * @param {number=} opt_velocity in range [0, 127]
