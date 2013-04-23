@@ -23,7 +23,7 @@
     goog.require("synthjs.model.Midi");
 
 
-    goog.require("synthjs.audiocore.ComposerWorker");
+    goog.require("synthjs.audiocore.ComposerIframeWorker");
     goog.require("synthjs.audiocore.DummyWavePlugin");
     goog.require("synthjs.audiocore.DummyPerformer");
     goog.require("synthjs.model.MidiTrack");
@@ -38,7 +38,7 @@ var MidiFile = synthjs.encode.MidiFile,
     D = synthjs.utility.Deferred,
     asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall(),
     midipath = "test.mid",
-    workerpath = "composerworker_test_worker.js",
+    workerpath = "composeriframeworker_test_worker.html",
     wavepath = "bootstrap.js",
     worker;
 
@@ -118,7 +118,7 @@ function testbeep() {
     var sampleRate = 48000,
         length = 1 << 16,
         composer = new synthjs.audiocore.Composer(sampleRate),
-        worker = new synthjs.audiocore.ComposerWorker(workerpath, sampleRate);
+        worker = new synthjs.audiocore.ComposerIframeWorker(workerpath, sampleRate);
         // player = synthjs.audiocore.Player.getInstance();
 
 

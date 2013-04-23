@@ -18,7 +18,7 @@ var Sequence = synthjs.audiocore.ComposerSequence = function(){
 
 goog.object.extend(Sequence.prototype, {
     join: function(sequence){
-        this._array = this._array.concat(sequence.getArray());
+        this._array = this._array.concat(sequence.getDump()['sequence']);
     },
 
     pushNoteOn: function(waveid, noteid, velocity){

@@ -1,6 +1,8 @@
 goog.provide("synthjs.audiocore.ComposerSequenceDispatcher");
 
+goog.require("synthjs.utility.Deferred");
 goog.require("synthjs.utility.EventTarget");
+goog.require("synthjs.audiocore.DynamicGenerator");
 goog.require("synthjs.audiocore.ComposerSequence");
 goog.require("synthjs.audiocore.ComposerSequenceEventType");
 goog.require("synthjs.audiocore.ComposerSequenceHandler");

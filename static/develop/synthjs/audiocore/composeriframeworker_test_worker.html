@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../closurelibrary/closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+goog.require("synthjs.process.Parent");
+goog.require("synthjs.audiocore.ComposerSequenceDispatcher");
+var dispatcher = new synthjs.audiocore.ComposerSequenceDispatcher();
+
+(function(){
+    var parent = null; 
+    var Parent = synthjs.process.Parent;
+    var handler = new goog.events.EventHandler();
+
+    Parent.loadDeferred().addCallbacks(function(p){
+        parent = p;
+        var handler = new goog.events.EventHandler();
+        handler.listen(
+            parent,
+            synthjs.process.EventType.MESSAGE,
+            onMessage
+            // function(event){
+            //     parent.postMessage(event.target);
+            // });
+        );
+    }).callback();
+
+
+function onMessage(e){
+    dispatcher.queryDeferred(e.target)
+        .addCallback(function(r){
+            r.callback = e.callback;
+            parent.postMessage(r);
+        })
+        .callback();
+}
+
+})();
+</script>
+</head>
+<body></body>
+</html>

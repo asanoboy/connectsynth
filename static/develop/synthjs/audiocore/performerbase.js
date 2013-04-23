@@ -5,6 +5,12 @@ goog.require("synthjs.utility.DeferredList");
 goog.require("synthjs.utility.EventTarget");
 var D = synthjs.utility.Deferred;
 var DL = synthjs.utility.DeferredList;
+
+
+/**
+ * TODO: This function should be delegated, not inherited,
+ * because it can't handle multi track on this way?
+ */
 synthjs.audiocore.PerformerBase = function(){
 
 	goog.base(this);
@@ -62,7 +68,10 @@ synthjs.audiocore.PerformerBase.prototype.setTrack = function(track){
 };
 
 synthjs.audiocore.PerformerBase.prototype.getBufferDeferredInternal = function(len){
+	if( !this._sampleRate ) throw new Error("Generator can't create buffer without setting sampleRate");
 
+    goog.asserts.assert(this._track, "Track was empty.");
+    goog.asserts.assertNumber(this._deltaPerSample);
 	// When event exists in required buffer, do nothing.
 	var nextEvent = this._track.getEvent(this._currentEventIndex);
 	var to = this._currentOffset + len * this._deltaPerSample;
@@ -119,6 +128,9 @@ synthjs.audiocore.PerformerBase.prototype.setSampleRate = function(sampleRate){
 	this._updateDeltaPerSample();
 };
 
+synthjs.audiocore.PerformerBase.prototype.getSampleRate = function(){
+    return this._sampleRate;
+};
 
 synthjs.audiocore.PerformerBase.prototype.eof = function(){
 	return this._eof;

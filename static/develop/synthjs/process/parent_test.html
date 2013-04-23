@@ -11,7 +11,7 @@
     goog.require("synthjs.process.Child");
 </script>
 </head>
-<body>
+<body id="body">
 <script>
 
 var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
@@ -24,8 +24,34 @@ function tearDown() {
 
 }
 
-function test() {
-    var loadD = synthjs.process.Child.loadDeferred(childpath);
+function testIframe() {
+    var loadD = synthjs.process.Child.loadIframeDeferred(childpath, document.getElementById('body'));
+
+    var message = "hello world.", child;
+
+    loadD.addCallback(function(c){
+        child = c;
+        assertTrue( child instanceof synthjs.process.Child );
+        handler.listen(
+            child,
+            synthjs.process.EventType.MESSAGE,
+            function(event){
+                assertTrue( event.target == message );
+                child.dispose();
+                asyncTestCase.continueTesting();
+            })
+        child.postMessage(message);
+    });
+    var handler = new goog.events.EventHandler();
+
+    asyncTestCase.waitForAsync();
+    loadD.callback();
+
+
+}
+
+function _testWindow() {
+    var loadD = synthjs.process.Child.loadWindowDeferred(childpath);
 
     var message = "hello world.", child;
 

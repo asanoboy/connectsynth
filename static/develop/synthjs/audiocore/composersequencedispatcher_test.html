@@ -103,6 +103,8 @@ function testCompareWithDynamicGenerator() {
         generator.querySequenceDeferred(gOnSequence),
         dispatcher.queryDeferred(dOnSequence.getDump())
     ];
+
+    console.log(dOnSequence.getDump());
     var dOffList = [
         generator.querySequenceDeferred(gOffSequence),
         dispatcher.queryDeferred(dOffSequence.getDump())
