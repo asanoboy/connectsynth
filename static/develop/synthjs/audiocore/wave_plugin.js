@@ -1,7 +1,7 @@
 goog.provide("synthjs.audiocore.WavePlugin");
 goog.provide("synthjs.audiocore.WavePluginEventType");
 goog.provide("synthjs.audiocore.WaveEvent");
-goog.require("synthjs.process.WorkerDeferredManager");
+goog.require("synthjs.process.WorkerManager");
 goog.require('synthjs.utility.EventTarget');
 
 /**
@@ -36,7 +36,7 @@ synthjs.audiocore.WavePlugin = function(url, sampleRate){  //opt_params){
 	 * @private
 	 */
 	this._worker = new Worker(url);
-	this._workerCreator = new synthjs.process.WorkerDeferredManager(this._worker);
+	this._workerCreator = new synthjs.process.WorkerManager(this._worker);
 	
 	// this._worker.addEventListener('message', function(e){
 		// if( !e["data"]["callback"] )

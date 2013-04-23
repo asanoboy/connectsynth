@@ -1,13 +1,13 @@
 goog.provide("synthjs.audiocore.ComposerWorker");
 
 goog.require("synthjs.audiocore.ComposerWorkerBase");
-goog.require("synthjs.process.WorkerDeferredManager");
+goog.require("synthjs.process.WorkerManager");
 
 goog.scope(function(){
 
 var ComposerWorker = synthjs.audiocore.ComposerWorker = function(workerpath, sampleRate){
     this._worker = new Worker(workerpath);
-    this._workerManager = new synthjs.process.WorkerDeferredManager(this._worker);
+    this._workerManager = new synthjs.process.WorkerManager(this._worker);
 
     goog.base(this, workerpath, sampleRate);
 };

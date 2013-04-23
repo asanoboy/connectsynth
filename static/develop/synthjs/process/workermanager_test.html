@@ -9,7 +9,7 @@
 	goog.require("goog.testing.AsyncTestCase");
 	
 	goog.require("synthjs.utility.Deferred");
-	goog.require("synthjs.process.WorkerDeferredManager");
+	goog.require("synthjs.process.WorkerManager");
 </script>
 </head>
 <body>
@@ -31,7 +31,7 @@ function testDeferredObject() {
 	//var WD = synthjs.process.WorkerDeferred;
 	
 	var worker = new Worker('test_echo_worker.js'),
-		creator = new synthjs.process.WorkerDeferredManager(worker);
+		creator = new synthjs.process.WorkerManager(worker);
 	
 	var d = creator.create({val:1}).addCallback(function(e){
 		assertEquals(e.val, 1);
@@ -46,7 +46,7 @@ function testDeferredCallback() {
 	//var WD = synthjs.process.WorkerDeferred;
 	
 	var worker = new Worker('test_echo_worker.js'),
-		creator = new synthjs.process.WorkerDeferredManager(worker);
+		creator = new synthjs.process.WorkerManager(worker);
 	
 	var dWait = new D();
 	

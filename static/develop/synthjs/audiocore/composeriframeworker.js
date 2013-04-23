@@ -1,7 +1,7 @@
 goog.provide("synthjs.audiocore.ComposerIframeWorker");
 
 goog.require("synthjs.audiocore.ComposerWorkerBase");
-goog.require("synthjs.process.WorkerDeferredManager");
+goog.require("synthjs.process.WorkerManager");
 goog.require("synthjs.process.Child");
 
 goog.scope(function(){

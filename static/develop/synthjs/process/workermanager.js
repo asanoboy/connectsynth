@@ -1,4 +1,4 @@
-goog.provide('synthjs.process.WorkerDeferredManager');
+goog.provide('synthjs.process.WorkerManager');
 
 goog.require('synthjs.utility.Deferred');
 goog.require('synthjs.utility.UUID');
@@ -9,7 +9,7 @@ goog.require('synthjs.utility.UUID');
  * @param {Worker} worker
  * @param {Object} opt_params
  */
-synthjs.process.WorkerDeferredManager = function(worker){
+synthjs.process.WorkerManager = function(worker){
 	
 	this._worker = worker;
 	
@@ -21,7 +21,7 @@ synthjs.process.WorkerDeferredManager = function(worker){
 	
 };
 
-synthjs.process.WorkerDeferredManager.prototype.dispose = function(){
+synthjs.process.WorkerManager.prototype.dispose = function(){
 
 	this._worker.removeEventListener("message", this._onPostMessageBinded);
 };
@@ -29,7 +29,7 @@ synthjs.process.WorkerDeferredManager.prototype.dispose = function(){
 /**
  * callback from worker.
  */
-synthjs.process.WorkerDeferredManager.prototype.onPostMessage = function(e){
+synthjs.process.WorkerManager.prototype.onPostMessage = function(e){
 	if( goog.isDef(e['data']['callback']) ){
 		if( this._waitDeferredList[e['data']['callback']] ){
 			
@@ -49,7 +49,7 @@ synthjs.process.WorkerDeferredManager.prototype.onPostMessage = function(e){
 	}
 };
 
-synthjs.process.WorkerDeferredManager.prototype.create = function(opt_params, opt_settings){
+synthjs.process.WorkerManager.prototype.create = function(opt_params, opt_settings){
 	opt_params = opt_params || {};
 	var callbackname = synthjs.utility.UUID.create();
 	var dWait = new synthjs.utility.Deferred();
@@ -72,7 +72,7 @@ synthjs.process.WorkerDeferredManager.prototype.create = function(opt_params, op
 	return d;
 }
 
-synthjs.process.WorkerDeferredManager.prototype.getPostMessageFunc = function(callbackname, opt_param){
+synthjs.process.WorkerManager.prototype.getPostMessageFunc = function(callbackname, opt_param){
 	return goog.bind(function(){
 		this.postMessage({'callback':callbackname})
 	}, this);
