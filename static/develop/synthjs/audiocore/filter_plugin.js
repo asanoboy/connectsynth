@@ -1,4 +1,4 @@
-goog.require("synthjs.utility.WorkerDeferred");
+goog.require("synthjs.process.WorkerDeferred");
 
 goog.provide("synthjs.audiocore.FilterPlugin");
 
@@ -49,7 +49,7 @@ synthjs.audiocore.FilterPlugin.prototype.setSampleRate = function(sampleRate){
 }
 synthjs.audiocore.FilterPlugin.prototype.getFilterDeferred = function(){
 	
-	return new synthjs.utility.WorkerDeferred(this._worker, function(e){
+	return new synthjs.process.WorkerDeferred(this._worker, function(e){
 		return e;
 	});
 };

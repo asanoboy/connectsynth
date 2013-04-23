@@ -3,7 +3,7 @@ goog.provide("synthjs.audiocore.ComposerWorkerBase");
 
 goog.require("synthjs.audiocore.ComposerSequence");
 goog.require("synthjs.audiocore.PerformerBase");
-goog.require("synthjs.utility.WorkerDeferredManager");
+goog.require("synthjs.process.WorkerDeferredManager");
 goog.require("synthjs.utility.Deferred");
 
 goog.scope(function(){
@@ -12,7 +12,7 @@ var Deferred = synthjs.utility.Deferred;
 
 var ComposerWorkerBase = synthjs.audiocore.ComposerWorkerBase = function(sampleRate){
     // this._worker = new Worker(workerpath);
-    // this._workerManager = new synthjs.utility.WorkerDeferredManager(this._worker);
+    // this._workerManager = new synthjs.process.WorkerDeferredManager(this._worker);
 
     this._performers = [];
     this._sequence = new synthjs.audiocore.ComposerSequence();

@@ -1,6 +1,6 @@
 goog.require('synthjs.utility.Deferred');
 
-goog.provide('synthjs.utility.WorkerDeferred');
+goog.provide('synthjs.process.WorkerDeferred');
 
 /**
  * @constructor
@@ -8,7 +8,7 @@ goog.provide('synthjs.utility.WorkerDeferred');
  * @param {worker} worker
  * @param {Object} opt_params
  */
-synthjs.utility.WorkerDeferred = function(worker, opt_params, opt_settings){
+synthjs.process.WorkerDeferred = function(worker, opt_params, opt_settings){
 	
 	goog.base(this);
 	this._worker = worker;
@@ -24,9 +24,9 @@ synthjs.utility.WorkerDeferred = function(worker, opt_params, opt_settings){
 	
 };
 
-goog.inherits(synthjs.utility.WorkerDeferred, synthjs.utility.Deferred);
+goog.inherits(synthjs.process.WorkerDeferred, synthjs.utility.Deferred);
 
-synthjs.utility.WorkerDeferred.prototype.postMessage = function(e){
+synthjs.process.WorkerDeferred.prototype.postMessage = function(e){
 	if( goog.isFunction( this._params ) ){
 		var params = this._params(e);
 		params['callback'] = this._callbackname;
@@ -38,7 +38,7 @@ synthjs.utility.WorkerDeferred.prototype.postMessage = function(e){
 	}
 };
 
-synthjs.utility.WorkerDeferred.prototype._attachListener = function(){
+synthjs.process.WorkerDeferred.prototype._attachListener = function(){
 	this._worker.addEventListener("message", goog.bind(this.successListener, this));
 	
 	if( goog.isFunction(this._settings.error) ){
@@ -46,7 +46,7 @@ synthjs.utility.WorkerDeferred.prototype._attachListener = function(){
 	}
 };
 
-synthjs.utility.WorkerDeferred.prototype.successListener = function(e){
+synthjs.process.WorkerDeferred.prototype.successListener = function(e){
 	if( e.data['callback'] == this._callbackname ){
 		this._worker.removeEventListener("message", this._listener);
 		this._dWait.callback(e.data);
@@ -54,13 +54,13 @@ synthjs.utility.WorkerDeferred.prototype.successListener = function(e){
 	e = void 0;
 };
 
-synthjs.utility.WorkerDeferred.prototype.errorListener = function(e){
+synthjs.process.WorkerDeferred.prototype.errorListener = function(e){
 	this._worker.removeEventListener("error", this.errorListener);
 	this._dWait.callback( this._settings.error(e) );
 	e = void 0;
 };
 
-synthjs.utility.WorkerDeferred.prototype._createUniqueId = function(){
+synthjs.process.WorkerDeferred.prototype._createUniqueId = function(){
 	return (((1+Math.random())*0x10000)|0).toString(16).substring(1) + '_' +
 		(((1+Math.random())*0x10000)|0).toString(16).substring(1) + '_' +
 		(((1+Math.random())*0x10000)|0).toString(16).substring(1) + '_' +

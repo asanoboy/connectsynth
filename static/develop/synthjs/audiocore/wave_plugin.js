@@ -1,7 +1,7 @@
 goog.provide("synthjs.audiocore.WavePlugin");
 goog.provide("synthjs.audiocore.WavePluginEventType");
 goog.provide("synthjs.audiocore.WaveEvent");
-goog.require("synthjs.utility.WorkerDeferredManager");
+goog.require("synthjs.process.WorkerDeferredManager");
 goog.require('synthjs.utility.EventTarget');
 
 /**
@@ -36,7 +36,7 @@ synthjs.audiocore.WavePlugin = function(url, sampleRate){  //opt_params){
 	 * @private
 	 */
 	this._worker = new Worker(url);
-	this._workerCreator = new synthjs.utility.WorkerDeferredManager(this._worker);
+	this._workerCreator = new synthjs.process.WorkerDeferredManager(this._worker);
 	
 	// this._worker.addEventListener('message', function(e){
 		// if( !e["data"]["callback"] )
@@ -80,7 +80,7 @@ synthjs.audiocore.WavePlugin.prototype.clone = function(){
 synthjs.audiocore.WavePlugin.prototype.initDeferred = function(opt_params){
 	this._initialized = true;
 	var self = this;
-	//return new synthjs.utility.WorkerDeferred(this._worker,
+	//return new synthjs.process.WorkerDeferred(this._worker,
 	return this._workerCreator.create(
 		//{'action':'init', "initParams": {"sampleRate": this._sampleRate}})
 		{'action':'init', "samplerate": this._sampleRate})
@@ -97,7 +97,7 @@ synthjs.audiocore.WavePlugin.prototype.initDeferred = function(opt_params){
  * @param {synthjs.audiocore.WaveEvent} event
  */
 synthjs.audiocore.WavePlugin.prototype.addEventDeferred = function(event){
-	//var workerD = new synthjs.utility.WorkerDeferred(this._worker,
+	//var workerD = new synthjs.process.WorkerDeferred(this._worker,
 	var request = event.createPostObject();
 	request['action'] = 'midi';
 	

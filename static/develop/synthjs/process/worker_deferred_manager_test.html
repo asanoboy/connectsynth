@@ -9,7 +9,7 @@
 	goog.require("goog.testing.AsyncTestCase");
 	
 	goog.require("synthjs.utility.Deferred");
-	goog.require("synthjs.utility.WorkerDeferredManager");
+	goog.require("synthjs.process.WorkerDeferredManager");
 </script>
 </head>
 <body>
@@ -28,10 +28,10 @@ function tearDown() {
 
 function testDeferredObject() {
 	var cnt = 0;
-	//var WD = synthjs.utility.WorkerDeferred;
+	//var WD = synthjs.process.WorkerDeferred;
 	
 	var worker = new Worker('test_echo_worker.js'),
-		creator = new synthjs.utility.WorkerDeferredManager(worker);
+		creator = new synthjs.process.WorkerDeferredManager(worker);
 	
 	var d = creator.create({val:1}).addCallback(function(e){
 		assertEquals(e.val, 1);
@@ -43,10 +43,10 @@ function testDeferredObject() {
 };
 
 function testDeferredCallback() {
-	//var WD = synthjs.utility.WorkerDeferred;
+	//var WD = synthjs.process.WorkerDeferred;
 	
 	var worker = new Worker('test_echo_worker.js'),
-		creator = new synthjs.utility.WorkerDeferredManager(worker);
+		creator = new synthjs.process.WorkerDeferredManager(worker);
 	
 	var dWait = new D();
 	
@@ -71,7 +71,7 @@ function testDeferredCallback() {
  */
 function _testFailure() {
 	var cnt = 0;
-	var WD = synthjs.utility.WorkerDeferred;
+	var WD = synthjs.process.WorkerDeferred;
 	
 	var worker = new Worker('test_echo_worker_failed.js');
 	var d = new WD(worker, {val:1}, {
