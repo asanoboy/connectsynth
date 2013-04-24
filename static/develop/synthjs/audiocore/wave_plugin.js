@@ -2,6 +2,7 @@ goog.provide("synthjs.audiocore.WavePlugin");
 goog.provide("synthjs.audiocore.WavePluginEventType");
 goog.provide("synthjs.audiocore.WaveEvent");
 goog.require("synthjs.process.WorkerManager");
+goog.require("synthjs.process.Worker");
 goog.require('synthjs.utility.EventTarget');
 
 /**
@@ -16,28 +17,28 @@ synthjs.audiocore.WavePlugin = function(url, sampleRate){  //opt_params){
 	 * @private
 	 */
 	this._url = url;
-	
+
 	/**
 	 * @private
 	 */
 	this._failed = false;
-	
+
 	/**
 	 * @private
 	 */
 	this._sampleRate = sampleRate;
-	
+
 	/**
 	 * @private
 	 */
 	this._initialized = false;
-	
+
 	/**
 	 * @private
 	 */
-	this._worker = new Worker(url);
+	this._worker = new synthjs.process.Worker(url);
 	this._workerCreator = new synthjs.process.WorkerManager(this._worker);
-	
+
 	// this._worker.addEventListener('message', function(e){
 		// if( !e["data"]["callback"] )
 			// console.log(e.data);
@@ -49,7 +50,7 @@ synthjs.audiocore.WavePlugin = function(url, sampleRate){  //opt_params){
 		event.error = e;
 		this.dispatchEvent(event);
 	}, this);
-	
+
 	this._worker.addEventListener('error', this._errorHandler);
 	//this._eventHandler = new goog.events.EventHandler();
 	this.getHandler().listen(document, goog.events.EventType.ERROR, this._errorHandler, false, this);
@@ -80,7 +81,6 @@ synthjs.audiocore.WavePlugin.prototype.clone = function(){
 synthjs.audiocore.WavePlugin.prototype.initDeferred = function(opt_params){
 	this._initialized = true;
 	var self = this;
-	//return new synthjs.process.WorkerDeferred(this._worker,
 	return this._workerCreator.create(
 		//{'action':'init', "initParams": {"sampleRate": this._sampleRate}})
 		{'action':'init', "samplerate": this._sampleRate})
@@ -97,7 +97,6 @@ synthjs.audiocore.WavePlugin.prototype.initDeferred = function(opt_params){
  * @param {synthjs.audiocore.WaveEvent} event
  */
 synthjs.audiocore.WavePlugin.prototype.addEventDeferred = function(event){
-	//var workerD = new synthjs.process.WorkerDeferred(this._worker,
 	var request = event.createPostObject();
 	request['action'] = 'midi';
 	

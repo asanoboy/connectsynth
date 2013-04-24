@@ -41,7 +41,6 @@ goog.scope(function(){
                     child.createHash();
                     var handler = new goog.events.EventHandler();
                     var listener = function(){
-                        console.log('hoge');
                         handler.dispose();
                         dWait.callback( child );
                     };

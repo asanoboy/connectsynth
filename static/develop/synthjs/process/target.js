@@ -33,6 +33,7 @@ goog.scope(function(){
             return this._window;
         },
         postMessage: function(data){
+            // console.log("=====PostMessage in Target");
             this._manager.postMessage(this, data);
         },
         postSyncMessage: function(){

@@ -17,20 +17,19 @@ var DL = synthjs.utility.DeferredList;
  * @implements synthjs.audiocore.Generator
  */
 synthjs.audiocore.DynamicGenerator = function(wave){
-	
-	
+
 	/** @private */
 	this._wave = wave;
-	
+
 	/** @private */
 	this._playingNotes = [];
-	
+
 	/** @private */
 	this._filters = [];
-	
+
 	/** @private */
 	this._afterBufferLength = 0;
-	
+
 	/** @private */
 	this._afterBuffer = new Float32Array(0);
 };

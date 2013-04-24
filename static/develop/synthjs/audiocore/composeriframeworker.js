@@ -9,43 +9,66 @@ goog.scope(function(){
 var ComposerIframeWorker = synthjs.audiocore.ComposerIframeWorker = function(workerpath, parentElement, sampleRate){
 
     this._childProcess = null;
-    this._hasProcessLaunched = false;
-    this._workerpath = workerpath;
-    this._parentElement = parentElement;
+    // this._workerpath = workerpath;
+    // this._parentElement = parentElement;
 
+    // this._worker = null;
+    this._workerManager = null;// = new synthjs.process.WorkerManager(this._worker);
+    this._waitLoadDeferred = new synthjs.utility.Deferred();
     goog.base(this, sampleRate);
+    synthjs.process.Child.loadIframeDeferred(workerpath, parentElement)
+        .addCallback(
+            goog.bind(function(child){
+                // console.log("======ON LOADED");
+                this._workerManager = new synthjs.process.WorkerManager(child);
+                this._waitLoadDeferred.callback();
+            }, this)
+        )
+        .callback();
 };
 goog.inherits(ComposerIframeWorker, synthjs.audiocore.ComposerWorkerBase);
 
 
 goog.object.extend(ComposerIframeWorker.prototype, {
     getBufferDeferredWorkerInternal: function(dump){
-        var dBuffer = this._workerManager.create(dump);
-        if( this._hasProcessLaunched ){
-            return dBuffer;
+        if( this._workerManager ){
+            return this._workerManager.create(dump);
         }
 
-        var dWait = new synthjs.utility.Deferred(),
-            d = new synthjs.utility.Deferred()
-                .addCallback(
-                    goog.bind(function(){
-                        //TODO: UNDER CONSTRUCT
-                        if( this._hasProcessLaunched ){
-                            dWait.callback();
-                        }
+        // console.log("====NOT LOADED YET");
+        var dWait = new synthjs.utility.Deferred();
+        return new synthjs.utility.Deferred()
+            // .addCallback(function(){
+            //     console.log("=======getBufferStart");
+            // })
+            .awaitDeferred(this._waitLoadDeferred)
+            .addCallback(
+                goog.bind(function(){
+                    this._workerManager.create(dump).chainDeferred(dWait).callback();
+                }, this)
+            )
+            .awaitDeferred(dWait);
 
-                        var dInit = synthjs.process.Child.loadIframeDeferred(this._workerpath, this._parentElement);
+        //     d = new synthjs.utility.Deferred()
+        //         .addCallback(
+        //             goog.bind(function(){
+        //                 //TODO: UNDER CONSTRUCT
+        //                 if( this._hasProcessLaunched ){
+        //                     dWait.callback();
+        //                 }
 
-                        dInit.addCallback(
-                            goog.bind(function(child){
-                                this._childProcess = child;
-                                this.handler
-                            }, this)
-                        );
-                    }, this)
-                )
-                .awaitDeferred(d)
-                .assocChainDeferred(dBuffer);
+        //                 var dInit = synthjs.process.Child.loadIframeDeferred(this._workerpath, this._parentElement);
+
+        //                 dInit.addCallback(
+        //                     goog.bind(function(child){
+        //                         this._childProcess = child;
+        //                         this.handler
+        //                     }, this)
+        //                 );
+        //             }, this)
+        //         )
+        //         .awaitDeferred(d)
+        //         .assocChainDeferred(dBuffer);
     }
 });
 

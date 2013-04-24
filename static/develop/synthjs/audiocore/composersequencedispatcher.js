@@ -121,13 +121,13 @@ goog.object.extend(Receiver.prototype, {
         var leftBuffer, rightBuffer,
             len = buffersList[0][1].leftBuffer.length;
         var result = {
-            leftBuffer: (leftBuffer=new Float32Array(len)),
-            rightBuffer: (rightBuffer=new Float32Array(len))};
-        var i = 0;
+            leftBuffer: new Float32Array(len),
+            rightBuffer: new Float32Array(len)};
         goog.array.forEach(buffersList, function(buffers){
+            var i = 0;
             for( var j=0; j<buffers[1].leftBuffer.length; j++ ){
-                result.leftBuffer[i] = buffers[1].leftBuffer[j];
-                result.rightBuffer[i] = buffers[1].rightBuffer[j];
+                result.leftBuffer[i] += buffers[1].leftBuffer[j];
+                result.rightBuffer[i] += buffers[1].rightBuffer[j];
                 i++;
             }
         });

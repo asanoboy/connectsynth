@@ -10,6 +10,8 @@
 	
 	goog.require("synthjs.utility.Deferred");
 	goog.require("synthjs.process.WorkerManager");
+	goog.require("synthjs.process.Child");
+	goog.require("synthjs.process.Worker");
 </script>
 </head>
 <body>
@@ -30,7 +32,8 @@ function testDeferredObject() {
 	var cnt = 0;
 	//var WD = synthjs.process.WorkerDeferred;
 	
-	var worker = new Worker('test_echo_worker.js'),
+	// var worker = new Worker('test_echo_worker.js'),
+	var worker = new synthjs.process.Worker('test_echo_worker.js'),
 		creator = new synthjs.process.WorkerManager(worker);
 	
 	var d = creator.create({val:1}).addCallback(function(e){
@@ -45,7 +48,8 @@ function testDeferredObject() {
 function testDeferredCallback() {
 	//var WD = synthjs.process.WorkerDeferred;
 	
-	var worker = new Worker('test_echo_worker.js'),
+	// var worker = new Worker('test_echo_worker.js'),
+	var worker = new synthjs.process.Worker('test_echo_worker.js'),
 		creator = new synthjs.process.WorkerManager(worker);
 	
 	var dWait = new D();

@@ -24,6 +24,10 @@ function tearDown() {
 
 }
 
+function testWebWorker() {
+
+}
+
 function testIframe() {
     var loadD = synthjs.process.Child.loadIframeDeferred(childpath, document.getElementById('body'));
 
@@ -50,7 +54,7 @@ function testIframe() {
 
 }
 
-function _testWindow() {
+function testWindow() {
     var loadD = synthjs.process.Child.loadWindowDeferred(childpath);
 
     var message = "hello world.", child;

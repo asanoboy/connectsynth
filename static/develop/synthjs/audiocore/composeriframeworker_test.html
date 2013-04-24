@@ -29,7 +29,7 @@
     goog.require("synthjs.model.MidiTrack");
 </script>
 </head>
-<body>
+<body id='main'>
 <script>
 
 var MidiFile = synthjs.encode.MidiFile,
@@ -43,7 +43,7 @@ var MidiFile = synthjs.encode.MidiFile,
     worker;
 
 function setUp() {
-
+    asyncTestCase.stepTimeout = 10000;
 }
 
 function tearDown() {
@@ -84,14 +84,14 @@ function createGetMidifileDeferred(){
 
 function getMidiDeferred() {
     return createGetMidifileDeferred()
-    .assocChainDeferred(
-        createReadArrayBufferDeferred()
-    )
-    .addCallback(function(buffer){
-        var parser = new synthjs.encode.MidiParser(buffer);
-        var midifile = parser.createMidi();
-        return Midi.createByMidiFile(midifile);
-    });
+        .assocChainDeferred(
+            createReadArrayBufferDeferred()
+        )
+        .addCallback(function(buffer){
+            var parser = new synthjs.encode.MidiParser(buffer);
+            var midifile = parser.createMidi();
+            return Midi.createByMidiFile(midifile);
+        });
 }
 
 function prepareComposer(midi, composer, Performer, WavePlugin){
@@ -100,6 +100,8 @@ function prepareComposer(midi, composer, Performer, WavePlugin){
     goog.array.forEach(tracks, function(track){
         if( !track.hasKeyEvent() ) return;
 
+        cnt++;
+        // if( cnt !== 2 && cnt !==3  )return;
         var wave = new WavePlugin("bootstrap.js", 48000),
             performer = new Performer();
         performer.setWave(wave);
@@ -113,35 +115,59 @@ function prepareComposer(midi, composer, Performer, WavePlugin){
     composer.setTrack(midi.get("tempoTrack"));
 }
 
+function testload() {
+    var sampleRate = 48000,
+        length = 1 << 16,
+        worker = new synthjs.audiocore.ComposerIframeWorker(workerpath, document.getElementById("main"), sampleRate);
 
-function testbeep() {
+
+    var d = getMidiDeferred().addCallback(function(midi){
+        prepareComposer(
+            midi,
+            worker,
+            synthjs.audiocore.DummyPerformer,
+            synthjs.audiocore.DummyWavePlugin);
+
+        var dBuffer = worker.getBufferDeferred(length)
+            .addCallback(function(){
+                asyncTestCase.continueTesting();
+            });
+
+        dBuffer.callback();
+    });
+    asyncTestCase.waitForAsync();
+    d.callback();
+}
+
+function testcompare() {
     var sampleRate = 48000,
         length = 1 << 16,
         composer = new synthjs.audiocore.Composer(sampleRate),
-        worker = new synthjs.audiocore.ComposerIframeWorker(workerpath, sampleRate);
-        // player = synthjs.audiocore.Player.getInstance();
+        worker = new synthjs.audiocore.ComposerIframeWorker(workerpath, document.getElementById("main"), sampleRate),
+        errorRadius=0.000001;
 
-
-    // player.addGenerator(composer);
-    // player.setLatencyTimer(true);
-    // var handler = new goog.events.EventHandler();
-    // handler.listen(player, 
-    //     synthjs.audiocore.PlayerEventType.PUT_LATENCY, 
-    //     function(e){
-    //         var msec = Math.round(e.target*1000);
-    //         var str = '';
-    //         while(msec--){
-    //             str += "#";
-    //         }
-    //         console.log(str);
-    //     });
     function compare(buffers){
         var generatorBuffers = buffers[0][1],
             dispatcherBuffers = buffers[1][1];
 
-        for( var i=0; i<generatorBuffers.leftBuffer.length; i+=1<<10 ){
-            assertEquals( generatorBuffers.leftBuffer[i], dispatcherBuffers.leftBuffer[i] );
-            assertEquals( generatorBuffers.rightBuffer[i], dispatcherBuffers.rightBuffer[i] );
+        for( var i=0; i<generatorBuffers.leftBuffer.length; i+=length>>4 ){
+            assert(
+                Math.abs(
+                    generatorBuffers.leftBuffer[i] -
+                    dispatcherBuffers.leftBuffer[i]
+                )
+                <
+                errorRadius
+            )
+            ;
+            assert(
+                Math.abs(
+                    generatorBuffers.rightBuffer[i] -
+                    dispatcherBuffers.rightBuffer[i]
+                )
+                <
+                errorRadius
+            ); 
         }
     }
 
@@ -158,23 +184,71 @@ function testbeep() {
             synthjs.audiocore.DummyPerformer,
             synthjs.audiocore.DummyWavePlugin);
 
-        var dList = [
-            composer.getBufferDeferred(length),
-            worker.getBufferDeferred(length)];
-        new goog.async.DeferredList(dList)
-            .addCallback(compare)
-            .addCallback(function(){
-                asyncTestCase.continueTesting();
-            });
+        function compareDeferred() {
+            var dWait = new synthjs.utility.Deferred();
+            return new synthjs.utility.Deferred().addCallback(
+                function(){
+                    var dList = [
+                        composer.getBufferDeferred(length),
+                        worker.getBufferDeferred(length)
+                        ];
 
-        for( var i=0; i<dList.length; i++){
-            dList[i].callback();
+                    new goog.async.DeferredList(dList)
+                        .addCallback(compare)
+                        .addCallback(function(){
+                            dWait.callback();
+                        });
+
+                    for( var i=0; i<dList.length; i++){
+                        dList[i].callback();
+                    }
+                })
+                .awaitDeferred(dWait);
+        }
+        var dStart = new synthjs.utility.Deferred();
+        var i = 0;
+        while(i++<10){
+            dStart.assocChainDeferred(compareDeferred());
         }
 
-        // d.addCallback(function(){
-        //     composer.rewind();
-            // player.play();
-        // });
+        dStart.addCallback(function(){
+            asyncTestCase.continueTesting();
+        }).callback();
+    });
+    
+    asyncTestCase.waitForAsync();
+    d.callback();
+}
+
+function testbeep() {
+    var sampleRate = 48000,
+        worker = new synthjs.audiocore.ComposerIframeWorker(workerpath, document.getElementById("main"), sampleRate);
+        player = synthjs.audiocore.Player.getInstance();
+
+
+    player.addGenerator(worker);
+    player.setLatencyTimer(true);
+    var handler = new goog.events.EventHandler();
+    handler.listen(player, 
+        synthjs.audiocore.PlayerEventType.PUT_LATENCY, 
+        function(e){
+            var msec = Math.round(e.target*1000);
+            var str = '';
+            while(msec--){
+                str += "#";
+            }
+            console.log(str);
+            asyncTestCase.continueTesting();
+        });
+
+    var d = getMidiDeferred().addCallback(function(midi){
+        prepareComposer(
+            midi,
+            worker,
+            synthjs.audiocore.DummyPerformer,
+            synthjs.audiocore.DummyWavePlugin);
+
+        player.play();
     });
     
     asyncTestCase.waitForAsync();

@@ -76,47 +76,82 @@ function testGetBuffer(){
 }
 
 function testCompareWithDynamicGenerator() {
-    var generator = new synthjs.audiocore.DynamicGenerator.createFromUrl(wavepath, 48000),
+    var generator1 = new synthjs.audiocore.DynamicGenerator.createFromUrl(wavepath, 48000),
+        generator2 = new synthjs.audiocore.DynamicGenerator.createFromUrl(wavepath, 48000),
         dispatcher = new synthjs.audiocore.ComposerSequenceDispatcher(),
-        length = 1 << 16,
-        gOnSequence = new synthjs.audiocore.DynamicGeneratorSequence(),
+        length = 1 << 8,
+        g1OnSequence = new synthjs.audiocore.DynamicGeneratorSequence(),
+        g2OnSequence = new synthjs.audiocore.DynamicGeneratorSequence(),
         dOnSequence = new synthjs.audiocore.ComposerSequence(),
-        gOffSequence = new synthjs.audiocore.DynamicGeneratorSequence(),
+        g1OffSequence = new synthjs.audiocore.DynamicGeneratorSequence(),
+        g2OffSequence = new synthjs.audiocore.DynamicGeneratorSequence(),
         dOffSequence = new synthjs.audiocore.ComposerSequence(),
-        waveid= 0;
+        waveid1= 0,
+        waveid2= 1,
+        errorRadius=0.000001;
 
-    gOnSequence.pushNoteOn(60, 100);
-    gOnSequence.pushGetBuffer(length);
+    // gen1
+    g1OnSequence.pushNoteOn(60, 100);
+    g1OnSequence.pushGetBuffer(length);
 
-    gOffSequence.pushNoteOff(60, 100);
-    gOffSequence.pushGetBuffer(length);
+    g1OffSequence.pushNoteOff(60, 100);
+    g1OffSequence.pushGetBuffer(length);
 
+    // gen2
+    g2OnSequence.pushNoteOn(40, 100);
+    g2OnSequence.pushGetBuffer(length);
 
-    dOnSequence.pushCreateWave(waveid, wavepath, 48000);
-    dOnSequence.pushNoteOn(waveid, 60, 100);
-    dOnSequence.pushGetBuffer(waveid, length);
+    g2OffSequence.pushNoteOff(40, 100);
+    g2OffSequence.pushGetBuffer(length);
 
-    dOffSequence.pushNoteOff(waveid, 60, 100);
-    dOffSequence.pushGetBuffer(waveid, length);
+    // dispatcher 
+    dOnSequence.pushCreateWave(waveid1, wavepath, 48000);
+    dOnSequence.pushCreateWave(waveid2, wavepath, 48000);
+    dOnSequence.pushNoteOn(waveid1, 60, 100);
+    dOnSequence.pushNoteOn(waveid2, 40, 100);
+    dOnSequence.pushGetBuffer(waveid1, length);
+    dOnSequence.pushGetBuffer(waveid2, length);
+
+    dOffSequence.pushNoteOff(waveid1, 60, 100);
+    dOffSequence.pushNoteOff(waveid2, 40, 100);
+    dOffSequence.pushGetBuffer(waveid1, length);
+    dOffSequence.pushGetBuffer(waveid2, length);
 
     var dOnList = [
-        generator.querySequenceDeferred(gOnSequence),
+        generator1.querySequenceDeferred(g1OnSequence),
+        generator2.querySequenceDeferred(g2OnSequence),
         dispatcher.queryDeferred(dOnSequence.getDump())
     ];
 
-    console.log(dOnSequence.getDump());
     var dOffList = [
-        generator.querySequenceDeferred(gOffSequence),
+        generator1.querySequenceDeferred(g1OffSequence),
+        generator2.querySequenceDeferred(g2OffSequence),
         dispatcher.queryDeferred(dOffSequence.getDump())
     ];
 
     function compare(buffers){
-        var generatorBuffers = buffers[0][1],
-            dispatcherBuffers = buffers[1][1];
+        var gen1Buffers = buffers[0][1],
+            gen2Buffers = buffers[1][1],
+            dispatcherBuffers = buffers[2][1];
 
-        for( var i=0; i<generatorBuffers.leftBuffer.length; i+=1<<10 ){
-            assertEquals( generatorBuffers.leftBuffer[i], dispatcherBuffers.leftBuffer[i] );
-            assertEquals( generatorBuffers.rightBuffer[i], dispatcherBuffers.rightBuffer[i] );
+        for( var i=0; i<gen1Buffers.leftBuffer.length; i+=1 ){
+            assert(
+                Math.abs(
+                    gen1Buffers.leftBuffer[i] + gen2Buffers.leftBuffer[i] -
+                    dispatcherBuffers.leftBuffer[i]
+                )
+                <
+                errorRadius
+            )
+            ;
+            assert(
+                Math.abs(
+                    gen1Buffers.rightBuffer[i] + gen2Buffers.rightBuffer[i] -
+                    dispatcherBuffers.rightBuffer[i]
+                )
+                <
+                errorRadius
+            );
         }
     }
 

@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../closurelibrary/closure/goog/base.js"></script>
-<script src="../../deps.js"></script>
-<script>
-goog.require("synthjs.process.Parent");
-goog.require("synthjs.audiocore.ComposerSequenceDispatcher");
+<script type="text/javascript" src="../../closurelibrary/closure/goog/base.js"></script>
+<script type="text/javascript" src="../../deps.js"></script>
+<script type="text/javascript" src="composeriframeworker_test_worker.js"></script>
+</head>
+<body>
+<script type="text/javascript">
 var dispatcher = new synthjs.audiocore.ComposerSequenceDispatcher();
 
 (function(){
@@ -30,7 +31,7 @@ var dispatcher = new synthjs.audiocore.ComposerSequenceDispatcher();
 function onMessage(e){
     dispatcher.queryDeferred(e.target)
         .addCallback(function(r){
-            r.callback = e.callback;
+            r.callback = e.target.callback;
             parent.postMessage(r);
         })
         .callback();
@@ -38,6 +39,5 @@ function onMessage(e){
 
 })();
 </script>
-</head>
-<body></body>
+</body>
 </html>
