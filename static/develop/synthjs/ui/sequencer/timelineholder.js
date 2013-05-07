@@ -151,7 +151,7 @@ goog.scope(function(){
             var margin = Math.min(this._width/2, this._scrollMargin);
             if( this._needleOffset < this._scrollLeft ){
                 // this._scrollLeft = this._needleOffse - margin;
-                if( this.setScroll(this._needleOffse - margin) ){
+                if( this.setScroll(this._needleOffset - margin) ){
                     this.scrollHeader();
                     this.scrollHolder();
                 }
