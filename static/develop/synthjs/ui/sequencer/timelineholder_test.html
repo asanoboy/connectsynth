@@ -26,6 +26,9 @@
     goog.require("synthjs.audiocore.Player");
     goog.require("synthjs.audiocore.WavePlugin");
     goog.require("synthjs.audiocore.Composer");
+    goog.require("synthjs.audiocore.ComposerIframeWorker");
+    goog.require("synthjs.audiocore.DummyWavePlugin");
+    goog.require("synthjs.audiocore.DummyPerformer");
     goog.require("synthjs.audiocore.Performer");
 </script>
 <style>
@@ -51,7 +54,9 @@ var Trackline = synthjs.ui.sequencer.Trackline,
     midipath = "../../audiocore/test.mid",
     _midipath = "../../model/midi_test.mid",
     pluginpath = "../../audiocore/bootstrap.js",
+    iframepluginpath = "../audiocore/bootstrap.js",
     appid = "application", 
+    workerpath = "../../audiocore/composeriframeworker_test_worker.html",
     holder, midi, composer, player;
 
 function setUp() {
@@ -63,7 +68,9 @@ function setUp() {
             midi = r;
             holder = new synthjs.ui.sequencer.TimelineHolder(midi.get("delta"));
             holder.render(goog.dom.getElement(appid));
+            
             loadComposer();
+            // loadComposerIframe();
             asyncTestCase.continueTesting();
         })
         .callback();
@@ -108,6 +115,32 @@ function loadMidiDeferred(){
         var midifile = parser.createMidi()
         return Midi.createByMidiFile(midifile);
     }) 
+}
+
+function loadComposerIframe(){
+    if( midi ){
+        composer = new synthjs.audiocore.ComposerIframeWorker(workerpath, document.getElementById("application"), 48000);
+        player = synthjs.audiocore.Player.getInstance();
+        player.addGenerator(composer);
+        goog.array.forEach(midi.get("tracks").getAll(), function(track){
+            if( !track.hasKeyEvent() ){
+                return;
+            }
+
+            var wave = new synthjs.audiocore.DummyWavePlugin(iframepluginpath, 48000),
+                performer = new synthjs.audiocore.DummyPerformer();
+
+            performer.setWave(wave);
+            performer.setSampleRate(48000);
+            performer.setDelta(midi.get("delta"));
+            performer.setTrack(track);
+            composer.addPerformer(performer);
+        });
+
+        composer.setDelta(midi.get("delta"));
+        composer.setTrack(midi.get("tempoTrack"));
+        // composer.rewind();
+    }
 }
 
 function loadComposer(){
