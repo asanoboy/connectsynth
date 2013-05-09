@@ -9,35 +9,35 @@
 <script type="text/javascript">
 var dispatcher = new synthjs.audiocore.ComposerQueryDispatcher();
 
-(function(){
-    var parent = null; 
-    var Parent = synthjs.process.Parent;
-    var handler = new goog.events.EventHandler();
+// (function(){
+//     var parent = null; 
+//     var Parent = synthjs.process.Parent;
+//     var handler = new goog.events.EventHandler();
 
-    Parent.loadDeferred().addCallbacks(function(p){
-        parent = p;
-        var handler = new goog.events.EventHandler();
-        handler.listen(
-            parent,
-            synthjs.process.EventType.MESSAGE,
-            onMessage
-            // function(event){
-            //     parent.postMessage(event.target);
-            // });
-        );
-    }).callback();
+//     Parent.loadDeferred().addCallbacks(function(p){
+//         parent = p;
+//         var handler = new goog.events.EventHandler();
+//         handler.listen(
+//             parent,
+//             synthjs.process.EventType.MESSAGE,
+//             onMessage
+//             // function(event){
+//             //     parent.postMessage(event.target);
+//             // });
+//         );
+//     }).callback();
 
 
-function onMessage(e){
-    dispatcher.queryDeferred(e.target)
-        .addCallback(function(r){
-            r.callback = e.target.callback;
-            parent.postMessage(r);
-        })
-        .callback();
-}
+// function onMessage(e){
+//     dispatcher.queryDeferred(e.target)
+//         .addCallback(function(r){
+//             r.callback = e.target.callback;
+//             parent.postMessage(r);
+//         })
+//         .callback();
+// }
 
-})();
+// })();
 </script>
 </body>
 </html>

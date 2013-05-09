@@ -12,7 +12,7 @@ goog.addDependency('../../../synthjs/application/sequencer.js', ['synthjs.applic
 goog.addDependency('../../../synthjs/audiocore/composer.js', ['synthjs.audiocore.Composer'], ['synthjs.audiocore.Performer', 'synthjs.audiocore.PerformerBase']);
 goog.addDependency('../../../synthjs/audiocore/composeriframeworker.js', ['synthjs.audiocore.ComposerIframeWorker'], ['synthjs.audiocore.ComposerWorkerBase', 'synthjs.process.Child', 'synthjs.process.WorkerManager']);
 goog.addDependency('../../../synthjs/audiocore/composerquery.js', ['synthjs.audiocore.ComposerQuery', 'synthjs.audiocore.ComposerQueryEventType', 'synthjs.audiocore.ComposerQueryHandler', 'synthjs.audiocore.ComposerQueryType'], ['goog.object', 'synthjs.utility.EventTarget']);
-goog.addDependency('../../../synthjs/audiocore/composerquerydispatcher.js', ['synthjs.audiocore.ComposerQueryDispatcher'], ['synthjs.audiocore.ComposerQuery', 'synthjs.audiocore.ComposerQueryEventType', 'synthjs.audiocore.ComposerQueryHandler', 'synthjs.audiocore.DynamicGenerator', 'synthjs.utility.Deferred', 'synthjs.utility.EventTarget']);
+goog.addDependency('../../../synthjs/audiocore/composerquerydispatcher.js', ['synthjs.audiocore.ComposerQueryDispatcher'], ['synthjs.audiocore.ComposerQuery', 'synthjs.audiocore.ComposerQueryEventType', 'synthjs.audiocore.ComposerQueryHandler', 'synthjs.audiocore.DynamicGenerator', 'synthjs.process.Dispatcher', 'synthjs.utility.Deferred']);
 goog.addDependency('../../../synthjs/audiocore/composerworker.js', ['synthjs.audiocore.ComposerWorker'], ['synthjs.audiocore.ComposerWorkerBase', 'synthjs.process.Worker', 'synthjs.process.WorkerManager']);
 goog.addDependency('../../../synthjs/audiocore/composerworkerbase.js', ['synthjs.audiocore.ComposerWorkerBase'], ['synthjs.audiocore.ComposerQuery', 'synthjs.audiocore.PerformerBase', 'synthjs.process.WorkerManager', 'synthjs.utility.Deferred']);
 goog.addDependency('../../../synthjs/audiocore/dummyperformer.js', ['synthjs.audiocore.DummyPerformer'], ['synthjs.audiocore.ComposerQuery', 'synthjs.audiocore.DummyWavePlugin', 'synthjs.audiocore.PerformerBase']);
@@ -51,6 +51,7 @@ goog.addDependency('../../../synthjs/model/plugintoggleparam.js', ['synthjs.mode
 goog.addDependency('../../../synthjs/model/textfile.js', ['synthjs.model.TextFile'], ['synthjs.model.FileBase', 'synthjs.model.FileType']);
 goog.addDependency('../../../synthjs/net/xhrio.js', ['synthjs.net.XhrIo'], ['goog.net.XhrIo']);
 goog.addDependency('../../../synthjs/process/child.js', ['synthjs.process.Child'], ['goog.dom', 'goog.style', 'synthjs.process.MessageType', 'synthjs.process.Target', 'synthjs.utility.Deferred']);
+goog.addDependency('../../../synthjs/process/dispatcher.js', ['synthjs.process.Dispatcher'], ['synthjs.process.EventType', 'synthjs.process.Parent', 'synthjs.utility.EventTarget']);
 goog.addDependency('../../../synthjs/process/eventtype.js', ['synthjs.process.EventType', 'synthjs.process.MessageType'], []);
 goog.addDependency('../../../synthjs/process/iframeworkermanager.js', ['synthjs.process.IframeWorkerManager'], []);
 goog.addDependency('../../../synthjs/process/messagemanager.js', ['synthjs.process.MessageManager'], ['goog.events.Event', 'synthjs.utility.EventTarget']);

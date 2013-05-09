@@ -103,6 +103,12 @@ var SequenceType = synthjs.audiocore.ComposerQueryType = {
 
 var EventType = synthjs.audiocore.ComposerQueryEventType = SequenceType;
 
+
+/**
+ * Receives each queries pushed by ComposerQuery and 
+ * dispatches events.
+ * @constructor
+ */
 var Handler = synthjs.audiocore.ComposerQueryHandler = function(){
     goog.base(this);
 };

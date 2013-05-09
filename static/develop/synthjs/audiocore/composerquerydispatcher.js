@@ -1,7 +1,8 @@
 goog.provide("synthjs.audiocore.ComposerQueryDispatcher");
 
 goog.require("synthjs.utility.Deferred");
-goog.require("synthjs.utility.EventTarget");
+// goog.require("synthjs.utility.EventTarget");
+goog.require("synthjs.process.Dispatcher");
 goog.require("synthjs.audiocore.DynamicGenerator");
 goog.require("synthjs.audiocore.ComposerQuery");
 goog.require("synthjs.audiocore.ComposerQueryEventType");
@@ -16,8 +17,8 @@ var SequenceEventType = synthjs.audiocore.ComposerQueryEventType;
  * Dispatches every event to DynamicGenerator.
  * @constructor
  */
-var Receiver = synthjs.audiocore.ComposerQueryDispatcher = function(){
-    goog.base(this);
+var Receiver = synthjs.audiocore.ComposerQueryDispatcher = function(process){
+    goog.base(this, process);
     this._sequenceHandler = new synthjs.audiocore.ComposerQueryHandler();
 
     this._waveidToGenerator = {};
@@ -25,7 +26,7 @@ var Receiver = synthjs.audiocore.ComposerQueryDispatcher = function(){
     this._waveidToSequence = {};
     this._sequenceidToWaitDeferred = {};
 };
-goog.inherits(Receiver, synthjs.utility.EventTarget);
+goog.inherits(Receiver, synthjs.process.Dispatcher);
 
 
 
