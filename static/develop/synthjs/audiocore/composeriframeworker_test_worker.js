@@ -1,2 +1,2 @@
-goog.require("synthjs.audiocore.ComposerSequenceDispatcher");
+goog.require("synthjs.audiocore.ComposerQueryDispatcher");
 goog.require("synthjs.process.Parent");

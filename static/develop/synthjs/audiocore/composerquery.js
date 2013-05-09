@@ -1,7 +1,7 @@
-goog.provide("synthjs.audiocore.ComposerSequence");
-goog.provide("synthjs.audiocore.ComposerSequenceType");
-goog.provide("synthjs.audiocore.ComposerSequenceHandler");
-goog.provide("synthjs.audiocore.ComposerSequenceEventType");
+goog.provide("synthjs.audiocore.ComposerQuery");
+goog.provide("synthjs.audiocore.ComposerQueryType");
+goog.provide("synthjs.audiocore.ComposerQueryHandler");
+goog.provide("synthjs.audiocore.ComposerQueryEventType");
 
 goog.require("synthjs.utility.EventTarget");
 goog.require("goog.object");
@@ -9,7 +9,7 @@ goog.require("goog.object");
 goog.scope(function(){
 
 var sequenceCurrentId = 0;
-var Sequence = synthjs.audiocore.ComposerSequence = function(){
+var Sequence = synthjs.audiocore.ComposerQuery = function(){
     this._array = [];
     this._id = ++sequenceCurrentId;
 };
@@ -87,7 +87,7 @@ goog.object.extend(Sequence.prototype, {
     }
 });
 
-var SequenceType = synthjs.audiocore.ComposerSequenceType = {
+var SequenceType = synthjs.audiocore.ComposerQueryType = {
     SET_WAVE_PARAM: 'set-wave-param',
     GET_BUFFER: 'get-buffer',
     CREATE_WAVE: 'create-wave',
@@ -101,9 +101,9 @@ var SequenceType = synthjs.audiocore.ComposerSequenceType = {
     FINISH: 'finish' //only for EventType
 };
 
-var EventType = synthjs.audiocore.ComposerSequenceEventType = SequenceType;
+var EventType = synthjs.audiocore.ComposerQueryEventType = SequenceType;
 
-var Handler = synthjs.audiocore.ComposerSequenceHandler = function(){
+var Handler = synthjs.audiocore.ComposerQueryHandler = function(){
     goog.base(this);
 };
 goog.inherits(Handler, synthjs.utility.EventTarget);

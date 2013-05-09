@@ -15,7 +15,7 @@
     goog.require("synthjs.audiocore.DynamicGenerator");
 
 
-    goog.require("synthjs.audiocore.ComposerSequenceDispatcher");
+    goog.require("synthjs.audiocore.ComposerQueryDispatcher");
 </script>
 </head>
 <body>
@@ -35,7 +35,7 @@ function tearDown() {
 
 function testSequence() {
 
-    var sequence = new synthjs.audiocore.ComposerSequence();
+    var sequence = new synthjs.audiocore.ComposerQuery();
 
     assert( 'id' in sequence.getDump() );
     assert( 'sequence' in sequence.getDump() );
@@ -47,10 +47,10 @@ function testSequence() {
 }
 
 function testGetBuffer(){
-    var dispatcher = new synthjs.audiocore.ComposerSequenceDispatcher(),
+    var dispatcher = new synthjs.audiocore.ComposerQueryDispatcher(),
         waveid = 0,
         length = 1000,
-        sequence = new synthjs.audiocore.ComposerSequence();
+        sequence = new synthjs.audiocore.ComposerQuery();
 
     sequence.pushCreateWave(waveid, wavepath, 48000);
     sequence.pushNoteOn(waveid, 60, 100);
@@ -78,14 +78,14 @@ function testGetBuffer(){
 function testCompareWithDynamicGenerator() {
     var generator1 = new synthjs.audiocore.DynamicGenerator.createFromUrl(wavepath, 48000),
         generator2 = new synthjs.audiocore.DynamicGenerator.createFromUrl(wavepath, 48000),
-        dispatcher = new synthjs.audiocore.ComposerSequenceDispatcher(),
+        dispatcher = new synthjs.audiocore.ComposerQueryDispatcher(),
         length = 1 << 8,
         g1OnSequence = new synthjs.audiocore.DynamicGeneratorSequence(),
         g2OnSequence = new synthjs.audiocore.DynamicGeneratorSequence(),
-        dOnSequence = new synthjs.audiocore.ComposerSequence(),
+        dOnSequence = new synthjs.audiocore.ComposerQuery(),
         g1OffSequence = new synthjs.audiocore.DynamicGeneratorSequence(),
         g2OffSequence = new synthjs.audiocore.DynamicGeneratorSequence(),
-        dOffSequence = new synthjs.audiocore.ComposerSequence(),
+        dOffSequence = new synthjs.audiocore.ComposerQuery(),
         waveid1= 0,
         waveid2= 1,
         errorRadius=0.000001;

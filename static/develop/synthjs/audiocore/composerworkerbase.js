@@ -1,7 +1,7 @@
 goog.provide("synthjs.audiocore.ComposerWorkerBase");
 
 
-goog.require("synthjs.audiocore.ComposerSequence");
+goog.require("synthjs.audiocore.ComposerQuery");
 goog.require("synthjs.audiocore.PerformerBase");
 goog.require("synthjs.process.WorkerManager");
 goog.require("synthjs.utility.Deferred");
@@ -15,7 +15,7 @@ var ComposerWorkerBase = synthjs.audiocore.ComposerWorkerBase = function(sampleR
     // this._workerManager = new synthjs.process.WorkerManager(this._worker);
 
     this._performers = [];
-    this._sequence = new synthjs.audiocore.ComposerSequence();
+    this._sequence = new synthjs.audiocore.ComposerQuery();
     goog.base(this);
     this.setSampleRate(sampleRate);
 };
@@ -61,7 +61,7 @@ goog.object.extend(ComposerWorkerBase.prototype, {
         }, this);
 
         var dump = this._sequence.getDump();
-        this._sequence = new synthjs.audiocore.ComposerSequence();
+        this._sequence = new synthjs.audiocore.ComposerQuery();
         return this.getBufferDeferredWorkerInternal(dump);
     },
 

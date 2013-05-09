@@ -1,24 +1,24 @@
-goog.provide("synthjs.audiocore.ComposerSequenceDispatcher");
+goog.provide("synthjs.audiocore.ComposerQueryDispatcher");
 
 goog.require("synthjs.utility.Deferred");
 goog.require("synthjs.utility.EventTarget");
 goog.require("synthjs.audiocore.DynamicGenerator");
-goog.require("synthjs.audiocore.ComposerSequence");
-goog.require("synthjs.audiocore.ComposerSequenceEventType");
-goog.require("synthjs.audiocore.ComposerSequenceHandler");
+goog.require("synthjs.audiocore.ComposerQuery");
+goog.require("synthjs.audiocore.ComposerQueryEventType");
+goog.require("synthjs.audiocore.ComposerQueryHandler");
 
 goog.scope(function(){
 
-var SequenceEventType = synthjs.audiocore.ComposerSequenceEventType;
+var SequenceEventType = synthjs.audiocore.ComposerQueryEventType;
 
 /**
  * It is concerned that this is constructed on Worker process. 
  * Dispatches every event to DynamicGenerator.
  * @constructor
  */
-var Receiver = synthjs.audiocore.ComposerSequenceDispatcher = function(){
+var Receiver = synthjs.audiocore.ComposerQueryDispatcher = function(){
     goog.base(this);
-    this._sequenceHandler = new synthjs.audiocore.ComposerSequenceHandler();
+    this._sequenceHandler = new synthjs.audiocore.ComposerQueryHandler();
 
     this._waveidToGenerator = {};
     this._listenHandler();

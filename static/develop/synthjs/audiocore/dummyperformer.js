@@ -2,7 +2,7 @@ goog.provide("synthjs.audiocore.DummyPerformer");
 goog.require("synthjs.audiocore.PerformerBase");
 goog.require("synthjs.audiocore.DummyWavePlugin");
 
-goog.require("synthjs.audiocore.ComposerSequence");
+goog.require("synthjs.audiocore.ComposerQuery");
 
 goog.scope(function(){
 
@@ -15,7 +15,7 @@ var Performer = synthjs.audiocore.DummyPerformer = function(){
 
     goog.base(this);
     this._wave = null;
-    this._sequence = new synthjs.audiocore.ComposerSequence();
+    this._sequence = new synthjs.audiocore.ComposerQuery();
 };
 goog.inherits(Performer, synthjs.audiocore.PerformerBase);
 
@@ -60,7 +60,7 @@ goog.object.extend(Performer.prototype, {
     setGetBuffer: function(length){
         goog.asserts.assert( !!this._wave );
 
-        // this._sequence = new synthjs.audiocore.ComposerSequence();
+        // this._sequence = new synthjs.audiocore.ComposerQuery();
 
         if( this._track.getEvent(this._currentEventIndex)===false ){
             this._eof = true;
@@ -80,7 +80,7 @@ goog.object.extend(Performer.prototype, {
     },
 
     flushSequence: function(){
-        this._sequence = new synthjs.audiocore.ComposerSequence();
+        this._sequence = new synthjs.audiocore.ComposerQuery();
     },
 
     onEventInternal: function(event){

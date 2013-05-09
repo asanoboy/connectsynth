@@ -7,9 +7,9 @@ importScripts(bootstrappath);
 importScripts(basepath);
 importScripts(depspath);
 
-goog.require("synthjs.audiocore.ComposerSequenceDispatcher");
+goog.require("synthjs.audiocore.ComposerQueryDispatcher");
 
-var dispatcher = new synthjs.audiocore.ComposerSequenceDispatcher();
+var dispatcher = new synthjs.audiocore.ComposerQueryDispatcher();
 
 addEventListener("message", onMessage, false);
 
