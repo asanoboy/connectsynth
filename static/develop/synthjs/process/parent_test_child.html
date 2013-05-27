@@ -8,24 +8,25 @@
     goog.require("synthjs.process.Parent");
     goog.require("goog.events.EventHandler");
 </script>
+<script src="parent_test_child.js"></script>
 </head>
 <body>
 <script>
 
-(function(){
-    var Parent = synthjs.process.Parent;
-    var handler = new goog.events.EventHandler();
+// (function(){
+//     var Parent = synthjs.process.Parent;
+//     var handler = new goog.events.EventHandler();
 
-    Parent.loadDeferred().addCallbacks(function(parent){
-        var handler = new goog.events.EventHandler();
-        handler.listen(  // echo listener
-            parent,
-            synthjs.process.EventType.MESSAGE,
-            function(event){
-                parent.postMessage(event.target);
-            });
-    }).callback();
-})();
+//     Parent.loadDeferred().addCallbacks(function(parent){
+//         var handler = new goog.events.EventHandler();
+//         handler.listen(  // echo listener
+//             parent,
+//             synthjs.process.EventType.MESSAGE,
+//             function(event){
+//                 parent.postMessage(event.target);
+//             });
+//     }).callback();
+// })();
 </script>
 </body>
 </html>

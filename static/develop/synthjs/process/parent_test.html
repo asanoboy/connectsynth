@@ -15,7 +15,8 @@
 <script>
 
 var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall();
-var childpath = "parent_test_child.html";
+var childpath = "parent_test_child.html",
+    workerpath = "parent_test_worker.js";
 function setUp() {
 
 }
@@ -24,60 +25,45 @@ function tearDown() {
 
 }
 
-function testWebWorker() {
+function innerEchoTest(loadD){
 
+    var message = "hello world.", child;
+
+    loadD.addCallback(function(c){
+        child = c;
+        assertTrue( child instanceof synthjs.process.Child );
+        handler.listen(
+            child,
+            synthjs.process.EventType.MESSAGE,
+            function(event){
+                assertTrue( event.target == message );
+                child.dispose();
+                asyncTestCase.continueTesting();
+            });
+        child.postMessage(message);
+    });
+    var handler = new goog.events.EventHandler();
+
+    asyncTestCase.waitForAsync();
+    loadD.callback();
 }
 
 function testIframe() {
     var loadD = synthjs.process.Child.loadIframeDeferred(childpath, document.getElementById('body'));
 
-    var message = "hello world.", child;
-
-    loadD.addCallback(function(c){
-        child = c;
-        assertTrue( child instanceof synthjs.process.Child );
-        handler.listen(
-            child,
-            synthjs.process.EventType.MESSAGE,
-            function(event){
-                assertTrue( event.target == message );
-                child.dispose();
-                asyncTestCase.continueTesting();
-            })
-        child.postMessage(message);
-    });
-    var handler = new goog.events.EventHandler();
-
-    asyncTestCase.waitForAsync();
-    loadD.callback();
-
-
+    innerEchoTest(loadD);
 }
 
 function testWindow() {
     var loadD = synthjs.process.Child.loadWindowDeferred(childpath);
 
-    var message = "hello world.", child;
+    innerEchoTest(loadD);
+}
 
-    loadD.addCallback(function(c){
-        child = c;
-        assertTrue( child instanceof synthjs.process.Child );
-        handler.listen(
-            child,
-            synthjs.process.EventType.MESSAGE,
-            function(event){
-                assertTrue( event.target == message );
-                child.dispose();
-                asyncTestCase.continueTesting();
-            })
-        child.postMessage(message);
-    });
-    var handler = new goog.events.EventHandler();
+function testWebWorker() {
+    var loadD = synthjs.process.Child.loadWorkerDeferred(workerpath);
 
-    asyncTestCase.waitForAsync();
-    loadD.callback();
-
-
+    innerEchoTest(loadD);
 }
 
 

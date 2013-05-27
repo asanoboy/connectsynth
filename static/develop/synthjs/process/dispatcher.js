@@ -10,8 +10,9 @@ goog.scope(function(){
  * This is abstract class and dispatches query from parent process.
  * @constructor
  */
-var Dispatcher = synthjs.process.Dispatcher = function(){
+var Dispatcher = synthjs.process.Dispatcher = function(Handler){
     goog.base(this);
+    this._queryHandler = new Handler();
     this._parent = null;
     synthjs.process.Parent.loadDeferred()
         .addCallbacks(goog.bind(this.listenMessage, this))
@@ -27,6 +28,10 @@ goog.object.extend(Dispatcher.prototype, {
             synthjs.process.EventType.MESSAGE,
             this.onMessage,
             this);
+    },
+
+    getQueryHandler: function(){
+        return this._queryHandler;
     },
 
     /**

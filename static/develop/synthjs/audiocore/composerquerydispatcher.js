@@ -17,8 +17,9 @@ var SequenceEventType = synthjs.audiocore.ComposerQueryEventType;
  * Dispatches every event to DynamicGenerator.
  * @constructor
  */
-var Receiver = synthjs.audiocore.ComposerQueryDispatcher = function(process){
-    goog.base(this, process);
+var Receiver = synthjs.audiocore.ComposerQueryDispatcher = function(Handler){
+    goog.base(this, Handler);
+    // goog.base(this, process);
     this._sequenceHandler = new synthjs.audiocore.ComposerQueryHandler();
 
     this._waveidToGenerator = {};

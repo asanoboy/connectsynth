@@ -26,7 +26,6 @@ goog.addDependency('../../../synthjs/audiocore/note.js', ['synthjs.audiocore.Not
 goog.addDependency('../../../synthjs/audiocore/performer.js', ['synthjs.audiocore.Performer'], ['synthjs.audiocore.DynamicGenerator', 'synthjs.audiocore.Generator', 'synthjs.audiocore.PerformerBase', 'synthjs.utility.Deferred', 'synthjs.utility.DeferredList']);
 goog.addDependency('../../../synthjs/audiocore/performerbase.js', ['synthjs.audiocore.PerformerBase'], ['synthjs.utility.Deferred', 'synthjs.utility.DeferredList', 'synthjs.utility.EventTarget']);
 goog.addDependency('../../../synthjs/audiocore/player.js', ['synthjs.audiocore.Player'], ['goog.events.EventTarget', 'goog.object', 'synthjs.audiocore.Generator']);
-goog.addDependency('../../../synthjs/audiocore/playeriframeworker.js', ['synthjs.audiocore.PlayerIframeWorker'], []);
 goog.addDependency('../../../synthjs/audiocore/wave_plugin.js', ['synthjs.audiocore.WaveEvent', 'synthjs.audiocore.WavePlugin', 'synthjs.audiocore.WavePluginEventType'], ['synthjs.process.Worker', 'synthjs.process.WorkerManager', 'synthjs.utility.EventTarget']);
 goog.addDependency('../../../synthjs/bridge/codemirror.js', ['synthjs.CodeMirror'], []);
 goog.addDependency('../../../synthjs/bridge/pnglib.js', ['synthjs.bridge.PNGlib'], []);
@@ -56,6 +55,7 @@ goog.addDependency('../../../synthjs/process/eventtype.js', ['synthjs.process.Ev
 goog.addDependency('../../../synthjs/process/iframeworkermanager.js', ['synthjs.process.IframeWorkerManager'], []);
 goog.addDependency('../../../synthjs/process/messagemanager.js', ['synthjs.process.MessageManager'], ['goog.events.Event', 'synthjs.utility.EventTarget']);
 goog.addDependency('../../../synthjs/process/parent.js', ['synthjs.process.Parent'], ['synthjs.process.MessageType', 'synthjs.process.Target', 'synthjs.utility.Deferred']);
+goog.addDependency('../../../synthjs/process/query.js', ['synthjs.process.Query'], []);
 goog.addDependency('../../../synthjs/process/target.js', ['synthjs.process.Target'], ['synthjs.process.MessageManager', 'synthjs.utility.EventTarget', 'synthjs.utility.UUID']);
 goog.addDependency('../../../synthjs/process/worker.js', ['synthjs.process.Worker'], ['synthjs.process.EventType', 'synthjs.utility.EventTarget']);
 goog.addDependency('../../../synthjs/process/workerdeferred.js', ['synthjs.process.WorkerDeferred'], ['synthjs.utility.Deferred']);

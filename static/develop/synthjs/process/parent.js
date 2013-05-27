@@ -7,7 +7,7 @@ goog.require("synthjs.utility.Deferred");
 
 
 goog.scope(function(){
-
+    var isWorker = !("document" in goog.global);
     var Parent = synthjs.process.Parent = function(win){
         goog.base(this, win);
     };
@@ -18,6 +18,11 @@ goog.scope(function(){
 
     goog.object.extend(Parent, {
         loadDeferred: function(){
+            if( isWorker ){
+                return new synthjs.utility.Deferred().addCallback(function(){
+                    return new Parent();
+                });
+            }
             var d = new synthjs.utility.Deferred(),
                 dWait = new synthjs.utility.Deferred();
 

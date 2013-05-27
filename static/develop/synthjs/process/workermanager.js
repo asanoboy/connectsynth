@@ -65,6 +65,8 @@ synthjs.process.WorkerManager.prototype.create = function(opt_params, opt_settin
 	var dWait = new synthjs.utility.Deferred();
 
 	var d = new synthjs.utility.Deferred().addCallback(goog.bind(function(e){
+		console.log("CALLED");
+		console.log(this._child);
 		if( goog.isFunction( opt_params ) ){
 			var params = opt_params(e);
 			params['callback'] = callbackname;

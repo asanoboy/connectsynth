@@ -9,7 +9,7 @@ goog.provide('synthjs.process.WorkerDeferred');
  * @param {Object} opt_params
  */
 synthjs.process.WorkerDeferred = function(worker, opt_params, opt_settings){
-	
+
 	goog.base(this);
 	this._worker = worker;
 	this._dWait = new synthjs.utility.Deferred();
@@ -27,6 +27,7 @@ synthjs.process.WorkerDeferred = function(worker, opt_params, opt_settings){
 goog.inherits(synthjs.process.WorkerDeferred, synthjs.utility.Deferred);
 
 synthjs.process.WorkerDeferred.prototype.postMessage = function(e){
+	console.log("FUGA");
 	if( goog.isFunction( this._params ) ){
 		var params = this._params(e);
 		params['callback'] = this._callbackname;
@@ -40,7 +41,6 @@ synthjs.process.WorkerDeferred.prototype.postMessage = function(e){
 
 synthjs.process.WorkerDeferred.prototype._attachListener = function(){
 	this._worker.addEventListener("message", goog.bind(this.successListener, this));
-	
 	if( goog.isFunction(this._settings.error) ){
 		this._worker.addEventListener("error", goog.bind(this.errorListener, this));
 	}

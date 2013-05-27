@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>synthjs Unit Tests dynamicgenerator</title>
+<script src="../../closurelibrary/closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+    goog.require("goog.testing.jsunit");
+    goog.require("goog.testing.AsyncTestCase");
+    
+    goog.require("synthjs.process.Dispatcher");
+    goog.require("synthjs.process.Query");
+    goog.require("synthjs.process.Worker");
+    goog.require("synthjs.process.WorkerManager");
+    goog.require("synthjs.process.Child");
+</script>
+</head>
+<body>
+<script>
+
+var asyncTestCase = new goog.testing.AsyncTestCase.createAndInstall(),
+    workerpath = "dispatcher_test_worker.js";
+
+/**
+ * @constructor
+ */
+var Query = function(){
+    goog.base(this);
+    this._params = [];
+};
+goog.inherits(Query, synthjs.process.Query);
+goog.object.extend(Query.prototype, {
+    pushValue: function(key, value){
+        this.push({
+            'action': 'push',
+            'key': key,
+            'value': value
+        });
+    }
+});
+
+
+
+function setUp() {
+
+}
+
+function tearDown() {
+
+}
+
+
+
+function testQuery() {
+    var key = "hoge",
+        val = "fuga",
+        query = new Query(),
+        worker = new synthjs.process.Worker(workerpath),
+        manager = new synthjs.process.WorkerManager(worker);
+
+
+    query.pushValue(key, val);
+    var d = manager.create(query.getDump())
+        .addCallback(function(e){
+            asyncTestCase.continueTesting();
+        });
+
+    asyncTestCase.waitForAsync();
+    d.callback();
+}
+
+
+</script>
+</body>
+</html>
