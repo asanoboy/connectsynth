@@ -30,10 +30,9 @@ var Query = function(){
 };
 goog.inherits(Query, synthjs.process.Query);
 goog.object.extend(Query.prototype, {
-    pushValue: function(key, value){
+    pushValue: function(value){
         this.push({
-            'action': 'push',
-            'key': key,
+            'action': 'add',
             'value': value
         });
     }
@@ -52,21 +51,26 @@ function tearDown() {
 
 
 function testQuery() {
-    var key = "hoge",
-        val = "fuga",
-        query = new Query(),
-        worker = new synthjs.process.Worker(workerpath),
-        manager = new synthjs.process.WorkerManager(worker);
-
-
-    query.pushValue(key, val);
-    var d = manager.create(query.getDump())
-        .addCallback(function(e){
-            asyncTestCase.continueTesting();
-        });
-
     asyncTestCase.waitForAsync();
-    d.callback();
+    synthjs.process.Child.loadWorkerDeferred(workerpath)
+    .addCallback(function(child){
+
+        var val = "fuga",
+            query = new Query(),
+            manager = new synthjs.process.WorkerManager(child);
+
+
+        query.pushValue(val);
+        query.pushValue(val);
+        manager.create(query.getDump())
+            .addCallback(function(e){
+                assertEquals(e.length, 2);
+                asyncTestCase.continueTesting();
+            })
+            .callback();
+
+    })
+    .callback();
 }
 
 

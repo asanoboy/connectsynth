@@ -21,6 +21,7 @@ goog.addDependency('../../../synthjs/audiocore/dynamicgenerator.js', ['synthjs.a
 goog.addDependency('../../../synthjs/audiocore/filter.js', ['synthjs.audiocore.Filter'], []);
 goog.addDependency('../../../synthjs/audiocore/filter_plugin.js', ['synthjs.audiocore.FilterPlugin'], ['synthjs.process.WorkerDeferred']);
 goog.addDependency('../../../synthjs/audiocore/generator.js', ['synthjs.audiocore.Generator'], ['synthjs.audiocore.Filter', 'synthjs.audiocore.FilterPlugin']);
+goog.addDependency('../../../synthjs/audiocore/instrumenthandler.js', ['synthjs.audiocore.InstrumentHandler', 'synthjs.audiocore.InstrumentQuery'], ['synthjs.process.Query', 'synthjs.process.QueryHandler']);
 goog.addDependency('../../../synthjs/audiocore/midiinterface.js', ['synthjs.audiocore.MidiInterface', 'synthjs.audiocore.MidiInterface.EventType'], ['goog.events.EventTarget']);
 goog.addDependency('../../../synthjs/audiocore/note.js', ['synthjs.audiocore.Note'], ['goog.array']);
 goog.addDependency('../../../synthjs/audiocore/performer.js', ['synthjs.audiocore.Performer'], ['synthjs.audiocore.DynamicGenerator', 'synthjs.audiocore.Generator', 'synthjs.audiocore.PerformerBase', 'synthjs.utility.Deferred', 'synthjs.utility.DeferredList']);
@@ -55,7 +56,7 @@ goog.addDependency('../../../synthjs/process/eventtype.js', ['synthjs.process.Ev
 goog.addDependency('../../../synthjs/process/iframeworkermanager.js', ['synthjs.process.IframeWorkerManager'], []);
 goog.addDependency('../../../synthjs/process/messagemanager.js', ['synthjs.process.MessageManager'], ['goog.events.Event', 'synthjs.utility.EventTarget']);
 goog.addDependency('../../../synthjs/process/parent.js', ['synthjs.process.Parent'], ['synthjs.process.MessageType', 'synthjs.process.Target', 'synthjs.utility.Deferred']);
-goog.addDependency('../../../synthjs/process/query.js', ['synthjs.process.Query'], []);
+goog.addDependency('../../../synthjs/process/query.js', ['synthjs.process.Query', 'synthjs.process.QueryHandler'], []);
 goog.addDependency('../../../synthjs/process/target.js', ['synthjs.process.Target'], ['synthjs.process.MessageManager', 'synthjs.utility.EventTarget', 'synthjs.utility.UUID']);
 goog.addDependency('../../../synthjs/process/worker.js', ['synthjs.process.Worker'], ['synthjs.process.EventType', 'synthjs.utility.EventTarget']);
 goog.addDependency('../../../synthjs/process/workerdeferred.js', ['synthjs.process.WorkerDeferred'], ['synthjs.utility.Deferred']);

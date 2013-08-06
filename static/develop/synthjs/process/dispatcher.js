@@ -10,9 +10,9 @@ goog.scope(function(){
  * This is abstract class and dispatches query from parent process.
  * @constructor
  */
-var Dispatcher = synthjs.process.Dispatcher = function(Handler){
+var Dispatcher = synthjs.process.Dispatcher = function(handler){
     goog.base(this);
-    this._queryHandler = new Handler();
+    this._queryHandler = handler;
     this._parent = null;
     synthjs.process.Parent.loadDeferred()
         .addCallbacks(goog.bind(this.listenMessage, this))
@@ -41,19 +41,45 @@ goog.object.extend(Dispatcher.prototype, {
      */
     onMessage: function(e){
         // Don't use dot notation for 'target'.
-        var d = this.queryDeferred(e['target']);
-        if( 'callback' in e['target'] ){
-            d.addCallback(goog.bind(
-                function(r){
-                    r['callback'] = e['target']['callback'];
-                    this._parent.postMessage(r);
-                },
-                this)
+        goog.asserts.assert("callback" in e["target"]);
+        goog.asserts.assert("query" in e["target"]);
+        var callbackname = e['target']['callback'];
+        var d = new synthjs.utility.Deferred(),
+            results = [];
+        goog.array.forEach(e['target']['query'], function(q){
+            d.assocChainDeferred(
+                this._queryHandler.queryDeferredEach(q)
+                .addCallback(function(r){
+                    results.push(r);
+                })
             );
-        }
-        d.callback();
-    },
+        }, this);
 
-    queryDeferred: goog.abstractMethod
+        d.addCallback(goog.bind(function(){
+            this._queryHandler.reduceDeferred(results)
+            .addCallback(goog.bind(function(r){
+                this._parent.postMessage({
+                    'callback': callbackname,
+                    'result': r
+                });
+            }, this)).callback();
+        }, this))
+        .callback();
+        // var d = this.queryDeferred(e['target']);
+
+
+        // if( 'callback' in e['target'] ){
+        //     d.addCallback(goog.bind(
+        //         function(r){
+        //             r['callback'] = e['target']['callback'];
+        //             this._parent.postMessage(r);
+        //         },
+        //         this)
+        //     );
+        // }
+        // d.callback();
+    }
+
+    // queryDeferred: goog.abstractMethod
 });
 });

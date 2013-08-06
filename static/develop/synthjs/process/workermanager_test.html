@@ -65,11 +65,33 @@ function testDeferredCallback() {
 			assertEquals(e.add, 'b');
 			asyncTestCase.continueTesting();
 		});
-	
+
 	asyncTestCase.waitForAsync();
 	d.callback();
 }
 
+function testDeferredCallbackChild() {
+	asyncTestCase.waitForAsync();
+	synthjs.process.Child.loadWorkerDeferred('test_echo_worker.js')
+		.addCallback(function(child){
+			var creator = new synthjs.process.WorkerManager(child);
+			var dWait = new D();
+			var d = new D().addCallback(function(){
+					return {val: 'a'};
+				}).assocChainDeferred(
+					creator.create(function(e){
+						e.add = 'b';
+						return e;
+					})
+				).addCallback(function(e){
+					assertEquals(e.add, 'b');
+					asyncTestCase.continueTesting();
+				})
+				.callback();
+		})
+		.callback();
+	
+}
 /*
  * try-catch邵ｺ�ｧ邵ｺ�ｯcatch邵ｺ�ｧ邵ｺ髦ｪ竊醍ｸｺ�ｽ�ｽwindow.onerror邵ｺ�ｧ郢ｧ�ｭ郢晢ｽ｣郢晢ｿｽ繝｡陷ｿ�ｯ髢ｭ�ｽ
  */
