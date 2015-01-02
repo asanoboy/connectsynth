@@ -39,14 +39,13 @@ synthjs.process.WorkerManager.prototype.dispose = function(){
  * callback from child.
  */
 synthjs.process.WorkerManager.prototype.onPostMessage = function(e){
-	if( goog.isObject(e.target) && 'callback' in e.target ){
+	if( 'callback' in e.target && 'result' in e.target){
 		if( e.target['callback'] in this._waitDeferredList ){
 
-			this._waitDeferredList[e.target['callback']].callback(e.target);
+			this._waitDeferredList[e.target['callback']].callback(e.target['result']);
 			delete this._waitDeferredList[e.target['callback']];
 		}
 		else{
-			console.log(e.target);
 			goog.asserts.fail("invalid callback name");
 		}
 
@@ -65,18 +64,21 @@ synthjs.process.WorkerManager.prototype.create = function(opt_params, opt_settin
 	var dWait = new synthjs.utility.Deferred();
 
 	var d = new synthjs.utility.Deferred().addCallback(goog.bind(function(e){
-		console.log("CALLED");
-		console.log(this._child);
 		if( goog.isFunction( opt_params ) ){
 			var params = opt_params(e);
-			params['callback'] = callbackname;
+			// params['callback'] = callbackname;
 			// this._worker.postMessage(params);
-            this._child.postMessage(params);
+            this._child.postMessage({
+                'query': params,
+                'callback': callbackname});
 		}
 		else {
-			opt_params['callback'] = callbackname;
+			// opt_params['callback'] = callbackname;
 			// this._worker.postMessage(opt_params);
-            this._child.postMessage(opt_params);
+            // this._child.postMessage(opt_params);
+            this._child.postMessage({
+                'query': opt_params,
+                'callback': callbackname});
 		}
 	}, this)).awaitDeferred(dWait);
 

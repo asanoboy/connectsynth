@@ -13,27 +13,30 @@ goog.require("synthjs.process.Query");
 /**
  * @constructor
  */
-var Dispatcher = function(Handler){
-    goog.base(this, Handler);
-};
-goog.inherits(Dispatcher, synthjs.process.Dispatcher);
-goog.object.extend(Dispatcher.prototype, {
-    queryDeferred: function(){
-        setTimeout(function(){
-            postMessage("FFF");
-        }, 1000);
-    }
-});
-
-/**
- * @constructor
- */
 var QueryHandler = function(){
     goog.base(this);
 };
 goog.inherits(QueryHandler, synthjs.process.QueryHandler);
 goog.object.extend(QueryHandler.prototype, {
+    queryDeferredEach: function(obj){
+        return new synthjs.utility.Deferred()
+        .addCallback(function(){
+            return obj;
+        });
+    },
 
+    reduceDeferred: function(list){
+        return new synthjs.utility.Deferred()
+        .addCallback(function(){
+            var result = [];
+            goog.array.forEach(list, function(e){
+                if( e.action=='add' ){
+                    result.push(e.value);
+                }
+            });
+            return result;
+        });
+    }
 });
 
-var dispatcher = new Dispatcher(QueryHandler);
+var dispatcher = new synthjs.process.Dispatcher(new QueryHandler());

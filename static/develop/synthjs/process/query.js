@@ -1,15 +1,16 @@
 goog.provide("synthjs.process.Query");
+goog.provide("synthjs.process.QueryHandler");
 
 goog.scope(function(){
 
-var queryId = 0;
+// var queryId = 0;
 
 /**
  * @constructor
  */
 var Query = synthjs.process.Query = function(){
     this._array = [];
-    this._id = ++queryId;
+    // this._id = ++queryId;
 };
 
 goog.object.extend(Query.prototype, {
@@ -24,10 +25,11 @@ goog.object.extend(Query.prototype, {
     },
 
     getDump: function(){
-        return {
-            "query": this._array,
-            "id": this._id
-        };
+        return this._array;
+        // return {
+        //     "query": this._array
+        //     // "id": this._id
+        // };
     },
 
     push: function(obj){
@@ -50,27 +52,46 @@ var Handler = synthjs.process.QueryHandler = function(){
 goog.inherits(Handler, synthjs.utility.EventTarget);
 
 goog.object.extend(Handler.prototype, {
-    dispatchQuery: function(obj){
-        var queryArray = obj['query'],
-            queryid = obj['id'];
+    // dispatchQuery: function(obj){
+    //     var queryArray = obj['query'],
+    //         queryid = obj['id'];
 
-        this.dispatchEvent(new goog.events.Event(
-            EventType.START,
-            {
-                queryid: queryid
-            })
-        );
-        goog.array.forEach(queryArray, this.dispatchEach, this);
+    //     this.dispatchEvent(new goog.events.Event(
+    //         EventType.START,
+    //         {
+    //             queryid: queryid
+    //         })
+    //     );
+    //     goog.array.forEach(queryArray, this.dispatchEach, this);
 
-        this.dispatchEvent(new goog.events.Event(
-            EventType.FINISH,
-            {
-                queryid: queryid
-            })
-        );
+    //     this.dispatchEvent(new goog.events.Event(
+    //         EventType.FINISH,
+    //         {
+    //             queryid: queryid
+    //         })
+    //     );
 
+    // },
+    // dispatchEach: goog.abstractMethod,
+
+    /**
+     * [ description]
+     * @param  {Object} obj [description]
+     * @return {synthjs.utility.Deferred}     [description]
+     */
+    queryDeferredEach: function(obj){
+        goog.asserts.fail("Does not implement!");
     },
-    dispatchEach: goog.abstractMethod
+
+    /**
+     * [ description]
+     * @param  {Array} list [description]
+     * @return {synthjs.utility.Deferred}      [description]
+     */
+    reduceDeferred: function(list){
+        goog.asserts.fail("Does not implement!");
+
+    }
 });
 
 });
